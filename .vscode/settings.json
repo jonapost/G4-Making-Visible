@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "plotHisto.C": "cpp",
+        "iostream": "cpp"
+    }
+}

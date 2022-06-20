@@ -1,0 +1,180 @@
+//
+// ********************************************************************
+// * License and Disclaimer                                           *
+// *                                                                  *
+// * The  Geant4 software  is  copyright of the Copyright Holders  of *
+// * the Geant4 Collaboration.  It is provided  under  the terms  and *
+// * conditions of the Geant4 Software License,  included in the file *
+// * LICENSE and available at  http://cern.ch/geant4/license .  These *
+// * include a list of copyright holders.                             *
+// *                                                                  *
+// * Neither the authors of this software system, nor their employing *
+// * institutes,nor the agencies providing financial support for this *
+// * work  make  any representation or  warranty, express or implied, *
+// * regarding  this  software system or assume any liability for its *
+// * use.  Please see the license in the file  LICENSE  and URL above *
+// * for the full disclaimer and the limitation of liability.         *
+// *                                                                  *
+// * This  code  implementation is the result of  the  scientific and *
+// * technical work of the GEANT4 collaboration.                      *
+// * By using,  copying,  modifying or  distributing the software (or *
+// * any work based  on the software)  you  agree  to acknowledge its *
+// * use  in  resulting  scientific  publications,  and indicate your *
+// * acceptance of all terms of the Geant4 Software license.          *
+// ********************************************************************
+//
+/// \file electromagnetic/TestEm3/include/DetectorConstruction.hh
+/// \brief Definition of the DetectorConstruction class
+//
+//
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+#ifndef DetectorConstruction_h
+#define DetectorConstruction_h 1
+
+#include "G4VUserDetectorConstruction.hh"
+#include "globals.hh"
+#include "G4Cache.hh"
+#include <list>
+class G4Box;
+class G4LogicalVolume;
+class G4VPhysicalVolume;
+class G4Material;
+class DetectorMessenger;
+
+class G4GlobalMagFieldMessenger;
+
+     const G4int kMaxAbsor = 10;                        // 0 + 9  
+     const G4int fNBlocks = 5; // Number of moveble Blocks ,CD
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+class DetectorConstruction : public G4VUserDetectorConstruction
+{
+public:
+  
+   DetectorConstruction();
+  ~DetectorConstruction();
+
+public:
+  
+  void SetNbOfAbsor     (G4int);      
+  void SetAbsorMaterial (G4int,const G4String&);     
+  void SetAbsorThickness(G4int,G4double);
+          
+  void SetWorldMaterial (const G4String&);
+  void SetCalorSizeY   (G4double);  
+  void SetCalorSizeZ   (G4double);         
+  void SetNbOfLayers    (G4int);   
+
+  void SetBlockAktiv (G4int,G4double);
+  void SetBlockMaterial (G4int,const G4String&); // Set the parameters of all Blocks CD
+  void SetBlockPosition(G4int, G4double, G4double, G4double);
+  void SetBlockSize(G4int, G4double, G4double, G4double);
+  
+  virtual G4VPhysicalVolume* Construct();
+  virtual void ConstructSDandField();
+     
+public:
+  
+  void PrintCalorParameters(); 
+                    
+  G4double GetWorldSizeX() const           {return fWorldSizeX;}; 
+  G4double GetWorldSizeYZ() const          {return fWorldSizeYZ;};
+  
+     
+  G4double GetCalorThickness() const       {return fCalorThickness;}; 
+  G4double GetCalorSizeY() const          {return fCalorSizeY;};
+  G4double GetCalorSizeZ() const          {return fCalorSizeZ;};
+      
+  G4int GetNbOfLayers() const              {return fNbOfLayers;}; 
+     
+  G4int       GetNbOfAbsor() const                {return fNbOfAbsor;}; 
+  G4double    GetAbsorThickness(G4int i) const    {return fAbsorThickness[i];};
+  const G4Material* GetAbsorMaterial(G4int i) const {return fAbsorMaterial[i];};
+
+  const G4VPhysicalVolume* GetphysiWorld() const      {return fPhysiWorld;};
+  const G4Material*        GetWorldMaterial() const   {return fWorldMaterial;};
+  const G4VPhysicalVolume* GetAbsorber(G4int i) const {return fPhysiAbsor[i];};
+
+
+  G4int GetIfBlockAktiv(G4int i) const {return IfBlockAktiv[i];};            
+  const G4VPhysicalVolume* GetBlock(G4int i) const {return fPhysiBlock[i];}; //New 
+  const G4Material* GetBlockMaterial(G4int i) const {return fBlockMaterial[i];}; //New  CD
+
+  //G4double GetBlockSize(G4int i ) const  {return fBlockSizeX[i], fBlockSizeY[i], fBlockSizeZ[i];}; //New
+  //G4double GetBlockPosition(G4int i ) const  {return fBlockPosiX[i], fBlockPosiY[i], fBlockPosiZ[i];}; // New
+  G4double GetBlockSize(G4int i, G4int j) const {return fBlockSize[i][j];};
+  G4double GetBlockPosition(G4int i, G4int j) const {return fBlockPosi[i][j];};
+
+
+private:
+
+  void DefineMaterials();
+  void ComputeCalorParameters();
+
+  G4int              fNbOfAbsor;
+  G4Material*        fAbsorMaterial[kMaxAbsor];
+  G4double           fAbsorThickness[kMaxAbsor];
+
+  G4int              fNbOfLayers;
+  G4double           fLayerThickness;
+
+  std::list<G4double> fNCalorSizeZ;
+
+  G4double           fCalorSizeZ;
+  G4double           fCalorSizeY;
+  G4double           fCalorThickness;
+
+  G4double           fCalorSizeZ1;
+  G4double           fCalorSizeY1;
+  G4double           fCalorThickness1;
+
+  G4double           fCalorSizeZ2;
+  G4double           fCalorSizeY2;
+  G4double           fCalorThickness2;
+
+  G4int          IfBlockAktiv[fNBlocks];
+  G4double           fBlockSizeZ[fNBlocks];  // CD
+  G4double           fBlockSizeY[fNBlocks];
+  G4double           fBlockSizeX[fNBlocks];  
+  G4Material*        fBlockMaterial[fNBlocks];
+  G4double           fBlockPosiX[fNBlocks];
+  G4double           fBlockPosiY[fNBlocks];
+  G4double           fBlockPosiZ[fNBlocks];
+
+  G4double           fBlockSize[fNBlocks][3];
+  G4double           fBlockPosi[fNBlocks][3];
+
+  G4Box*             fSolidBlock[fNBlocks];
+  G4LogicalVolume*   fLogicBlock[fNBlocks];
+  G4VPhysicalVolume* fPhysiBlock[fNBlocks];
+
+
+  G4Material*        fWorldMaterial;
+  G4double           fWorldSizeYZ;
+  G4double           fWorldSizeX;
+
+  G4Box*             fSolidWorld;
+  G4LogicalVolume*   fLogicWorld;
+  G4VPhysicalVolume* fPhysiWorld;
+
+  G4Box*             fSolidCalor;
+  G4LogicalVolume*   fLogicCalor;
+  G4VPhysicalVolume* fPhysiCalor;
+
+  G4Box*             fSolidLayer;
+  G4LogicalVolume*   fLogicLayer;
+  G4VPhysicalVolume* fPhysiLayer;
+
+  G4Box*             fSolidAbsor[kMaxAbsor];
+  G4LogicalVolume*   fLogicAbsor[kMaxAbsor];
+  G4VPhysicalVolume* fPhysiAbsor[kMaxAbsor];
+
+  DetectorMessenger* fDetectorMessenger;
+  G4Cache<G4GlobalMagFieldMessenger*> fFieldMessenger;  
+};
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+#endif
