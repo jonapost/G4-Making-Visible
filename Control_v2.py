@@ -6,6 +6,7 @@ import os
 import numpy as np
 import time
 import subprocess
+import keyboard
 #os.system('/build/make')
 #os.system('./build/TestEm3 Run_Beam_v1.mac ')
 
@@ -138,6 +139,29 @@ def SetBlockPosition_v2(N,X,Y,Z,M,B):
     return 0
 
 
+def SetBlockPosition_v3(N,X):
+    #BlockN = Check_Position_v2(N,X,Y,Z,B)
+
+    a_file = open('Run_Beam_v2.mac', "r")
+    list_of_lines = a_file.readlines()
+    a_file = open('Run_Beam_v2.mac', "w")
+
+    
+    TX = list_of_lines[14 + N]
+    print(TX)
+    print(len(TX))
+    Xi = TX[22+8:26+5]
+    print(Xi)
+
+    Text = TX[0:30] + str(int( Xi) + X[N] ) + TX[31:74]
+
+    list_of_lines[14 + N] = Text
+    print(N, Text)
+    a_file.writelines(list_of_lines)
+
+    a_file.close()
+    return 0
+
 
 def Cpp_Execution():
     proc = subprocess.Popen(["./build/TestEm3", "Run_Beam_v1.mac"],
@@ -153,25 +177,40 @@ def Cpp_Execution():
 arg = 0
 
 def main(arg):
-    
-    # args is a list of the command line args
     i = int(arg)
 
-    #os.system('./build/TestEm3 Run_Beam_v1.mac ')
     M3 = ["Lead","Lead","Lead","Lead","Lead","Lead","Aluminium","Aluminium","Aluminium","Aluminium",]
   
     M = ["Aluminium","Scintillator",M3[4],"Aluminium","Aluminium"]
     N = [0,1,2,3,4]
    # X = [-20 + i*4,-10 - i, 0, 10,20]
-    X = [-30+i*2,-10 - i, 0, 10,20]
+    X = [-30+i*2,-10 - i, 0.0, 10,20]
     Y = [i,i,0,-1,i]
     Z = [0,0,0,0,0]
+    
+    #value = input("Please enter an integer:\n")
+ 
+    #value = int(value)
+    #if value == 1:
+    #time.sleep(0.5)
+    if keyboard.is_pressed("1"):
+        X = [1,0,0,0,0]
+        SetBlockPosition_v3(0,X)
+    #if value == 2:
+    if keyboard.is_pressed("2"):
+        X = [-1,0,0,0,0]
+        SetBlockPosition_v3(0,X)
+
+
+        
+    
     BlockSize_D = [[2,2,2,2,2],[20,20,20,20,20],[20,20,20,20,20]]
-    SetBlockPosition_v2(N,X,Y,Z,M,BlockSize_D)
+    #SetBlockPosition_v2(N,X,Y,Z,M,BlockSize_D)
      
 
     # os.system('./build/TestEm3 Run_Beam_v1.mac ')
    # Cpp_Execution()
+   #return 
 
 
 

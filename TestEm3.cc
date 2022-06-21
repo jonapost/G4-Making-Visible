@@ -109,7 +109,7 @@ int main(int argc,char** argv) {
       G4String command = "/control/execute ";
       G4String commandS = "/control/shell ";
       G4String fileName =  "Run_Beam_v1.mac";
-      G4String PyCommand = "python3 ../Control_v2.py ";
+      G4String PyCommand = "sudo python3 ../Control_v2.py ";
       for (G4int i=1; i<=20; i++) {
         if (i>1){fileName = "Run_Beam_v2.mac";}
         UImanager->ApplyCommand(commandS+PyCommand+std::to_string(i));
