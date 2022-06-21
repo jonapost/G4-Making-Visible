@@ -1,0 +1,37 @@
+#
+# Macro file for "TestEm3.cc" 
+#
+#  5 Block and Calorimeter at the end
+#
+
+
+
+
+
+
+
+
+/testem/det/setBlock 0 -30 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium
+/testem/det/setBlock 0 10 cm 20 cm 0 cm 0.0 cm 10.0 cm 10.0 cm Aluminium
+/testem/det/setBlock 1 -30 cm 20 cm 0 cm 2 cm 10.0 cm 10.0 cm Scintillator
+/testem/det/setBlock 2 0 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Lead
+/testem/det/setBlock 3 10 cm -1 cm 0 cm 0.0 cm 10.0 cm 10.0 cm Aluminium
+/testem/det/setBlock 4 20 cm 20 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium
+
+/run/reinitializeGeometry  ####### Reinitialisation
+
+
+
+#/testem/gun/setDefault
+#/gun/particle proton
+/gun/particle e-
+/gun/energy 1 GeV
+
+
+
+/run/beamOn 1
+
+
+
+
+

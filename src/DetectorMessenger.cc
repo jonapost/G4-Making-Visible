@@ -133,6 +133,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   fBlockCmd->SetGuidance(" Block Y size (with unit)");
   fBlockCmd->SetGuidance(" Block Z size (with unit)");
   fBlockCmd->SetGuidance(" material name");
+  fBlockCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
   //fBlockCmd->SetGuidance(" nb of layers : from 1 to 10");
 
   G4UIparameter* BlockNbPrm = new G4UIparameter("BlockNb",'i',false);
@@ -191,7 +192,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   //fBlockCmd->SetParameter(LayerNbPrm);
 
   //
-  fBlockCmd->AvailableForStates(G4State_PreInit);
+
   fBlockCmd->SetToBeBroadcasted(false); 
 }
 

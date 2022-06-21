@@ -322,118 +322,137 @@ void DetectorConstruction::ComputeCalorParameters()
     fLayerThickness += fAbsorThickness[iAbs];
   }
   fCalorThickness = fNbOfLayers*fLayerThickness;     
-  fWorldSizeX = 1.2*fCalorThickness + 50*cm; 
-  fWorldSizeYZ = 1.2*fCalorSizeY + 50*cm;  // CD
+  fWorldSizeX = 98*cm; //1.2*fCalorThickness + 100*cm; 
+  fWorldSizeYZ = 50*cm; //1.2*fCalorSizeY + 25*cm;  // CD
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 G4VPhysicalVolume* DetectorConstruction::Construct()
 {
-  if(fPhysiWorld) { return fPhysiWorld; }
-  // complete the Calor parameters definition
-  ComputeCalorParameters();
-
-  //
-  // World
-  //
-  fSolidWorld = new G4Box("World",                                //its name
-                   fWorldSizeX/2,fWorldSizeYZ/2,fWorldSizeYZ/2);  //its size
-
-  fLogicWorld = new G4LogicalVolume(fSolidWorld,        //its solid
-                                    fWorldMaterial,     //its material
-                                    "World");           //its name
-
-  fPhysiWorld = new G4PVPlacement(0,                    //no rotation
-                                  G4ThreeVector(),      //at (0,0,0)
-                                  fLogicWorld,          //its fLogical volume
-                                  "World",              //its name
-                                  0,                    //its mother  volume
-                                  false,                //no boolean operation
-                                  0);                   //copy number
-  //
-  // Calorimeter
-  //
-  //if(fCalorSizeZ == 0){ fCalorSizeZ = 0.1;fCalorSizeY = 0.1;fCalorThickness = 0.1;}
-
-
-  fSolidCalor = new G4Box("Calorimeter",                                  
-                     // fCalorThickness/2,fCalorSizeY/2,fCalorSizeZ/2);
-                      fCalorThickness/2,fWorldSizeYZ/2,fWorldSizeYZ/2);
-
-  fLogicCalor = new G4LogicalVolume(fSolidCalor,               
-                                    fWorldMaterial,     
-                                    "Calorimeter");      
-
-  fPhysiCalor = new G4PVPlacement(0,                     //no rotation
-                                G4ThreeVector(fWorldSizeX/2 - fCalorThickness/2,0, 0 ),//-fWorldSizeYZ/2 + fCalorSizeZ/2),        //at (0,0,0)
-                                //G4ThreeVector(fBlockPosiX[1],fBlockPosiY[1],fBlockPosiZ[1]),
-                                fLogicCalor,            //its fLogical volume
-                                "Calorimeter",          //its name
-                                fLogicWorld,            //its mother  volume
-                                false,                  //no boolean operation
-                                0);                     //copy number
- 
-  //
-  // Layers
-  //
-
-  fSolidLayer = new G4Box("Layer",                               
-                         // fLayerThickness/2,fCalorSizeY/2,fCalorSizeZ/2);
-                          fLayerThickness/2,fWorldSizeYZ/2,fWorldSizeYZ/2);
-
-  fLogicLayer = new G4LogicalVolume(fSolidLayer,      
-                                    fWorldMaterial,   
-                                    "Layer");              
-  if (fNbOfLayers > 1) {
-    fPhysiLayer = new G4PVReplica("Layer",              
-                                  fLogicLayer,     
-                                  fLogicCalor,      
-                                  kXAxis,              
-                                  fNbOfLayers,            
-                                  fLayerThickness);     
-  } else {
-    fPhysiLayer = new G4PVPlacement(0,                   
-                                  G4ThreeVector(),     
-                                  fLogicLayer,           
-                                  "Layer",             
-                                  fLogicCalor,         
-                                  false,             
-                                  0);                    
-  }
-  //
-  // Absorbers
-  //
+  G4cout<< "Detector_constuctor_called. fPhysiWorld="<<  fPhysiWorld <<G4endl;
+  if(!fPhysiWorld) {      
   
+    // complete the Calor parameters definition
+    ComputeCalorParameters();
 
-  G4double xfront = -0.5*fLayerThickness;
-  for (G4int k=1; k<=fNbOfAbsor; ++k) {
-    fSolidAbsor[k] = new G4Box("Absorber",                //its name
-                       // fAbsorThickness[k]/2,fCalorSizeY/2,fCalorSizeZ/2);
-                        fAbsorThickness[k]/2,fWorldSizeYZ/2,fWorldSizeYZ/2);
+    //
+    // World
+    //
+    fSolidWorld = new G4Box("World",                                //its name
+                    fWorldSizeX/2,fWorldSizeYZ/2,fWorldSizeYZ/2);  //its size
 
-    fLogicAbsor[k] = new G4LogicalVolume(fSolidAbsor[k],    //its solid
-                                        fAbsorMaterial[k], //its material
-                                        fAbsorMaterial[k]->GetName());
+    fLogicWorld = new G4LogicalVolume(fSolidWorld,        //its solid
+                                      fWorldMaterial,     //its material
+                                      "World");           //its name
 
-    G4double xcenter = xfront+0.5*fAbsorThickness[k];
-    xfront += fAbsorThickness[k];
-    fPhysiAbsor[k] = new G4PVPlacement(0,              
-                        G4ThreeVector(xcenter,0.,0),
-                        fLogicAbsor[k],               
-                        fAbsorMaterial[k]->GetName(),
-                        fLogicLayer,                  
-                        false,                      
-                        k);                                //copy number
+    fPhysiWorld = new G4PVPlacement(0,                    //no rotation
+                                    G4ThreeVector(),      //at (0,0,0)
+                                    fLogicWorld,          //its fLogical volume
+                                    "World",              //its name
+                                    0,                    //its mother  volume
+                                    false,                //no boolean operation
+                                    0);                   //copy number
+    //
+    // Calorimeter
+    //
+    //if(fCalorSizeZ == 0){ fCalorSizeZ = 0.1;fCalorSizeY = 0.1;fCalorThickness = 0.1;}
+
+
+    fSolidCalor = new G4Box("Calorimeter",                                  
+                      // fCalorThickness/2,fCalorSizeY/2,fCalorSizeZ/2);
+                        fCalorThickness/2,fWorldSizeYZ/2,fWorldSizeYZ/2);
+
+    fLogicCalor = new G4LogicalVolume(fSolidCalor,               
+                                      fWorldMaterial,     
+                                      "Calorimeter");      
+
+    fPhysiCalor = new G4PVPlacement(0,                     //no rotation
+                                  G4ThreeVector(fWorldSizeX/2 - fCalorThickness/2,0, 0 ),                         
+                                  fLogicCalor,            //its fLogical volume
+                                  "Calorimeter",          //its name
+                                  fLogicWorld,            //its mother  volume
+                                  false,                  //no boolean operation
+                                  0);                     //copy number
+  
+    //
+    // Layers
+    //
+
+    fSolidLayer = new G4Box("Layer",                               
+                          // fLayerThickness/2,fCalorSizeY/2,fCalorSizeZ/2);
+                            fLayerThickness/2,fWorldSizeYZ/2,fWorldSizeYZ/2);
+
+    fLogicLayer = new G4LogicalVolume(fSolidLayer,      
+                                      fWorldMaterial,   
+                                      "Layer");              
+    if (fNbOfLayers > 1) {
+      fPhysiLayer = new G4PVReplica("Layer",              
+                                    fLogicLayer,     
+                                    fLogicCalor,      
+                                    kXAxis,              
+                                    fNbOfLayers,            
+                                    fLayerThickness);     
+    } else {
+      fPhysiLayer = new G4PVPlacement(0,                   
+                                    G4ThreeVector(),     
+                                    fLogicLayer,           
+                                    "Layer",             
+                                    fLogicCalor,         
+                                    false,             
+                                    0);                    
+    }
+    //
+    // Absorbers
+    //
+    
+
+    G4double xfront = -0.5*fLayerThickness;
+    for (G4int k=1; k<=fNbOfAbsor; ++k) {
+      fSolidAbsor[k] = new G4Box("Absorber",                //its name
+                        // fAbsorThickness[k]/2,fCalorSizeY/2,fCalorSizeZ/2);
+                          fAbsorThickness[k]/2,fWorldSizeYZ/2,fWorldSizeYZ/2);
+
+      fLogicAbsor[k] = new G4LogicalVolume(fSolidAbsor[k],    //its solid
+                                          fAbsorMaterial[k], //its material
+                                          fAbsorMaterial[k]->GetName());
+
+      G4double xcenter = xfront+0.5*fAbsorThickness[k];
+      xfront += fAbsorThickness[k];
+      fPhysiAbsor[k] = new G4PVPlacement(0,              
+                          G4ThreeVector(xcenter,0.,0),
+                          fLogicAbsor[k],               
+                          fAbsorMaterial[k]->GetName(),
+                          fLogicLayer,                  
+                          false,                      
+                          k);                                //copy number
 
   }
 //PrintCalorParameters();
-  
+  }
+
   //
   // Block  // CD
   //
+  G4LogicalVolume *blockMotherLogical = fLogicWorld;
 
-  
+  for (G4int k=0; k<fNBlocks; ++k) {
+
+    delete fSolidBlock[k];
+    delete fLogicBlock[k];
+    
+    // delete this volume from its Mother, WorldVolume
+    blockMotherLogical->RemoveDaughter(fPhysiBlock[k]);
+    
+    delete fPhysiBlock[k];
+
+    fSolidBlock[k] = nullptr;
+    fLogicBlock[k] = nullptr;
+    fPhysiBlock[k] = nullptr;
+
+  }
+
+
   for (G4int k=0; k<fNBlocks; ++k) {
     G4cout << k << IfBlockAktiv[k]  <<G4endl;
     //G4cout << fBlockSizeX[k] << G4endl;
@@ -446,7 +465,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       G4cout << fBlockSize[k] << G4endl;
       G4cout << fBlockMaterial[k] << G4endl;
       G4cout << fBlockPosi[k] << G4endl;
-      
+
       fSolidBlock[k] = new G4Box("Block",                //its name
                           fBlockSize[k][0]/2,fBlockSize[k][1]/2,fBlockSize[k][2]/2);
 
@@ -607,7 +626,7 @@ void DetectorConstruction::SetBlockAktiv(G4int ival, G4double valx)
   // set Block aktiv
   //
   if (ival < 0  && ival >fNBlocks)
-    { G4cout << "\n --->warning from SetfNbOfLayers: "
+    { G4cout << "\n --->warning from SetBlockAktiv: "
              << ival << " must be at least 1. Command refused" << G4endl;
       return;
     }

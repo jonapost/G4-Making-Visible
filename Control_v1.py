@@ -16,7 +16,8 @@ st = time.time()
 BlockPosition = [[-20,-10,0,10,20],[0,0,0,0,0],[0,0,0,0,0]]
 BlockSize = [[2,2,2,2,2],[10,10,10,10,10],[10,10,10,10,10]]
 BlockPosition_D = [[-20,-10,0,10,20],[0,0,0,0,0],[0,0,0,0,0]]
-BlockSize_D = [[50,0,0,0,0],[10,10,10,10,10],[10,10,10,10,10]]
+#BlockSize_D = [[50,0,0,0,0],[10,10,10,10,10],[10,10,10,10,10]]
+BlockSize_D = [[5,5,5,5,5],[20,20,20,20,20],[20,20,20,20,20]]
 Material = ["Aluminium","Aluminium","Aluminium","Aluminium","Aluminium"]
 
 print(BlockSize)
@@ -56,31 +57,46 @@ def Check_Position(N,X,Y,Z):
   
     return 0
 
-def Check_Position_v2(N,X,Y,Z):
+def Check_Position_v2(N,X,Y,Z,B):
+    BlockSizeN = B
     for i in N:
         for j in N:
-            BlockSize[0][i] =  BlockSize_D[0][i]
-            BlockSize[0][j] =  BlockSize_D[0][j]
-            if i < j  and np.abs(X[i] - X[j]) < (BlockSize[0][i]/2 + BlockSize[0][j]/2):
-                BlockSize[0][i] =  np.abs(X[i] - X[j])/2*0.001
-                BlockSize[0][j] =  np.abs(X[i] - X[j])/2*0.001
+            if i< j:
+                BlockSizeN[0][i] =  B[0][i]
+                BlockSizeN[0][j] =  B[0][j]
+                #print( i, j)
+                #print(BlockSizeN)
+                #print( np.abs(X[i] - X[j]) , (BlockSizeN[0][i]/2 + BlockSizeN[0][j]/2))
+                if i < j  and np.abs(X[i] - X[j]) < (BlockSizeN[0][i]/2 + BlockSizeN[0][j]/2):
+                    BlockSizeN[0][i] =  np.abs(X[i] - X[j])/2#*0.001
+                    BlockSizeN[0][j] =  np.abs(X[i] - X[j])/2#*0.001
 
+                    print( i, j)
+
+                    if  np.abs(X[i] - X[j]) == 0.0:
+                        BlockSizeN[0][i] =  0.0
+                        BlockSizeN[0][j] =  0.0
+                        print( i, j)
+
+  
+
+             
+            if i < j and np.abs(X[i] - X[j]) != 0.0 and BlockSizeN[0][i] == 0.0 and BlockSizeN[0][j] == 0.0 :
+                BlockSizeN[0][i] =  BlockSize_D[0][i]
+                BlockSizeN[0][j] =  BlockSize_D[0][j]
                 print( i, j)
 
-                if  np.abs(X[i] - X[j]) == 0.0:
-                    BlockSize[0][i] =  0.0
-                    BlockSize[0][j] =  0.0
-            if i < j and np.abs(X[i] - X[j]) != 0.0 and BlockSize[0][i] == 0.0 and BlockSize[0][j] == 0.0 :
-                BlockSize[0][i] =  BlockSize_D[0][i]
-                BlockSize[0][j] =  BlockSize_D[0][j]
-
-                if np.abs(X[i] - X[j]) < (BlockSize[0][i]/2 + BlockSize[0][j]/2):
-                    BlockSize[0][i] =  np.abs(X[i] - X[j])/2*0.001
-                    BlockSize[0][j] =  np.abs(X[i] - X[j])/2*0.001
+                if np.abs(X[i] - X[j]) < (BlockSizeN[0][i]/2 + BlockSizeN[0][j]/2):
+                    BlockSizeN[0][i] =  np.abs(X[i] - X[j])/2#*0.001
+                    BlockSizeN[0][j] =  np.abs(X[i] - X[j])/2#*0.001
+                    print( i, j)
             if i != j and X[i] == X[j]:
-                BlockSize[0][i] =  0.0
-                BlockSize[0][j] =  0.0
-    return 0
+                BlockSizeN[0][i] =  0.0
+                BlockSizeN[0][j] =  0.0
+                print( i, j)
+           # BlockSize = BlockSizeN
+        
+    return BlockSizeN
 
 
 
@@ -104,15 +120,15 @@ def SetBlockPosition(N,X,Y,Z,M):
 
 
 
-def SetBlockPosition_v2(N,X,Y,Z,M):
-    Check_Position_v2(N,X,Y,Z)
+def SetBlockPosition_v2(N,X,Y,Z,M,B):
+    BlockN = Check_Position_v2(N,X,Y,Z,B)
 
     a_file = open('Run_Beam_v1.mac', "r")
     list_of_lines = a_file.readlines()
     a_file = open('Run_Beam_v1.mac', "w")
 
     for i in N:
-        Text = "/testem/det/setBlock " + str(i) + " " + str(X[i]) + " cm "+ str(Y[i]) + " cm "+ str(Z[i]) + " cm " + str(BlockSize[0][i]) + " cm 10.0 cm 10.0 cm "+ M[i] + "\n"
+        Text = "/testem/det/setBlock " + str(i) + " " + str(X[i]) + " cm "+ str(Y[i]) + " cm "+ str(Z[i]) + " cm " + str(BlockN[0][i]) + " cm 10.0 cm 10.0 cm "+ M[i] + "\n"
         list_of_lines[14 + i] = Text
         print(i, Text)
     a_file.writelines(list_of_lines)
@@ -174,14 +190,16 @@ for i in range(5):
 NChanges = 0
 #os.system('./build/TestEm3 Run_Beam_v1.mac ')
 M3 = ["Lead","Lead","Lead","Lead","Lead","Lead","Aluminium","Aluminium","Aluminium","Aluminium",]
-for i in range(1):
-    M = ["Lead","Scintillator",M3[i],"Aluminium","Aluminium"]
+for i in range(10):
+    M = ["Aluminium","Scintillator","Aluminium","Aluminium",M3[i]]
     N = [0,1,2,3,4]
     X = [-20 + i*4,-10 - i, 0, 10,20]
-    X = [-30,-10 - i, 0, 10,20]
-    Y = [0,i,0,-1,i]
+    X = [-30+i*2,-10 - i, 0, 10,20]
+    Y = [i*2,i,0,-1,i]
     Z = [0,0,0,0,0]
-    SetBlockPosition_v2(N,X,Y,Z,M)
+    BlockSize_D = [[2,2,2,2,2],[20,20,20,20,20],[20,20,20,20,20]]
+
+    SetBlockPosition_v2(N,X,Y,Z,M,BlockSize_D)
     NChanges = NChanges + 1
 
    # os.system('./build/TestEm3 Run_Beam_v1.mac ')

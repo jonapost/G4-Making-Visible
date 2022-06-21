@@ -12,11 +12,11 @@
 /testem/det/setSizeY 50 cm
 /testem/det/setSizeZ 50 cm
 #
-/testem/det/setBlock 0 -30 cm 0 cm 0 cm 50 cm 10.0 cm 10.0 cm Lead
-/testem/det/setBlock 1 -10 cm 0 cm 0 cm 0 cm 10.0 cm 10.0 cm Scintillator
-/testem/det/setBlock 2 0 cm 0 cm 0 cm 0 cm 10.0 cm 10.0 cm Lead
-/testem/det/setBlock 3 10 cm -1 cm 0 cm 0 cm 10.0 cm 10.0 cm Aluminium
-/testem/det/setBlock 4 20 cm 0 cm 0 cm 0 cm 10.0 cm 10.0 cm Aluminium
+/testem/det/setBlock 0 -20 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium
+/testem/det/setBlock 1 -10 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Scintillator
+/testem/det/setBlock 2 0 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium
+/testem/det/setBlock 3 10 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium
+/testem/det/setBlock 4 20 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium
 #
 #/testem/det/update
 
@@ -37,23 +37,23 @@
 #
 #/globalField/setValue 0 0 10 tesla
 #
-#/control/execute vis.mac
+/control/execute vis.mac
 #
 #/testem/gun/setDefault
 #/gun/particle proton
 /gun/particle e-
-/gun/energy 10 GeV
+/gun/energy 1 GeV
 
 
 
 #/vis/open OGL
 
-/vis/open VRML2FILE # HepRepFile
-/vis/scene/create
+#/vis/open VRML2FILE # HepRepFile
+#/vis/scene/create
 #/vis/scene/add/volume
 #/vis/sceneHandler/attach
 #/vis/viewer/flush
-/vis/scene/add/trajectories
+#/vis/scene/add/trajectories
 
 
 

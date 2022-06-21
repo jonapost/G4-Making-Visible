@@ -42,7 +42,7 @@ target_link_libraries(TestEm3 ${Geant4_LIBRARIES})
 #
 set(TestEm3_SCRIPTS
     atlashec.mac dedx.mac emtutor.mac geom.mac ionC12.mac lhcb.mac linac.mac lockwood.mac
-    run01.mac run02.mac stepMax.mac storeTables.mac TestEm3.in TestEm3.out tileCal.mac vis.mac Run_Beam_v1.mac Geo5Blocks_SetUp.mac
+    run01.mac run02.mac stepMax.mac storeTables.mac TestEm3.in TestEm3.out tileCal.mac vis.mac Run_Beam_v1.mac Geo5Blocks_SetUp.mac Run_Beam_v2.mac Run_Beam_v3.mac
   )
 
 foreach(_script ${TestEm3_SCRIPTS})

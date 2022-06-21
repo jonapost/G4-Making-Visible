@@ -70,6 +70,8 @@ set(CMAKE_MAKEFILE_DEPENDS
   "../CMakeLists.txt"
   "../Geo5Blocks_SetUp.mac"
   "../Run_Beam_v1.mac"
+  "../Run_Beam_v2.mac"
+  "../Run_Beam_v3.mac"
   "../TestEm3.in"
   "../TestEm3.out"
   "../atlashec.mac"
@@ -152,6 +154,8 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "vis.mac"
   "Run_Beam_v1.mac"
   "Geo5Blocks_SetUp.mac"
+  "Run_Beam_v2.mac"
+  "Run_Beam_v3.mac"
   "CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 

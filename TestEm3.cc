@@ -55,9 +55,7 @@ using namespace std::chrono;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.....
 
 int main(int argc,char** argv) {
-  
-  //  string python_message = "";
-    
+      
   auto start = high_resolution_clock::now();
   auto stop = high_resolution_clock::now();
   auto start2 = high_resolution_clock::now();
@@ -101,50 +99,45 @@ int main(int argc,char** argv) {
     //interactive mode
     visManager = new G4VisExecutive();
     visManager->Initialize();
-  //  ui->SessionStart();
-   // delete ui;
+    ui->SessionStart();
+    delete ui;
+  }if( strcmp(argv[1], "Loop") == 0) {
+    // Loop changing mode for interaktive test
+      visManager = new G4VisExecutive();  
+      visManager->Initialize();
+
+      G4String command = "/control/execute ";
+      G4String commandS = "/control/shell ";
+      G4String fileName =  "Run_Beam_v1.mac";
+      G4String PyCommand = "python3 ../Control_v2.py ";
+      for (G4int i=1; i<=20; i++) {
+        if (i>1){fileName = "Run_Beam_v2.mac";}
+        UImanager->ApplyCommand(commandS+PyCommand+std::to_string(i));
+        UImanager->ApplyCommand(command+fileName);
+        sleep(1);
+
+        }
+
   } else {
     //batch mode
       visManager = new G4VisExecutive();  
       visManager->Initialize();
-      
+
       G4String command = "/control/execute ";
       G4String fileName =  argv[1];
       start = high_resolution_clock::now();
       UImanager->ApplyCommand(command+fileName);
       stop = high_resolution_clock::now();
       
-
-   //   for (G4int k=0; k<3; ++k) {
-  //    bool quit = false;
-  //    int Test = 0;
-
-   //   while (!quit){
-    //    cin >> python_message;
-   //     G4String ComPy =  python_message; 
-    //    UImanager->ApplyCommand(ComPy);
-   //     cout<< python_message << "Comming from Geant4" <<endl;
-  //      sleep(3);
-   //     Test = Test + 1;
-    //    if Test == 10;
-  //        quit = true;
- //   }
+      
   }
-//getchar();
-
-
-  
-
-//sleep(3);
-
 
 
   //job termination
   delete visManager;
   delete runManager;
 
-  stop2 = high_resolution_clock::now();
-  //auto duration = duration_cast<microseconds>(stop - start);
+    stop2 = high_resolution_clock::now();
     cout << "Command elapsed time in milliseconds: "
         << chrono::duration_cast<chrono::milliseconds>(stop - start).count()
         << " ms" << endl;
@@ -152,7 +145,6 @@ int main(int argc,char** argv) {
         << chrono::duration_cast<chrono::milliseconds>(stop2 - start2).count()
         << " ms" << endl;
 
- // cout<< python_message << "Comming from Geant4" <<endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
