@@ -36,6 +36,9 @@
 # Draw geometry:
 /vis/drawVolume
 
+#/vis/scene/add/trajectories rich
+#/vis/modeling/trajectories/drawByCharge-0/default/setTimeSliceInterval 0.01 ns
+
 #
 /vis/scene/add/axes
 /vis/scene/add/scale

@@ -129,7 +129,7 @@ int main(int argc,char** argv) {
       UImanager->ApplyCommand(command+fileName);
       stop = high_resolution_clock::now();
       
-      
+      sleep(3);
   }
 
 

@@ -53,7 +53,8 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
  fNbLayersCmd(0),
  fNbAbsorCmd(0),
  fAbsorCmd(0),
- fBlockCmd(0)  // CD
+ fBlockCmd(0),  // CD
+ fAbsorBlockCmd(0) //CD
 { 
   fTestemDir = new G4UIdirectory("/testem/");
   fTestemDir->SetGuidance("UI commands specific to this example");
@@ -124,7 +125,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
 
   //// New command for Block control  CD
   fBlockCmd = new G4UIcommand("/testem/det/setBlock",this);
-  fBlockCmd->SetGuidance("Set the Block Number, the X Position, the Y Position, the Z Position, the X size, the Y size, the Z size, the material"); //, nb of layer.");
+  fBlockCmd->SetGuidance("Set the Block Number, the X Position, the Y Position, the Z Position, the X size, the Y size, the Z size, the first material, nb of layer");
   fBlockCmd->SetGuidance(" Block number : from 1 to fNBlock");
   fBlockCmd->SetGuidance(" Block X position (with unit)");
   fBlockCmd->SetGuidance(" Block Y position (with unit)");
@@ -132,9 +133,10 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   fBlockCmd->SetGuidance(" Block X size (with unit)");
   fBlockCmd->SetGuidance(" Block Y size (with unit)");
   fBlockCmd->SetGuidance(" Block Z size (with unit)");
-  fBlockCmd->SetGuidance(" material name");
+  fBlockCmd->SetGuidance(" first material name");
+  fBlockCmd->SetGuidance(" nb of layers : from 1 to 5");
   fBlockCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-  //fBlockCmd->SetGuidance(" nb of layers : from 1 to 10");
+  
 
   G4UIparameter* BlockNbPrm = new G4UIparameter("BlockNb",'i',false);
   BlockNbPrm->SetGuidance("Block number : from 1 to fNBlocks");
@@ -183,17 +185,33 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   fBlockCmd->SetParameter(unitBPrm);
 
   G4UIparameter* MatBPrm = new G4UIparameter("material",'s',false);
-  MatBPrm->SetGuidance("material name");
+  MatBPrm->SetGuidance("first material name");
   fBlockCmd->SetParameter(MatBPrm);
 
-  //G4UIparameter* LayerNbPrm = new G4UIparameter("LayerNb",'i',false);
-  //LayerNbPrm->SetGuidance("layer number : from 1 to 10");
-  //LayerNbPrm->SetParameterRange("LayerNb>0");
-  //fBlockCmd->SetParameter(LayerNbPrm);
+  G4UIparameter* LayerNbPrm = new G4UIparameter("LayerNb",'i',false);
+  LayerNbPrm->SetGuidance("layer number : from 1 to 5");
+  LayerNbPrm->SetParameterRange("LayerNb>0 & LayerNb<6");
+  fBlockCmd->SetParameter(LayerNbPrm);
 
   //
 
   fBlockCmd->SetToBeBroadcasted(false); 
+
+  fAbsorBlockCmd = new G4UIcommand("/testem/det/setAbsorBlock",this);
+  fAbsorBlockCmd->SetGuidance("Set the Block nb, the material");
+  fAbsorBlockCmd->SetGuidance("  Block number : from 1 to fNBlocks");
+  fAbsorBlockCmd->SetGuidance("  material name");
+  //
+  fAbsorBlockCmd->SetParameter(BlockNbPrm);
+  //
+  G4UIparameter* MatAPrm = new G4UIparameter("material",'s',false);
+  MatAPrm->SetGuidance("material name");
+  fAbsorBlockCmd->SetParameter(MatAPrm);
+  //    
+  //
+  fAbsorBlockCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  fAbsorBlockCmd->SetToBeBroadcasted(false); 
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -206,6 +224,7 @@ DetectorMessenger::~DetectorMessenger()
   delete fNbAbsorCmd;
   delete fAbsorCmd;
   //delete fBlockCmd;  // CD  Some Problem with this
+  //delete fAbsorBlockCmd;
   delete fDetDir;  
   delete fTestemDir;
 
@@ -238,14 +257,23 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
      fDetector->SetAbsorMaterial (num,material);
      fDetector->SetAbsorThickness(num,tick);
    }
+  if (command == fAbsorBlockCmd)
+   {
+     G4int num; 
+     G4String mat;
+     std::istringstream is(newValue);
+     is >> num >> mat;
+     G4String material=mat;
+     fDetector->SetBlockAbsorMaterial (num,material);
+   }
 
   if (command == fBlockCmd) 
    {
     G4int num; G4double Px; G4double Py; G4double Pz;
     G4double Sx; G4double Sy; G4double Sz;
-    G4String unt1,unt2,unt3,unt4,unt5,unt6, mat;// G4int Nl;
+    G4String unt1,unt2,unt3,unt4,unt5,unt6, mat; G4int Nl;
     std::istringstream is(newValue);
-     is >> num >> Px >> unt1 >> Py >> unt2 >> Pz >> unt3 >> Sx >> unt4 >> Sy >> unt5 >> Sz >> unt6 >> mat;// >> Nl;
+     is >> num >> Px >> unt1 >> Py >> unt2 >> Pz >> unt3 >> Sx >> unt4 >> Sy >> unt5 >> Sz >> unt6 >> mat >> Nl;
      G4String material=mat;
      Px *= G4UIcommand::ValueOf(unt1);
      Py *= G4UIcommand::ValueOf(unt2);
@@ -258,8 +286,7 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
      fDetector->SetBlockPosition (num,Px,Py,Pz);
      fDetector->SetBlockSize (num,Sx,Sy,Sz);
      fDetector->SetBlockAktiv (num,Sx);
-    // fDetector->SetNbOfLayers (num,Nl);
-     G4cout << newValue << material << G4endl;
+     fDetector->SetNbOfBlockLayers (num,Nl);
      
 
    }

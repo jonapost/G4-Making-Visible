@@ -65,6 +65,7 @@ class DetectorMessenger: public G4UImessenger
     G4UIcmdWithAnInteger*      fNbAbsorCmd;
     G4UIcommand*               fAbsorCmd;
     G4UIcommand*               fBlockCmd;
+    G4UIcommand*               fAbsorBlockCmd;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

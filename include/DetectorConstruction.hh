@@ -68,7 +68,9 @@ public:
   void SetNbOfLayers    (G4int);   
 
   void SetBlockAktiv (G4int,G4double);
+  void SetNbOfBlockLayers (G4int,G4int);
   void SetBlockMaterial (G4int,const G4String&); // Set the parameters of all Blocks CD
+  void SetBlockAbsorMaterial (G4int,const G4String&);
   void SetBlockPosition(G4int, G4double, G4double, G4double);
   void SetBlockSize(G4int, G4double, G4double, G4double);
   
@@ -97,13 +99,12 @@ public:
   const G4Material*        GetWorldMaterial() const   {return fWorldMaterial;};
   const G4VPhysicalVolume* GetAbsorber(G4int i) const {return fPhysiAbsor[i];};
 
-
+  G4int GetNbOfBlockLayers(G4int i) const {return fNbOfBlockLayers[i];}; //New CD
   G4int GetIfBlockAktiv(G4int i) const {return IfBlockAktiv[i];};            
-  const G4VPhysicalVolume* GetBlock(G4int i) const {return fPhysiBlock[i];}; //New 
-  const G4Material* GetBlockMaterial(G4int i) const {return fBlockMaterial[i];}; //New  CD
+  const G4VPhysicalVolume* GetBlock(G4int i,G4int j) const {return fPhysiBlock[i][j];}; //New 
+  const G4Material* GetBlockMaterial(G4int i) const {return fBlockMaterial[i][0];}; //New  CD
+  const G4Material* GetAbsorBlockMaterial(G4int i) const {return fBlockMaterial[i][1];}; //New  CD
 
-  //G4double GetBlockSize(G4int i ) const  {return fBlockSizeX[i], fBlockSizeY[i], fBlockSizeZ[i];}; //New
-  //G4double GetBlockPosition(G4int i ) const  {return fBlockPosiX[i], fBlockPosiY[i], fBlockPosiZ[i];}; // New
   G4double GetBlockSize(G4int i, G4int j) const {return fBlockSize[i][j];};
   G4double GetBlockPosition(G4int i, G4int j) const {return fBlockPosi[i][j];};
 
@@ -134,11 +135,13 @@ private:
   G4double           fCalorSizeY2;
   G4double           fCalorThickness2;
 
-  G4int          IfBlockAktiv[fNBlocks];
+  G4int              IfBlockAktiv[fNBlocks];
+  G4bool             fBlockCalo[fNBlocks];
+  G4int              fNbOfBlockLayers[fNBlocks];
   G4double           fBlockSizeZ[fNBlocks];  // CD
   G4double           fBlockSizeY[fNBlocks];
   G4double           fBlockSizeX[fNBlocks];  
-  G4Material*        fBlockMaterial[fNBlocks];
+  G4Material*        fBlockMaterial[fNBlocks][2];
   G4double           fBlockPosiX[fNBlocks];
   G4double           fBlockPosiY[fNBlocks];
   G4double           fBlockPosiZ[fNBlocks];
@@ -146,9 +149,17 @@ private:
   G4double           fBlockSize[fNBlocks][3];
   G4double           fBlockPosi[fNBlocks][3];
 
+  G4Box*             fSolidBlockPosition[fNBlocks];
+  G4LogicalVolume*   fLogicBlockPosition[fNBlocks];
+  G4VPhysicalVolume* fPhysiBlockPosition[fNBlocks];
+
+  G4Box*             fSolidBlockLayer[fNBlocks];
+  G4LogicalVolume*   fLogicBlockLayer[fNBlocks];
+  G4VPhysicalVolume* fPhysiBlockLayer[fNBlocks];
+
   G4Box*             fSolidBlock[fNBlocks];
-  G4LogicalVolume*   fLogicBlock[fNBlocks];
-  G4VPhysicalVolume* fPhysiBlock[fNBlocks];
+  G4LogicalVolume*   fLogicBlock[fNBlocks][2];
+  G4VPhysicalVolume* fPhysiBlock[fNBlocks][2];
 
 
   G4Material*        fWorldMaterial;
