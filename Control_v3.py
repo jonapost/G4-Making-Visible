@@ -1,16 +1,14 @@
-
-#!/usr/bin/python
-
-import sys
 import os
 import numpy as np
 import time
 import subprocess
-import keyboard
 #os.system('/build/make')
 #os.system('./build/TestEm3 Run_Beam_v1.mac ')
+import keyboard
+import time
 
-
+# get the start time
+st = time.time()
 
 ##############################################
 #Define Parameters
@@ -110,11 +108,11 @@ def Check_Position_v2(N,X,Y,Z,B):
 def SetBlockPosition(N,X,Y,Z,M):
     Check_Position(N,X,Y,Z)
 
-    Text = "/testem/det/setBlock " + str(N) + " " + str(X) + " cm "+ str(Y) + " cm "+ str(Z) + " cm " + str(BlockSize[0][N]) + " cm 10.0 cm 10.0 cm " + M + " 1 "
-    a_file = open('Run_Beam_v1.mac', "r")
+    Text = "/testem/det/setBlock " + str(N) + " " + str(X) + " cm "+ str(Y) + " cm "+ str(Z) + " cm " + str(BlockSize[0][N]) + " cm 10.0 cm 10.0 cm " + M + " 1 \n"
+    a_file = open('build/Run_Beam_v1.mac', "r")
     list_of_lines = a_file.readlines()
    # print(list_of_lines)
-    a_file = open('Run_Beam_v1.mac', "w")
+    a_file = open('build/Run_Beam_v1.mac', "w")
     list_of_lines[14 + N] = Text
     a_file.writelines(list_of_lines)
     a_file.close()
@@ -125,12 +123,12 @@ def SetBlockPosition(N,X,Y,Z,M):
 def SetBlockPosition_v2(N,X,Y,Z,M,B):
     BlockN = Check_Position_v2(N,X,Y,Z,B)
 
-    a_file = open('Run_Beam_v2.mac', "r")
+    a_file = open('build/Run_Beam_v1.mac', "r")
     list_of_lines = a_file.readlines()
-    a_file = open('Run_Beam_v2.mac', "w")
+    a_file = open('build/Run_Beam_v1.mac', "w")
 
     for i in N:
-        Text = "/testem/det/setBlock " + str(i) + " " + str(X[i]) + " cm "+ str(Y[i]) + " cm "+ str(Z[i]) + " cm " + str(BlockN[0][i]) + " cm 10.0 cm 10.0 cm "+ M[i] + " 1 "
+        Text = "/testem/det/setBlock " + str(i) + " " + str(X[i]) + " cm "+ str(Y[i]) + " cm "+ str(Z[i]) + " cm " + str(BlockN[0][i]) + " cm 10.0 cm 10.0 cm "+ M[i] + " 1 \n"
         list_of_lines[14 + i] = Text
         print(i, Text)
     a_file.writelines(list_of_lines)
@@ -142,10 +140,10 @@ def SetBlockPosition_v2(N,X,Y,Z,M,B):
 def SetBlockPosition_v3(N,X):
     #BlockN = Check_Position_v2(N,X,Y,Z,B)
 
-    a_file = open('Run_Beam_v2.mac', "r")
+    a_file = open('build/Run_Beam_v2.mac', "r")
     list_of_lines = a_file.readlines()
-    a_file = open('Run_Beam_v2.mac', "w")
-    N = 0
+    a_file = open('build/Run_Beam_v2.mac', "w")
+
     
     TX = list_of_lines[14 + N]
     print(TX)
@@ -162,9 +160,16 @@ def SetBlockPosition_v3(N,X):
     a_file.close()
     return 0
 
+#import subprocess
 
-def Cpp_Execution():
-    proc = subprocess.Popen(["./build/TestEm3", "Run_Beam_v1.mac"],
+#DTestEm3 = "/home/kappe/projects/CERN_SS/Geant_Project/TestEm3_1Block_moveble/build/TestEm3"
+#proc = subprocess.Popen("/home/kappe/projects/CERN_SS/Geant_Project/TestEm3_1Block_moveble/build/TestEm3",
+
+
+
+
+def Cpp_Execution(W):
+    proc = subprocess.Popen(["./build/TestEm3", "Python"],
     stdin=None ,#subprocess.PIPE,
     stdout=subprocess.PIPE,
     universal_newlines=False)
@@ -172,51 +177,92 @@ def Cpp_Execution():
    # inp = input("Message to CPP>> ")
 
    # proc.stdin.write("/run/beamOn 1")
-    stdout, stderr = proc.communicate()
+   # stdout, stderr = proc.communicate()
+    #proc.wait()
+   # print(stdout)
 
-arg = 0
 
-def main(arg):
-    i = int(arg)
-
-    M3 = ["Lead","Lead","Lead","Lead","Lead","Lead","Aluminium","Aluminium","Aluminium","Aluminium",]
-  
-    M = ["Aluminium","Scintillator",M3[4],"Aluminium","Aluminium"]
-    N = [0,1,2,3,4]
-   # X = [-20 + i*4,-10 - i, 0, 10,20]
-    X = [-30+i*2,-10 - i, 0.0, 10,20]
-    Y = [i,i,0,-1,i]
-    Z = [0,0,0,0,0]
+    #cppMessage = proc.stdout.readline().rstrip("\n") 
+    #print( "cppreturn message ->" + cppMessage + " written by python \n")
     
-    #value = input("Please enter an integer:\n")
- 
-    #value = int(value)
-    #if value == 1:
-    #time.sleep(0.5)
+
+    # creating a pipe to child process
+
+    data, temp = os.pipe()
+
+    # writing inputs to stdin and using utf-8 to convert it to byte string
+    if (W):
+        os.write(temp, bytes("run", "utf-8"));
+
+        os.close(temp)
+    if (W == False):
+        os.write(temp, bytes("quit", "utf-8"));
+
+        os.close(temp)
+
+
+    subprocess.call(["./build/TestEm3"],stdin=data, stdout=None, stderr=None, shell=False)
+
+
+
+
+
+NChanges = 0
+#os.system('./build/TestEm3 Run_Beam_v1.mac ')
+M3 = ["Lead","Lead","Lead","Lead","Lead","Lead","Aluminium","Aluminium","Aluminium","Aluminium",]
+'''
+for i in range(10):
+    M = ["Aluminium","Scintillator","Aluminium","Aluminium",M3[i]]
+    N = [0,1,2,3,4]
+    X = [-20 + i*4,-10 - i, 0, 10,20]
+    X = [-30+i*2,-10 - i, 0, 10,20]
+    Y = [i*2,i,0,-1,i]
+    Z = [0,0,0,0,0]
+    BlockSize_D = [[2,2,2,2,2],[20,20,20,20,20],[20,20,20,20,20]]
+
+   # SetBlockPosition_v2(N,X,Y,Z,M,BlockSize_D)
+    NChanges = NChanges + 1
+'''
+q = True
+
+
+proc = subprocess.Popen(["./TestEm3", "Python"],
+stdin=None ,#subprocess.PIPE,
+stdout=subprocess.PIPE)#,
+universal_newlines=False)
+
+data, temp = os.pipe()
+#subprocess.call("source /home/kappe/Geant4_11_0_2/bin/geant4.sh ",stdin=None,stdout=None,stderr=None,shell=False)
+while(q):
+    value = input("Please enter an integer:\n")
+    print(value)
     if keyboard.is_pressed("1"):
         X = [1,0,0,0,0]
-        SetBlockPosition_v3(0,X)
-        time.sleep(0.1)
-    #if value == 2:
+        # SetBlockPosition_v3(0,X)
+        #os.write(temp, bytes("run", "utf-8"))
+        proc.communicate()
+       # os.close(temp)
+      #  subprocess.call(["./build/TestEm3"],stdin=data, stdout=None, stderr=None, shell=False)
+        proc.wait(timeout=None)
+
     if keyboard.is_pressed("2"):
         X = [-1,0,0,0,0]
-        SetBlockPosition_v3(0,X)
-        time.sleep(0.1)
-
-
-        
+        # SetBlockPosition_v3(0,X)
+        os.write(temp, bytes("run", "utf-8"))
+      #  os.close(temp)
+       # subprocess.call(["./build/TestEm3"],stdin=data, stdout=None, stderr=None, shell=False)
+        proc.wait(timeout=None)
+    if keyboard.is_pressed("q"):
+        os.write(temp, bytes("quit", "utf-8"))
+      #  os.close(temp)
+       # subprocess.call(["./build/TestEm3"],stdin=data, stdout=None, stderr=None, shell=False)
+        proc.wait(timeout=None)
+        q = False
+  
     
-    BlockSize_D = [[2,2,2,2,2],[20,20,20,20,20],[20,20,20,20,20]]
-    #SetBlockPosition_v2(N,X,Y,Z,M,BlockSize_D)
-     
 
-    # os.system('./build/TestEm3 Run_Beam_v1.mac ')
-   # Cpp_Execution()
-   #return 
+et = time.time()
 
-
-
-
-if __name__ == "__main__":
-
-    main(sys.argv[1])
+# get the execution time
+elapsed_time = et - st
+print('Execution time:', elapsed_time/NChanges, 'seconds', "\n" , "For mean time 10 changes with 1 events each")

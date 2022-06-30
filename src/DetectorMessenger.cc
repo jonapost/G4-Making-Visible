@@ -189,8 +189,8 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   fBlockCmd->SetParameter(MatBPrm);
 
   G4UIparameter* LayerNbPrm = new G4UIparameter("LayerNb",'i',false);
-  LayerNbPrm->SetGuidance("layer number : from 1 to 5");
-  LayerNbPrm->SetParameterRange("LayerNb>0 & LayerNb<6");
+  LayerNbPrm->SetGuidance("layer number : from 1 to 10");
+  LayerNbPrm->SetParameterRange("LayerNb>0 & LayerNb<11");
   fBlockCmd->SetParameter(LayerNbPrm);
 
   //

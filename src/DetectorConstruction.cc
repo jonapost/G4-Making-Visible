@@ -447,44 +447,51 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   //
   // Block  // CD
   //
+  
   G4LogicalVolume *blockMotherLogical = fLogicWorld;
 
   for (G4int k=0; k<fNBlocks; ++k) {
+    if(fPhysiBlockPosition[k]){
 
-    delete fSolidBlockPosition[k];
-    delete fLogicBlockPosition[k];
+      
+      // delete this volume from its Mother, WorldVolume
+      //fLogicBlockLayer[k]->RemoveDaughter(fPhysiBlock[k][0]);
+      //fLogicBlockLayer[k]->RemoveDaughter(fPhysiBlock[k][1]);
+      //fLogicBlockPosition[k]->RemoveDaughter(fPhysiBlockLayer[k]);
+      blockMotherLogical->RemoveDaughter(fPhysiBlockPosition[k]);
+    G4cout << "Deleting and initial Geometrie ###############################################################################" << G4endl;
 
-    delete fSolidBlockLayer[k];
-    delete fLogicBlockLayer[k];
+      delete fSolidBlock[k];
+      delete fLogicBlock[k][0];
+      delete fLogicBlock[k][1];
+      
+      delete fPhysiBlock[k][0];
+      delete fPhysiBlock[k][1];
 
-    delete fSolidBlock[k];
-    delete fLogicBlock[k][0];
-    delete fLogicBlock[k][1];
-    
-    // delete this volume from its Mother, WorldVolume
-    blockMotherLogical->RemoveDaughter(fPhysiBlockPosition[k]);
-    
-    delete fPhysiBlock[k][0];
-    delete fPhysiBlock[k][1];
-    delete fPhysiBlockLayer[k];
-    delete fPhysiBlockPosition[k];
+      delete fSolidBlockLayer[k];
+      delete fLogicBlockLayer[k];
+      delete fPhysiBlockLayer[k];
 
-    fSolidBlock[k] = nullptr;
-    fLogicBlock[k][0] = nullptr;
-    fPhysiBlock[k][0] = nullptr;
+      delete fSolidBlockPosition[k];
+      delete fLogicBlockPosition[k];
+      delete fPhysiBlockPosition[k];
 
-    fLogicBlock[k][1] = nullptr;
-    fPhysiBlock[k][1] = nullptr;
+      fSolidBlock[k] = nullptr;
+      fLogicBlock[k][0] = nullptr;
+      fPhysiBlock[k][0] = nullptr;
 
-    fSolidBlockPosition[k] = nullptr;
-    fLogicBlockPosition[k] = nullptr;
-    fPhysiBlockPosition[k] = nullptr;
+      fLogicBlock[k][1] = nullptr;
+      fPhysiBlock[k][1] = nullptr;
 
-    fSolidBlockLayer[k] = nullptr;
-    fLogicBlockLayer[k] = nullptr;
-    fPhysiBlockLayer[k] = nullptr;
+      fSolidBlockPosition[k] = nullptr;
+      fLogicBlockPosition[k] = nullptr;
+      fPhysiBlockPosition[k] = nullptr;
+
+      fSolidBlockLayer[k] = nullptr;
+      fLogicBlockLayer[k] = nullptr;
+      fPhysiBlockLayer[k] = nullptr;
+    }
   }
-
 
   for (G4int k=0; k<fNBlocks; ++k) {
     G4cout << k << IfBlockAktiv[k]  <<G4endl;
@@ -562,8 +569,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                           BlockS,fBlockSize[k][1]/2,fBlockSize[k][2]/2);
 
         fLogicBlock[k][0] = new G4LogicalVolume(fSolidBlock[k],    //its solid   2D array, first layer is the absorber, second the Colorimeter Block
-                                        //  fWorldMaterial,
-                                         // fWorldMaterial->GetName());
+                                    
                                           fBlockMaterial[k][0], //its material
                                           fBlockMaterial[k][0]->GetName());
         fPhysiBlock[k][0] = new G4PVPlacement(0,              
@@ -574,10 +580,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                             false,                      
                             0);  
         /// Place Calorimeter Block in the Block
+        
         if(fBlockCalo[k]){
           fLogicBlock[k][1] = new G4LogicalVolume(fSolidBlock[k],    //its solid   2D array, first layer is the absorber, second the Colorimeter Block
-                                          //  fWorldMaterial,
-                                          // fWorldMaterial->GetName());
                                             fBlockMaterial[k][1], //its material
                                             fBlockMaterial[k][1]->GetName());
           fPhysiBlock[k][1] = new G4PVPlacement(0,              
@@ -621,7 +626,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   G4cout << "Plotting is done so fare" << G4endl;
   
-  //getchar();
+ // getchar();
 
 
  
@@ -783,7 +788,7 @@ void DetectorConstruction::SetBlockAktiv(G4int ival, G4double valx)
   if (valx)
     {IfBlockAktiv[ival] = 1;
      G4cout << "\n ---> Parameters were given for one Block : Size X  "
-             << valx  << IfBlockAktiv[ival] << " ################################################################################################################################" << G4endl;
+             << valx  << IfBlockAktiv[ival] << G4endl;
   }
 }
 

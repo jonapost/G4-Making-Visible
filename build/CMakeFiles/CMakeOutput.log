@@ -557,3 +557,20 @@ make[1]: Leaving directory '/home/kappe/projects/CERN_SS/Geant_Project/TestEm3_1
 
 
 
+Performing C++ SOURCE FILE Test HAS_FLTO succeeded with the following output:
+Change Dir: /home/kappe/projects/CERN_SS/Geant_Project/TestEm3_1Block_moveble/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_4c14d/fast && make[1]: Entering directory '/home/kappe/projects/CERN_SS/Geant_Project/TestEm3_1Block_moveble/build/CMakeFiles/CMakeTmp'
+/usr/bin/make -f CMakeFiles/cmTC_4c14d.dir/build.make CMakeFiles/cmTC_4c14d.dir/build
+make[2]: Entering directory '/home/kappe/projects/CERN_SS/Geant_Project/TestEm3_1Block_moveble/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_4c14d.dir/src.cxx.o
+/usr/bin/c++    -W -Wall -pedantic -Wno-non-virtual-dtor -Wno-long-long -Wwrite-strings -Wpointer-arith -Woverloaded-virtual -Wno-variadic-macros -Wshadow -pipe -pthread -ftls-model=initial-exec -std=c++17  -DHAS_FLTO   -flto -fno-fat-lto-objects -o CMakeFiles/cmTC_4c14d.dir/src.cxx.o -c /home/kappe/projects/CERN_SS/Geant_Project/TestEm3_1Block_moveble/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_4c14d
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4c14d.dir/link.txt --verbose=1
+/usr/bin/c++  -W -Wall -pedantic -Wno-non-virtual-dtor -Wno-long-long -Wwrite-strings -Wpointer-arith -Woverloaded-virtual -Wno-variadic-macros -Wshadow -pipe -pthread -ftls-model=initial-exec -std=c++17  -DHAS_FLTO     CMakeFiles/cmTC_4c14d.dir/src.cxx.o  -o cmTC_4c14d  -flto 
+make[2]: Leaving directory '/home/kappe/projects/CERN_SS/Geant_Project/TestEm3_1Block_moveble/build/CMakeFiles/CMakeTmp'
+make[1]: Leaving directory '/home/kappe/projects/CERN_SS/Geant_Project/TestEm3_1Block_moveble/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }

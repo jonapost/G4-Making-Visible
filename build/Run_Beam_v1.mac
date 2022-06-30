@@ -12,16 +12,12 @@
 /testem/det/setSizeY 50 cm
 /testem/det/setSizeZ 50 cm
 #
-/testem/det/setBlock 0 -20 cm 0 cm 0 cm 0 cm 10.0 cm 10.0 cm Aluminium 1
-/testem/det/setBlock 1 -10 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Scintillator 5 
+/testem/det/setBlock 0 -20 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium 1 
+/testem/det/setBlock 1 -10 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium 1 
 /testem/det/setBlock 2 0 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium 1 
 /testem/det/setBlock 3 10 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium 1 
 /testem/det/setBlock 4 20 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium 1 
 
-#/testem/det/setAbsorBlock 0  Lead
-
-/testem/det/setAbsorBlock 1  Lead
-#
 #/testem/det/update
 
 /process/em/verbose 0
@@ -38,6 +34,9 @@
 #/run/setCut 100 um
 #
 /run/initialize
+
+
+
 #
 #/globalField/setValue 0 0 10 tesla
 #
@@ -45,8 +44,8 @@
 #
 #/testem/gun/setDefault
 #/gun/particle proton
-/gun/particle e-
-/gun/energy 1 GeV
+#/gun/particle e-
+#/gun/energy 100 MeV 
 
 
 

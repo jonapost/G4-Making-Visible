@@ -12,20 +12,23 @@
 
 
 
-/testem/det/setBlock 0 -20 cm 2 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium
-/testem/det/setBlock 1 -15 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Scintillator
-/testem/det/setBlock 2 0 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium
-/testem/det/setBlock 3 10 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium
-/testem/det/setBlock 4 20 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium
+/testem/det/setBlock 0 -20 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium 1 
+/testem/det/setBlock 1 -15 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Scintillator 1
+/testem/det/setBlock 2 0 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium 1
+/testem/det/setBlock 3 10 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium 1
+/testem/det/setBlock 4 20 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium 1
 /run/reinitializeGeometry  ####### Reinitialisation
 
 
+/testem/det/setAbsorBlock 1  Lead
+/testem/det/setAbsorBlock 2  Lead
+/testem/det/setAbsorBlock 0  Lead
 
 #/testem/gun/setDefault
 #/gun/particle proton
 /gun/particle e-
 /gun/energy 1 GeV
 
+ 
 
-
-/run/beamOn 1
+/run/beamOn 1     

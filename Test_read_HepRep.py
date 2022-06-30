@@ -1,6 +1,7 @@
 
 
 from xml.dom import minidom
+import Geant4
 
 # parse an xml file by name
 file = minidom.parse('G4Data1.heprep')
@@ -62,4 +63,10 @@ for Da in Listk:
     print(Da.values)
 
 print(ET.tostring(root, encoding='utf8').decode('utf8'))
+
+
+
+import hello_ext
+print( hello_ext.greet())
+
 

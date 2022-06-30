@@ -53,7 +53,19 @@ using namespace std::chrono;
 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.....
+/*
+#include <pybind11/pybind11.h>
 
+int add(int i, int j) {
+    return i + j;
+}
+
+PYBIND11_MODULE(example, m) {
+    m.doc() = "pybind11 example plugin"; // optional module docstring
+
+    m.def("add", &add, "A function that adds two numbers");
+}
+*/
 int main(int argc,char** argv) {
       
   auto start = high_resolution_clock::now();
@@ -65,7 +77,7 @@ int main(int argc,char** argv) {
 
   //detect interactive mode (if no arguments) and define UI session
   G4UIExecutive* ui = nullptr;
-  if (argc == 1) { ui = new G4UIExecutive(argc,argv);}//,"tcsh"); }
+  if (argc == 1) { ui = new G4UIExecutive(argc,argv,"tcsh"); }
  
   //Use SteppingVerbose with Unit
   G4int precision = 4;
@@ -101,6 +113,7 @@ int main(int argc,char** argv) {
     visManager->Initialize();
     ui->SessionStart();
     delete ui;
+
   }if( strcmp(argv[1], "Loop") == 0) {
     // Loop changing mode for interaktive test
       visManager = new G4VisExecutive();  
@@ -114,10 +127,9 @@ int main(int argc,char** argv) {
         if (i>1){fileName = "Run_Beam_v2.mac";}
         UImanager->ApplyCommand(commandS+PyCommand+std::to_string(i));
         UImanager->ApplyCommand(command+fileName);
-        sleep(1);
+       // sleep(1);
 
         }
-
   } else {
     //batch mode
       visManager = new G4VisExecutive();  
@@ -125,16 +137,21 @@ int main(int argc,char** argv) {
 
       G4String command = "/control/execute ";
       G4String fileName =  argv[1];
-      start = high_resolution_clock::now();
+      
       UImanager->ApplyCommand(command+fileName);
+      start = high_resolution_clock::now();
+      for (int i=0; i<100; i++){
+      UImanager->ApplyCommand("/control/execute Run_Beam_v2.mac");}
+
       stop = high_resolution_clock::now();
       
-      sleep(3);
+      //sleep(3);
   }
 
 
   //job termination
   delete visManager;
+//  getchar();
   delete runManager;
 
     stop2 = high_resolution_clock::now();
