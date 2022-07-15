@@ -23,7 +23,7 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file electromagnetic/TestEm3/include/EmAcceptance.hh
+/// \file electromagnetic/CalSG/include/EmAcceptance.hh
 /// \brief Definition of the EmAcceptance class
 //
 //

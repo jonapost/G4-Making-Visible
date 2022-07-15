@@ -23,7 +23,7 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file electromagnetic/TestEm3/src/TrackingAction.cc
+/// \file electromagnetic/CalSG/src/TrackingAction.cc
 /// \brief Implementation of the TrackingAction class
 //
 //
@@ -40,6 +40,11 @@
 #include "G4Positron.hh"
 #include "G4PhysicalConstants.hh"
 
+#include "G4RichTrajectory.hh"
+
+//#include "TrajectoryWithTime.hh"  // CD
+
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 TrackingAction::TrackingAction(DetectorConstruction* det)
@@ -53,6 +58,14 @@ void TrackingAction::PreUserTrackingAction(const G4Track* track )
   //get Run
   Run* run = static_cast<Run*>(
              G4RunManager::GetRunManager()->GetNonConstCurrentRun());
+
+  //fpTrackingManager->SetStoreTrajectory(true);  // CD
+  //fpTrackingManager->SetTrajectory(new TrajectoryWithTime(track));
+  
+  //fpTrackingManager->SetStoreTrajectory(true);  // CD
+  //fpTrackingManager->SetTrajectory(new G4RichTrajectory(track));
+  
+  
              
   // Energy flow initialisation for primary particle
   //

@@ -23,7 +23,7 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file electromagnetic/TestEm3/include/DetectorConstruction.hh
+/// \file electromagnetic/CalSG/include/DetectorConstruction.hh
 /// \brief Definition of the DetectorConstruction class
 //
 //

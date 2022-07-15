@@ -23,7 +23,7 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file electromagnetic/TestEm3/include/SteppingAction.hh
+/// \file electromagnetic/CalSG/include/SteppingAction.hh
 /// \brief Definition of the SteppingAction class
 //
 // 

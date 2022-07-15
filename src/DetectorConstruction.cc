@@ -23,7 +23,7 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file electromagnetic/TestEm3/src/DetectorConstruction.cc
+/// \file electromagnetic/CalSG/src/DetectorConstruction.cc
 /// \brief Implementation of the DetectorConstruction class
 //
 //
@@ -117,8 +117,8 @@ DetectorConstruction::DetectorConstruction()
   // materials
   DefineMaterials();
   SetWorldMaterial("Galactic");
-  SetAbsorMaterial(1,"G4_Pb");
-  SetAbsorMaterial(2,"G4_lAr");
+  SetAbsorMaterial(1,"Galactic");
+  SetAbsorMaterial(2,"Galactic");
 
   SetBlockMaterial(1, "G4_lAr");
 

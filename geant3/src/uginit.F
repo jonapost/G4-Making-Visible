@@ -37,7 +37,7 @@
       OPEN (unit=5,file=filnam,status='unknown',form='formatted')
 *
 *     fileName for histograms, must be 1st data card !
-      fileName = 'testem3.paw'
+      fileName = 'CalSG.paw'
       READ(5,98)key,spaces,fileName
 98    FORMAT(A4,A2,A25)
 

@@ -23,7 +23,7 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file electromagnetic/TestEm3/src/DetectorMessenger.cc
+/// \file electromagnetic/CalSG/src/DetectorMessenger.cc
 /// \brief Implementation of the DetectorMessenger class
 //
 //

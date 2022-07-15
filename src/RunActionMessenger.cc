@@ -23,7 +23,7 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file electromagnetic/TestEm3/src/RunActionMessenger.cc
+/// \file electromagnetic/CalSG/src/RunActionMessenger.cc
 /// \brief Implementation of the RunActionMessenger class
 //
 //

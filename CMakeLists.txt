@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------------
 # Setup the project
 cmake_minimum_required(VERSION 3.16...3.21)
-project(TestEm3)
+project(CalSG)
 
 
 #----------------------------------------------------------------------------
@@ -33,20 +33,19 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
-add_executable(TestEm3 TestEm3.cc ${sources} ${headers})
-target_link_libraries(TestEm3 ${Geant4_LIBRARIES})
+add_executable(CalSG CalSG.cc ${sources} ${headers})
+target_link_libraries(CalSG ${Geant4_LIBRARIES})
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory, i.e. the directory in which we
-# build TestEm3. This is so that we can run the executable directly because it
+# build CalSG. This is so that we can run the executable directly because it
 # relies on these scripts being in the current working directory.
 #
-set(TestEm3_SCRIPTS
-    atlashec.mac dedx.mac emtutor.mac geom.mac ionC12.mac lhcb.mac linac.mac lockwood.mac
-    run01.mac run02.mac stepMax.mac storeTables.mac TestEm3.in TestEm3.out tileCal.mac vis.mac Run_Beam_v1.mac Geo5Blocks_SetUp.mac Run_Beam_v2.mac Run_Beam_v3.mac Test_nothing.mac Beam_ON_File.mac
+set(CalSG_SCRIPTS
+    stepMax.mac storeTables.mac CalSG.in CalSG.out vis.mac Run_Beam_v1.mac Geo5Blocks_SetUp.mac Run_Beam_v2.mac Run_Beam_v3.mac  Beam_ON_File.mac
   )
 
-foreach(_script ${TestEm3_SCRIPTS})
+foreach(_script ${CalSG_SCRIPTS})
   configure_file(
     ${PROJECT_SOURCE_DIR}/${_script}
     ${PROJECT_BINARY_DIR}/${_script}
@@ -57,5 +56,5 @@ endforeach()
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
-install(TARGETS TestEm3 DESTINATION bin)
+install(TARGETS CalSG DESTINATION bin)
 

@@ -14,24 +14,6 @@
 # EXTERNAL cache entries
 ########################
 
-//The directory containing a CMake configuration file for Boost.
-Boost_DIR:PATH=Boost_DIR-NOTFOUND
-
-//Path to a file.
-Boost_INCLUDE_DIR:PATH=Boost_INCLUDE_DIR-NOTFOUND
-
-//Boost iostreams library (debug)
-Boost_IOSTREAMS_LIBRARY_DEBUG:FILEPATH=Boost_IOSTREAMS_LIBRARY_DEBUG-NOTFOUND
-
-//Boost iostreams library (release)
-Boost_IOSTREAMS_LIBRARY_RELEASE:FILEPATH=Boost_IOSTREAMS_LIBRARY_RELEASE-NOTFOUND
-
-//Boost system library (debug)
-Boost_SYSTEM_LIBRARY_DEBUG:FILEPATH=Boost_SYSTEM_LIBRARY_DEBUG-NOTFOUND
-
-//Boost system library (release)
-Boost_SYSTEM_LIBRARY_RELEASE:FILEPATH=Boost_SYSTEM_LIBRARY_RELEASE-NOTFOUND
-
 //Path to a program.
 CMAKE_ADDR2LINE:FILEPATH=/usr/bin/addr2line
 
@@ -163,7 +145,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=TestEm3
+CMAKE_PROJECT_NAME:STATIC=CalSG
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/usr/bin/ranlib
@@ -227,6 +209,12 @@ CMAKE_STRIP:FILEPATH=/usr/bin/strip
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
+//Value Computed by CMake
+CalSG_BINARY_DIR:STATIC=/home/kappe/projects/CERN_SS/Geant_Project/TestEm3_1Block_moveble/build
+
+//Value Computed by CMake
+CalSG_SOURCE_DIR:STATIC=/home/kappe/projects/CERN_SS/Geant_Project/TestEm3_1Block_moveble
+
 //Path to a file.
 EXPAT_INCLUDE_DIR:PATH=/usr/include
 
@@ -287,33 +275,6 @@ PKG_CONFIG_EXECUTABLE:FILEPATH=/usr/bin/pkg-config
 //The directory containing a CMake configuration file for PTL.
 PTL_DIR:PATH=/home/kappe/Geant4_11_0_2/lib/Geant4-11.0.2/PTL
 
-//Python version to use for compiling modules
-PYBIND11_PYTHON_VERSION:STRING=
-
-//Path to a program.
-PYTHON_EXECUTABLE:FILEPATH=/home/kappe/anaconda3/bin/python
-
-//Path to a file.
-PYTHON_INCLUDE_DIR:PATH=/usr/include/python3.8
-
-//Path to a library.
-PYTHON_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libpython3.8.so
-
-//Path to a library.
-PYTHON_LIBRARY_DEBUG:FILEPATH=PYTHON_LIBRARY_DEBUG-NOTFOUND
-
-//Path to a library.
-Python3_LIBRARY_DEBUG:FILEPATH=
-
-//Path to a library.
-Python3_LIBRARY_RELEASE:FILEPATH=/home/kappe/anaconda3/lib/libpython3.8.so
-
-//Path to a library.
-Python_LIBRARY_DEBUG:FILEPATH=
-
-//Path to a library.
-Python_LIBRARY_RELEASE:FILEPATH=/home/kappe/anaconda3/lib/libpython3.8.so
-
 //The directory containing a CMake configuration file for Qt5Core.
 Qt5Core_DIR:PATH=/home/kappe/anaconda3/lib/cmake/Qt5Core
 
@@ -328,12 +289,6 @@ Qt5PrintSupport_DIR:PATH=/home/kappe/anaconda3/lib/cmake/Qt5PrintSupport
 
 //The directory containing a CMake configuration file for Qt5Widgets.
 Qt5Widgets_DIR:PATH=/home/kappe/anaconda3/lib/cmake/Qt5Widgets
-
-//Value Computed by CMake
-TestEm3_BINARY_DIR:STATIC=/home/kappe/projects/CERN_SS/Geant_Project/TestEm3_1Block_moveble/build
-
-//Value Computed by CMake
-TestEm3_SOURCE_DIR:STATIC=/home/kappe/projects/CERN_SS/Geant_Project/TestEm3_1Block_moveble
 
 //Build example with Geant4 UI and Vis drivers
 WITH_GEANT4_UIVIS:BOOL=ON
@@ -518,24 +473,6 @@ X11_xkbfile_INCLUDE_PATH:PATH=X11_xkbfile_INCLUDE_PATH-NOTFOUND
 //Path to a library.
 X11_xkbfile_LIB:FILEPATH=X11_xkbfile_LIB-NOTFOUND
 
-//Path to a program.
-_Python3_EXECUTABLE:FILEPATH=/home/kappe/anaconda3/bin/python3.8
-
-//Path to a file.
-_Python3_INCLUDE_DIR:PATH=/home/kappe/anaconda3/include/python3.8
-
-//Path to a library.
-_Python3_LIBRARY_RELEASE:FILEPATH=/home/kappe/anaconda3/lib/libpython3.8.so
-
-//Path to a program.
-_Python_EXECUTABLE:FILEPATH=/home/kappe/anaconda3/bin/python3.8
-
-//Path to a file.
-_Python_INCLUDE_DIR:PATH=/home/kappe/anaconda3/include/python3.8
-
-//Path to a library.
-_Python_LIBRARY_RELEASE:FILEPATH=/home/kappe/anaconda3/lib/libpython3.8.so
-
 //Path to a library.
 pkgcfg_lib_PC_EXPAT_expat:FILEPATH=/usr/lib/x86_64-linux-gnu/libexpat.so
 
@@ -545,26 +482,11 @@ pkgcfg_lib_PKG_FONTCONFIG_fontconfig:FILEPATH=/usr/lib/x86_64-linux-gnu/libfontc
 //Path to a library.
 pkgcfg_lib_PKG_FONTCONFIG_freetype:FILEPATH=/usr/lib/x86_64-linux-gnu/libfreetype.so
 
-//The directory containing a CMake configuration file for pybind11.
-pybind11_DIR:PATH=pybind11_DIR-NOTFOUND
-
 
 ########################
 # INTERNAL cache entries
 ########################
 
-//ADVANCED property for variable: Boost_DIR
-Boost_DIR-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_INCLUDE_DIR
-Boost_INCLUDE_DIR-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_IOSTREAMS_LIBRARY_DEBUG
-Boost_IOSTREAMS_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_IOSTREAMS_LIBRARY_RELEASE
-Boost_IOSTREAMS_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_SYSTEM_LIBRARY_DEBUG
-Boost_SYSTEM_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_SYSTEM_LIBRARY_RELEASE
-Boost_SYSTEM_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_ADDR2LINE
 CMAKE_ADDR2LINE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_AR
@@ -734,16 +656,6 @@ FIND_PACKAGE_MESSAGE_DETAILS_EXPAT:INTERNAL=[/usr/lib/x86_64-linux-gnu/libexpat.
 FIND_PACKAGE_MESSAGE_DETAILS_Geant4:INTERNAL=[/home/kappe/Geant4_11_0_2/lib/Geant4-11.0.2/Geant4Config.cmake][v11.0.2()]
 //Details about finding OpenGL
 FIND_PACKAGE_MESSAGE_DETAILS_OpenGL:INTERNAL=[/usr/lib/x86_64-linux-gnu/libGL.so][/usr/include][c ][v()]
-//Details about finding PYTHON
-FIND_PACKAGE_MESSAGE_DETAILS_PYTHON:INTERNAL=/home/kappe/anaconda3/bin/python3.8.10
-//Details about finding Python
-FIND_PACKAGE_MESSAGE_DETAILS_Python:INTERNAL=[/home/kappe/anaconda3/bin/python3.8][/home/kappe/anaconda3/lib/libpython3.8.so][/home/kappe/anaconda3/include/python3.8][cfound components: Interpreter Development ][v3.8.10()]
-//Details about finding Python3
-FIND_PACKAGE_MESSAGE_DETAILS_Python3:INTERNAL=[/home/kappe/anaconda3/bin/python3.8][/home/kappe/anaconda3/lib/libpython3.8.so][/home/kappe/anaconda3/include/python3.8][cfound components: Interpreter Development ][v3.8.10()]
-//Details about finding PythonInterp
-FIND_PACKAGE_MESSAGE_DETAILS_PythonInterp:INTERNAL=[/home/kappe/anaconda3/bin/python][v3.8.10()]
-//Details about finding PythonLibs
-FIND_PACKAGE_MESSAGE_DETAILS_PythonLibs:INTERNAL=[/usr/lib/x86_64-linux-gnu/libpython3.8.so][/usr/include/python3.8][v3.8.10()]
 //Details about finding Threads
 FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
 //Details about finding X11
@@ -760,8 +672,6 @@ FREETYPE_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 Fontconfig_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Fontconfig_LIBRARY
 Fontconfig_LIBRARY-ADVANCED:INTERNAL=1
-//Test HAS_FLTO
-HAS_FLTO:INTERNAL=1
 //ADVANCED property for variable: OPENGL_EGL_INCLUDE_DIR
 OPENGL_EGL_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: OPENGL_GLX_INCLUDE_DIR
@@ -854,31 +764,6 @@ PKG_FONTCONFIG_fontconfig_PREFIX:INTERNAL=
 PKG_FONTCONFIG_fontconfig_VERSION:INTERNAL=
 //PTL library
 PTL_LIBRARY:INTERNAL=
-//ADVANCED property for variable: PYTHON_EXECUTABLE
-PYTHON_EXECUTABLE-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: PYTHON_INCLUDE_DIR
-PYTHON_INCLUDE_DIR-ADVANCED:INTERNAL=1
-PYTHON_INCLUDE_DIRS:INTERNAL=/home/kappe/anaconda3/include/python3.8
-PYTHON_IS_DEBUG:INTERNAL=0
-PYTHON_LIBRARIES:INTERNAL=/usr/lib/x86_64-linux-gnu/libpython3.8.so
-//ADVANCED property for variable: PYTHON_LIBRARY
-PYTHON_LIBRARY-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: PYTHON_LIBRARY_DEBUG
-PYTHON_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
-PYTHON_MODULE_EXTENSION:INTERNAL=.cpython-38-x86_64-linux-gnu.so
-PYTHON_MODULE_PREFIX:INTERNAL=
-PYTHON_VERSION:INTERNAL=3.8.10
-PYTHON_VERSION_MAJOR:INTERNAL=3
-PYTHON_VERSION_MINOR:INTERNAL=8
-//ADVANCED property for variable: Python3_LIBRARY_DEBUG
-Python3_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Python3_LIBRARY_RELEASE
-Python3_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
-Python_ADDITIONAL_VERSIONS:INTERNAL=3.10;3.9;3.8;3.7;3.6;3.5;3.4
-//ADVANCED property for variable: Python_LIBRARY_DEBUG
-Python_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Python_LIBRARY_RELEASE
-Python_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 //Result of TRY_COMPILE
 THREADS_HAVE_PTHREAD_ARG:INTERNAL=TRUE
 //ADVANCED property for variable: X11_ICE_INCLUDE_PATH
@@ -1003,31 +888,6 @@ X11_dpms_INCLUDE_PATH-ADVANCED:INTERNAL=1
 X11_xkbfile_INCLUDE_PATH-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_xkbfile_LIB
 X11_xkbfile_LIB-ADVANCED:INTERNAL=1
-//Components requested for this build tree.
-_Boost_COMPONENTS_SEARCHED:INTERNAL=iostreams;system
-//Last used Boost_INCLUDE_DIR value.
-_Boost_INCLUDE_DIR_LAST:INTERNAL=Boost_INCLUDE_DIR-NOTFOUND
-//Last used Boost_NAMESPACE value.
-_Boost_NAMESPACE_LAST:INTERNAL=boost
-//Last used Boost_USE_MULTITHREADED value.
-_Boost_USE_MULTITHREADED_LAST:INTERNAL=TRUE
-_Python:INTERNAL=PYTHON
-_Python3_DEVELOPMENT_SIGNATURE:INTERNAL=77911d0e6b43535f37fb0206552b6113
-//ADVANCED property for variable: _Python3_EXECUTABLE
-_Python3_EXECUTABLE-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: _Python3_INCLUDE_DIR
-_Python3_INCLUDE_DIR-ADVANCED:INTERNAL=1
-_Python3_INTERPRETER_SIGNATURE:INTERNAL=433782671e79ee774bb8b21106a3c7fd
-//ADVANCED property for variable: _Python3_LIBRARY_RELEASE
-_Python3_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
-_Python_DEVELOPMENT_SIGNATURE:INTERNAL=77911d0e6b43535f37fb0206552b6113
-//ADVANCED property for variable: _Python_EXECUTABLE
-_Python_EXECUTABLE-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: _Python_INCLUDE_DIR
-_Python_INCLUDE_DIR-ADVANCED:INTERNAL=1
-_Python_INTERPRETER_SIGNATURE:INTERNAL=433782671e79ee774bb8b21106a3c7fd
-//ADVANCED property for variable: _Python_LIBRARY_RELEASE
-_Python_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 __pkg_config_arguments_PC_EXPAT:INTERNAL=QUIET;expat
 __pkg_config_arguments_PKG_FONTCONFIG:INTERNAL=QUIET;fontconfig
 __pkg_config_checked_PC_EXPAT:INTERNAL=1
@@ -1039,6 +899,4 @@ pkgcfg_lib_PKG_FONTCONFIG_fontconfig-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: pkgcfg_lib_PKG_FONTCONFIG_freetype
 pkgcfg_lib_PKG_FONTCONFIG_freetype-ADVANCED:INTERNAL=1
 prefix_result:INTERNAL=/usr/lib/x86_64-linux-gnu
-//Directories where pybind11 and possibly Python headers are located
-pybind11_INCLUDE_DIRS:INTERNAL=/home/kappe/anaconda3/lib/python3.8/site-packages/pybind11/include;/home/kappe/anaconda3/include/python3.8
 

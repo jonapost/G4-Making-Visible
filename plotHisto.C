@@ -3,7 +3,7 @@
   
   // Draw histos filled by Geant4 simulation 
   //   
-  ///TFile f("testem3.root");
+  ///TFile f("CalSG.root");
   TFile f("run01.root");    
   TCanvas* c1 = new TCanvas("c1", "  ");
   

@@ -3,7 +3,7 @@ import numpy as np
 import time
 import subprocess
 #os.system('/build/make')
-#os.system('./build/TestEm3 Run_Beam_v1.mac ')
+#os.system('./build/CalSG Run_Beam_v1.mac ')
 
 import time
 
@@ -140,14 +140,14 @@ def SetBlockPosition_v2(N,X,Y,Z,M,B):
 
 #import subprocess
 
-#DTestEm3 = "/home/kappe/projects/CERN_SS/Geant_Project/TestEm3_1Block_moveble/build/TestEm3"
-#proc = subprocess.Popen("/home/kappe/projects/CERN_SS/Geant_Project/TestEm3_1Block_moveble/build/TestEm3",
+#DCalSG = "/home/kappe/projects/CERN_SS/Geant_Project/CalSG_1Block_moveble/build/CalSG"
+#proc = subprocess.Popen("/home/kappe/projects/CERN_SS/Geant_Project/CalSG_1Block_moveble/build/CalSG",
 
 
 
 
 def Cpp_Execution():
-    proc = subprocess.Popen(["./build/TestEm3", "Run_Beam_v1.mac"],
+    proc = subprocess.Popen(["./build/CalSG", "Run_Beam_v1.mac"],
     stdin=None ,#subprocess.PIPE,
     stdout=subprocess.PIPE,
     universal_newlines=False)
@@ -174,7 +174,7 @@ def Cpp_Execution():
 
     os.close(temp)
 
-    subprocess.call(["./build/TestEm3", "Run_Beam_v1.mac"],stdin=data, stdout=None, stderr=None, shell=False)
+    subprocess.call(["./build/CalSG", "Run_Beam_v1.mac"],stdin=data, stdout=None, stderr=None, shell=False)
 '''
 
 
@@ -188,7 +188,7 @@ for i in range(5):
 
 
 NChanges = 0
-#os.system('./build/TestEm3 Run_Beam_v1.mac ')
+#os.system('./build/CalSG Run_Beam_v1.mac ')
 M3 = ["Lead","Lead","Lead","Lead","Lead","Lead","Aluminium","Aluminium","Aluminium","Aluminium",]
 for i in range(10):
     M = ["Aluminium","Scintillator","Aluminium","Aluminium",M3[i]]
@@ -202,15 +202,15 @@ for i in range(10):
     SetBlockPosition_v2(N,X,Y,Z,M,BlockSize_D)
     NChanges = NChanges + 1
 
-   # os.system('./build/TestEm3 Run_Beam_v1.mac ')
+   # os.system('./build/CalSG Run_Beam_v1.mac ')
     Cpp_Execution()
-    #subprocess.call(["./build/TestEm3", "Run_Beam_v1.mac"],stdin=None, stdout=None, stderr=None, shell=False,universal_newlines=False)
+    #subprocess.call(["./build/CalSG", "Run_Beam_v1.mac"],stdin=None, stdout=None, stderr=None, shell=False,universal_newlines=False)
 
 #Work = True
 #while(Work):
 
 
-#os.system('./build/TestEm3 Run_Beam_v1.mac ')
+#os.system('./build/CalSG Run_Beam_v1.mac ')
 # get the end time
 et = time.time()
 

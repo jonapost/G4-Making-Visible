@@ -3,7 +3,7 @@ import numpy as np
 import time
 import subprocess
 #os.system('/build/make')
-#os.system('./build/TestEm3 Run_Beam_v1.mac ')
+#os.system('./build/CalSG Run_Beam_v1.mac ')
 import keyboard
 import time
 
@@ -162,14 +162,14 @@ def SetBlockPosition_v3(N,X):
 
 #import subprocess
 
-#DTestEm3 = "/home/kappe/projects/CERN_SS/Geant_Project/TestEm3_1Block_moveble/build/TestEm3"
-#proc = subprocess.Popen("/home/kappe/projects/CERN_SS/Geant_Project/TestEm3_1Block_moveble/build/TestEm3",
+#DCalSG = "/home/kappe/projects/CERN_SS/Geant_Project/CalSG_1Block_moveble/build/CalSG"
+#proc = subprocess.Popen("/home/kappe/projects/CERN_SS/Geant_Project/CalSG_1Block_moveble/build/CalSG",
 
 
 
 
 def Cpp_Execution(W):
-    proc = subprocess.Popen(["./build/TestEm3", "Python"],
+    proc = subprocess.Popen(["./build/CalSG", "Python"],
     stdin=None ,#subprocess.PIPE,
     stdout=subprocess.PIPE,
     universal_newlines=False)
@@ -201,14 +201,14 @@ def Cpp_Execution(W):
         os.close(temp)
 
 
-    subprocess.call(["./build/TestEm3"],stdin=data, stdout=None, stderr=None, shell=False)
+    subprocess.call(["./build/CalSG"],stdin=data, stdout=None, stderr=None, shell=False)
 
 
 
 
 
 NChanges = 0
-#os.system('./build/TestEm3 Run_Beam_v1.mac ')
+#os.system('./build/CalSG Run_Beam_v1.mac ')
 M3 = ["Lead","Lead","Lead","Lead","Lead","Lead","Aluminium","Aluminium","Aluminium","Aluminium",]
 '''
 for i in range(10):
@@ -226,7 +226,7 @@ for i in range(10):
 q = True
 
 
-proc = subprocess.Popen(["./TestEm3", "Python"],
+proc = subprocess.Popen(["./CalSG", "Python"],
 stdin=None ,#subprocess.PIPE,
 stdout=subprocess.PIPE)#,
 universal_newlines=False)
@@ -242,7 +242,7 @@ while(q):
         #os.write(temp, bytes("run", "utf-8"))
         proc.communicate()
        # os.close(temp)
-      #  subprocess.call(["./build/TestEm3"],stdin=data, stdout=None, stderr=None, shell=False)
+      #  subprocess.call(["./build/CalSG"],stdin=data, stdout=None, stderr=None, shell=False)
         proc.wait(timeout=None)
 
     if keyboard.is_pressed("2"):
@@ -250,12 +250,12 @@ while(q):
         # SetBlockPosition_v3(0,X)
         os.write(temp, bytes("run", "utf-8"))
       #  os.close(temp)
-       # subprocess.call(["./build/TestEm3"],stdin=data, stdout=None, stderr=None, shell=False)
+       # subprocess.call(["./build/CalSG"],stdin=data, stdout=None, stderr=None, shell=False)
         proc.wait(timeout=None)
     if keyboard.is_pressed("q"):
         os.write(temp, bytes("quit", "utf-8"))
       #  os.close(temp)
-       # subprocess.call(["./build/TestEm3"],stdin=data, stdout=None, stderr=None, shell=False)
+       # subprocess.call(["./build/CalSG"],stdin=data, stdout=None, stderr=None, shell=False)
         proc.wait(timeout=None)
         q = False
   

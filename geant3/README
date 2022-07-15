@@ -1,5 +1,5 @@
 
- testem3/src is the geant3 equivalent of TestEm3
+ CalSG/src is the geant3 equivalent of CalSG
  
  % cd geant3
  % gmakeB           to make an executable  (Batch version) 
@@ -8,7 +8,7 @@
  To execute:
   
  % cd geant3
- % $G4SYSTEM/testem3.xb (for batch) or testem1.xt (for interactive)
+ % $G4SYSTEM/CalSG.xb (for batch) or testem1.xt (for interactive)
  
  The program will ask:
  G3 > gives the filename of the data cards to be read:
@@ -21,7 +21,7 @@
  CUTPR  imed2  bcute/m   dcute/m  ppcutm
  ...etc............
  
- testem3 can produce histograms : 
+ CalSG can produce histograms : 
   histo 1 : energy deposit in absorber 1
   histo 2 : energy deposit in absorber 2
   ...etc...........

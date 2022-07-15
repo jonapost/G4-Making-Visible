@@ -39,7 +39,7 @@
 * *** drawing
 *                                                          
       IF (ISWIT(1).NE.0) THEN
-         CALL GDHEAD (110110,'TestEm3',0.)
+         CALL GDHEAD (110110,'CalSG',0.)
          CALL GDSHOW (3)
          CALL GDXYZ  (0)
       END IF

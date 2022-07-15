@@ -1,14 +1,54 @@
 
-///\file "electromagnetic/TestEm3/.README.txt"
-///\brief Example TestEm3 README page
+///\file "electromagnetic/CalSG/.README.txt"
+///\brief Example CalSG README page
 
-/*! \page ExampleTestEm3 Example TestEm3
+/*! \page ExampleCalSG Example CalSG
 
  - How to collect energy deposition in a sampling calorimeter.
  - How to survey energy flow.
  - How to print stopping power. 
 
-\section TestEm3_s1 GEOMETRY DEFINITION
+\section CalSG new commands and diff. to TestEm3
+
+  This program is based on TestEm3 and its commands can still be used.
+
+  Here 5 blocks can be created individually. The following parameters can be set via commands.
+
+  /testem/det/setBlock 0 -20 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium 1 -> Block number  X Y Z Position  X Y Z  Length  Material Number of copies
+
+  Number of blocks
+  Thickness, height and depth
+  Position
+  Material
+  Number of copies which are placed one after the other
+
+
+  With this command a block can be further modified.
+
+  /testem/det/setAbsorBlock 4  Lead -> Block number Material First layer
+
+  Whether a block should consist of two layers
+  Material of the layer in front in X direction
+
+
+  CalSG.cc also has a Python mode.
+  CalSG is started with Control_v1.py and the position can be changed with commands from the console while the programme is in idle mode.
+  iu -> Block i goes up one cm.
+  id -> Block i moves down one cm.
+  q -> Program is terminated.
+
+
+  With HepRepFile a HepRep file can be created which stores the geometry, positions of the tracks and the global time for each step.
+
+
+
+
+
+
+  From here on the documentation of TestEm3 follows.
+
+
+\section CalSG_s1 GEOMETRY DEFINITION
  
   The calorimeter is a box made of a given number of layers.
   A layer consists of a sequence of various absorbers (maximum MaxAbsor=9).
@@ -53,7 +93,7 @@
   a bubble chamber rather than a calorimeter ...
   (see the macro emtutor.mac)
   
-\section TestEm3_s2 PHYSICS LISTS
+\section CalSG_s2 PHYSICS LISTS
 
   Physics lists are based on modular design. Several modules are instantiated:
   1. Transportation
@@ -83,7 +123,7 @@
       
   Physics lists and options can be (re)set with UI commands.
         	    
-\section TestEm3_s3 AN EVENT : THE PRIMARY GENERATOR
+\section CalSG_s3 AN EVENT : THE PRIMARY GENERATOR
  
   The primary kinematic consists of a single particle which hits the calorimeter
   perpendicular to the input face. The type of the particle and its energy are 
@@ -96,12 +136,12 @@
  
   A RUN is a set of events.
   
-  TestEm3 computes the energy deposited per absorber and the energy flow through
+  CalSG computes the energy deposited per absorber and the energy flow through
   the calorimeter.
  
-\section TestEm3_s4 VISUALIZATION
+\section CalSG_s4 VISUALIZATION
  
-  The Visualization Manager is set in the main() (see TestEm3.cc).
+  The Visualization Manager is set in the main() (see CalSG.cc).
   The initialisation of the drawing is done via the commands :
   /vis/... in the macro vis.mac. In interactive session:
 \verbatim
@@ -114,7 +154,7 @@
   Optionally one can choose to draw all particles, only the charged ones, or
   none. This command is defined in EventActionMessenger class.
  
-\section TestEm3_s5 PHYSICS DEMO
+\section CalSG_s5 PHYSICS DEMO
  
   The particle's type and the physics processes which will be available
   in this example are set in PhysicsList class.
@@ -134,16 +174,16 @@
 \endverbatim
   (see StepMax and PhysicsList classes)
  
-\section TestEm3_s6 HOW TO START ?
+\section CalSG_s6 HOW TO START ?
  
-  - Execute TestEm3 in 'batch' mode from macro files
+  - Execute CalSG in 'batch' mode from macro files
 \verbatim
-% TestEm3   run01.mac
+% CalSG   run01.mac
 \endverbatim
  
-  - Execute TestEm3 in 'interactive mode' with visualization
+  - Execute CalSG in 'interactive mode' with visualization
 \verbatim
-% TestEm3
+% CalSG
 ....
 Idle> type your commands. For instance:
 Idle> /control/execute run01.mac
@@ -166,9 +206,9 @@ Idle> exit
  - tileCal.mac: ATLAS tileCal
  - vis.mac: to activate visualization
 
-\section TestEm3_s7 HISTOGRAMS
+\section CalSG_s7 HISTOGRAMS
  
- Testem3 can produce histograms : 
+ CalSG can produce histograms : 
   - histo 1 : energy deposit in absorber 1
   - histo 2 : energy deposit in absorber 2
   - etc.
@@ -190,11 +230,11 @@ Idle> exit
 /analysis/h1/set   idAbsor  nbin  Emin  Emax  unit 
 \endverbatim
   etc.,  
-  where unit is the desired energy unit for that histo (see TestEm3.in).
+  where unit is the desired energy unit for that histo (see CalSG.in).
   
   One can control the name of the histograms file with the command:
 \verbatim
-/analysis/setFileName  name  (default testem3)
+/analysis/setFileName  name  (default CalSG)
 \endverbatim
    
   It is possible to choose the format of the histogram file : root (default),
@@ -204,6 +244,6 @@ Idle> exit
 \verbatim
 /analysis/h1/setAscii id
  \endverbatim
- All selected histos will be written on a file name.ascii  (default testem3)
+ All selected histos will be written on a file name.ascii  (default CalSG)
 
 */

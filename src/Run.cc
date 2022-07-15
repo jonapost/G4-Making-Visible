@@ -23,7 +23,7 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file electromagnetic/TestEm3/src/Run.cc
+/// \file electromagnetic/CalSG/src/Run.cc
 /// \brief Implementation of the Run class
 //
 // 

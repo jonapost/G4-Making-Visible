@@ -8,7 +8,7 @@ import time
 import subprocess
 import keyboard
 #os.system('/build/make')
-#os.system('./build/TestEm3 Run_Beam_v1.mac ')
+#os.system('./build/CalSG Run_Beam_v1.mac ')
 
 
 
@@ -164,7 +164,7 @@ def SetBlockPosition_v3(N,X):
 
 
 def Cpp_Execution():
-    proc = subprocess.Popen(["./build/TestEm3", "Run_Beam_v1.mac"],
+    proc = subprocess.Popen(["./build/CalSG", "Run_Beam_v1.mac"],
     stdin=None ,#subprocess.PIPE,
     stdout=subprocess.PIPE,
     universal_newlines=False)
@@ -210,7 +210,7 @@ def main(arg):
     #SetBlockPosition_v2(N,X,Y,Z,M,BlockSize_D)
      
 
-    # os.system('./build/TestEm3 Run_Beam_v1.mac ')
+    # os.system('./build/CalSG Run_Beam_v1.mac ')
    # Cpp_Execution()
    #return 
 

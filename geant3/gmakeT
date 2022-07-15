@@ -1,7 +1,7 @@
 #
 # @(#) Script to build an inTeractive geant executable
 #
-set name=testem3
+set name=CalSG
 
 set extnam=" "
 if ($G4SYSTEM == AIX-AFS) set extnam=-qextname

@@ -4,9 +4,53 @@
      Geant4 - an Object-Oriented Toolkit for Simulation in HEP
      =========================================================
 
-                            TestEm3
+                            CalSG
                             -------
   
+
+
+
+
+This program is based on TestEm3 and its commands can still be used.
+
+Here 5 blocks can be created individually. The following parameters can be set via commands.
+
+/testem/det/setBlock 0 -20 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium 1 -> Block number  X Y Z Position  X Y Z  Length  Material Number of copies
+
+Number of blocks
+Thickness, height and depth
+Position
+Material
+Number of copies which are placed one after the other
+
+
+With this command a block can be further modified.
+
+/testem/det/setAbsorBlock 4  Lead -> Block number Material First layer
+
+Whether a block should consist of two layers
+Material of the layer in front in X direction
+
+
+CalSG.cc also has a Python mode.
+CalSG is started with Control_v1.py and the position can be changed with commands from the console while the programme is in idle mode.
+iu -> Block i goes up one cm.
+id -> Block i moves down one cm.
+q -> Program is terminated.
+
+
+With HepRepFile a HepRep file can be created which stores the geometry, positions of the tracks and the global time for each step.
+
+
+
+
+
+
+From here on the documentation of TestEm3 follows.
+
+
+
+
  How to collect energy deposition in a sampling calorimeter.
  How to survey energy flow.
  how to print stopping power. 
@@ -98,12 +142,12 @@
  	
   A RUN is a set of events.
   
-  TestEm3 computes the energy deposited per absorber and the energy flow through
+  CalSG computes the energy deposited per absorber and the energy flow through
   the calorimeter.
  				
  4- VISUALIZATION
  
-  The Visualization Manager is set in the main() (see TestEm3.cc).
+  The Visualization Manager is set in the main() (see CalSG.cc).
   The initialisation of the drawing is done via the commands :
   /vis/... in the macro vis.mac. In interactive session:
   PreInit or Idle > /control/execute vis.mac
@@ -133,11 +177,11 @@
  
  6- HOW TO START ?
  
-  - Execute TestEm3 in 'batch' mode from macro files
-      % TestEm3   run01.mac
+  - Execute CalSG in 'batch' mode from macro files
+      % CalSG   run01.mac
  
-  - Execute TestEm3 in 'interactive mode' with visualization
-    % TestEm3
+  - Execute CalSG in 'interactive mode' with visualization
+    % CalSG
     ....
     Idle> type your commands. For instance:
     Idle> /control/execute run01.mac
@@ -161,7 +205,7 @@
 
  7- HISTOGRAMS
  
- Testem3 can produce histograms : 
+ CalSG can produce histograms : 
   histo 1 : energy deposit in absorber 1
   histo 2 : energy deposit in absorber 2
   ...etc...........
@@ -181,15 +225,15 @@
   
  One can control the binning of the histo with the command:
   /analysis/h1/set   idAbsor  nbin  Emin  Emax  unit 
-  where unit is the desired energy unit for that histo (see TestEm3.in).
+  where unit is the desired energy unit for that histo (see CalSG.in).
          
   One can control the name of the histograms file with the command:
-  /analysis/setFileName  name  (default testem3)
+  /analysis/setFileName  name  (default CalSG)
    
   It is possible to choose the format of the histogram file : root (default),
   xml, csv, by using namespace in HistoManager.hh 
    	
  It is also possible to print selected histograms on an ascii file:
  /analysis/h1/setAscii id
- All selected histos will be written on a file name.ascii  (default testem3)
+ All selected histos will be written on a file name.ascii  (default CalSG)
     
