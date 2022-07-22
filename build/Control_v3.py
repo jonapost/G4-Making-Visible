@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import os
 import numpy as np
 import time
@@ -188,8 +190,8 @@ def Cpp_Execution(Block,Y,NOL):
 q = True
 
 import pexpect as px  
-print("Spawning TestEm3")
-child = px.spawn('./TestEm3')
+print("Spawning CalSG")
+child = px.spawn('./CalSG ')
 print("return from spawn")
 child.expect('PreInit> ')
 print("expect return")
