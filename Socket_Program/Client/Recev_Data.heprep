@@ -1,4 +1,4 @@
-Msg rece<?xml version="1.0" ?>
+<?xml version="1.0" ?>
 <heprep:heprep xmlns:heprep="http://www.slac.stanford.edu/~perl/heprep/"
   xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance" xsi:schemaLocation="HepRep.xsd">
   <heprep:attdef extra="" name="Generator" type="Physics"
@@ -90,7 +90,7 @@ Msg rece<?xml version="1.0" ?>
               <heprep:attvalue showLabel="NONE" name="Density"
                 value="1e-22"/>
               <heprep:attvalue showLabel="NONE" name="State"
-            value="3"/>
+                value="3"/>
               <heprep:attvalue showLabel="NONE" name="Radlen"
                 value="6.30435e+24"/>
               <heprep:attvalue showLabel="NONE" name="DrawAs"
@@ -173,7 +173,7 @@ Msg rece<?xml version="1.0" ?>
                         value="DefaultRegionForTheWorld"/>
                       <heprep:attvalue showLabel="NONE" name="RootRegion"
                         value="False"/>
-                      <heprep:attvalue showLabel="NONE" name=id"
+                      <heprep:attvalue showLabel="NONE" name="Solid"
                         value="Absorber"/>
                       <heprep:attvalue showLabel="NONE" name="EType"
                         value="G4Box"/>
@@ -258,7 +258,7 @@ Msg rece<?xml version="1.0" ?>
                 </heprep:point>
                 <heprep:point x="-210" y="-50" z="50">
                 </heprep:point>
-                <heprep:point x="-210" y="50" 0">
+                <heprep:point x="-210" y="50" z="50">
                 </heprep:point>
               </heprep:primitive>
               <heprep:type version="null" name="Galactic">
@@ -338,7 +338,7 @@ Msg rece<?xml version="1.0" ?>
                       <heprep:primitive>
                         <heprep:point x="-190" y="50" z="-50">
                         </heprep:point>
-                    <heprep:point x="-190" y="-50" z="-50">
+                        <heprep:point x="-190" y="-50" z="-50">
                         </heprep:point>
                         <heprep:point x="-210" y="-50" z="-50">
                         </heprep:point>
@@ -424,7 +424,7 @@ Msg rece<?xml version="1.0" ?>
                   <heprep:attvalue showLabel="NONE" name="State"
                     value="3"/>
                   <heprep:attvalue showLabel="NONE" name="Radlen"
-                    val6.30435e+24"/>
+                    value="6.30435e+24"/>
                   <heprep:attvalue showLabel="NONE" name="DrawAs"
                     value="Prism"/>
                   <heprep:attvalue showLabel="NONE" name="LineColor"
@@ -506,7 +506,7 @@ Msg rece<?xml version="1.0" ?>
               <heprep:attvalue showLabel="NONE" name="LVol"
                 value="Galactic"/>
               <heprep:attvalue showLabel="NONE" name="Region"
-                value="DefaugionForTheWorld"/>
+                value="DefaultRegionForTheWorld"/>
               <heprep:attvalue showLabel="NONE" name="RootRegion"
                 value="False"/>
               <heprep:attvalue showLabel="NONE" name="Solid"
@@ -592,7 +592,7 @@ Msg rece<?xml version="1.0" ?>
                     </heprep:point>
                   </heprep:primitive>
                   <heprep:type version="null" name="Uranium">
-                <heprep:instance>
+                    <heprep:instance>
                       <heprep:attvalue showLabel="NONE" name="Layer"
                         value="4"/>
                       <heprep:attvalue showLabel="NONE" name="LVol"
@@ -674,7 +674,7 @@ Msg rece<?xml version="1.0" ?>
                 </heprep:point>
                 <heprep:point x="110" y="-50" z="-50">
                 </heprep:point>
-                <heprep:point x="90" y0" z="-50">
+                <heprep:point x="90" y="-50" z="-50">
                 </heprep:point>
                 <heprep:point x="90" y="50" z="-50">
                 </heprep:point>
@@ -756,7 +756,7 @@ Msg rece<?xml version="1.0" ?>
                       <heprep:attvalue showLabel="NONE" name="Radlen"
                         value="0.425442"/>
                       <heprep:attvalue showLabel="NONE" name="DrawAs"
-                    value="Prism"/>
+                        value="Prism"/>
                       <heprep:attvalue showLabel="NONE" name="LineColor"
                         value="255,255,255"/>
                       <heprep:attvalue showLabel="NONE" name="Visibility"
@@ -922,7 +922,7 @@ Msg rece<?xml version="1.0" ?>
                         </heprep:point>
                       </heprep:primitive>
                     </heprep:instance>
-              </heprep:type>
+                  </heprep:type>
                   <heprep:type version="null" name="Lead">
                     <heprep:instance>
                       <heprep:attvalue showLabel="NONE" name="Layer"

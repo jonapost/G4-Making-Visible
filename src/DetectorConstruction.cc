@@ -70,7 +70,7 @@ DetectorConstruction::DetectorConstruction()
     fPhysiAbsor[i] = nullptr;
   } 
  G4cout << "\n----------------------------------H!!!!!---------------------------";
-  for(G4int i=0; i<fNBlocks; ++i) { // CD  Default Parameter
+  for(G4int i=0; i<fNBlocks; ++i) { // CD  Default Parameter fot the blocks
     fBlockMaterial[i][0] = nullptr; 
     fBlockMaterial[i][1] = nullptr; 
     fBlockSize[i][0] = 0.0*mm;
@@ -335,8 +335,8 @@ void DetectorConstruction::ComputeCalorParameters()
     fLayerThickness += fAbsorThickness[iAbs];
   }
   fCalorThickness = fNbOfLayers*fLayerThickness;     
-  fWorldSizeX = 98*cm; //1.2*fCalorThickness + 100*cm; 
-  fWorldSizeYZ = 50*cm; //1.2*fCalorSizeY + 25*cm;  // CD
+  fWorldSizeX = 98*cm; //1.2*fCalorThickness + 100*cm;  Set fix World length 
+  fWorldSizeYZ = 1.0*fCalorSizeY*cm;  // CD  Set World size. 
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -459,7 +459,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       //fLogicBlockLayer[k]->RemoveDaughter(fPhysiBlock[k][1]);
       //fLogicBlockPosition[k]->RemoveDaughter(fPhysiBlockLayer[k]);
       blockMotherLogical->RemoveDaughter(fPhysiBlockPosition[k]);
-    G4cout << "Deleting and initial Geometrie ###############################################################################" << G4endl;
+    G4cout << "Deleting and initial Geometrie" << G4endl;
 
       delete fSolidBlock[k];
       delete fLogicBlock[k][0];
@@ -673,7 +673,7 @@ void DetectorConstruction::SetWorldMaterial(const G4String& material)
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-// CD
+// CD  Funktions to set the block propertis 
 
 void DetectorConstruction::SetBlockAbsorMaterial(G4int ival,
                                             const G4String& material)

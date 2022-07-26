@@ -1,7 +1,7 @@
 import socket
 import os
 
-BUFFER_SIZE = 4096
+BUFFER_SIZE = 4096*10
 
 HEADER = 64
 PORT = 5050

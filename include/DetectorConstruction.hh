@@ -68,9 +68,10 @@ public:
   void SetCalorSizeZ   (G4double);         
   void SetNbOfLayers    (G4int);   
 
+// Set the parameters of all Blocks CD
   void SetBlockAktiv (G4int,G4double);
   void SetNbOfBlockLayers (G4int,G4int);
-  void SetBlockMaterial (G4int,const G4String&); // Set the parameters of all Blocks CD
+  void SetBlockMaterial (G4int,const G4String&); 
   void SetBlockAbsorMaterial (G4int,const G4String&);
   void SetBlockPosition(G4int, G4double, G4double, G4double);
   void SetBlockSize(G4int, G4double, G4double, G4double);
@@ -100,7 +101,7 @@ public:
   const G4Material*        GetWorldMaterial() const   {return fWorldMaterial;};
   const G4VPhysicalVolume* GetAbsorber(G4int i) const {return fPhysiAbsor[i];};
 
-  G4int GetNbOfBlockLayers(G4int i) const {return fNbOfBlockLayers[i];}; //New CD
+  G4int GetNbOfBlockLayers(G4int i) const {return fNbOfBlockLayers[i];}; //New CD, Funktions for Blocks layer, if aktiv, its Material
   G4int GetIfBlockAktiv(G4int i) const {return IfBlockAktiv[i];};            
   const G4VPhysicalVolume* GetBlock(G4int i,G4int j) const {return fPhysiBlock[i][j];}; //New 
   const G4Material* GetBlockMaterial(G4int i) const {return fBlockMaterial[i][0];}; //New  CD
@@ -138,6 +139,7 @@ private:
 
   G4int              IfBlockAktiv[fNBlocks];
   G4bool             fBlockCalo[fNBlocks];
+  // Ints and double for Blocks
   G4int              fNbOfBlockLayers[fNBlocks];
   G4double           fBlockSizeZ[fNBlocks];  // CD
   G4double           fBlockSizeY[fNBlocks];

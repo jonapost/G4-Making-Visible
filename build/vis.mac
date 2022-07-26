@@ -26,9 +26,7 @@
 
 # Draw geometry:
 /vis/drawVolume
-#/vis/viewer/set/style wireframe
 
-#/vis/scene/add/trajectories smooth
 
 /vis/scene/add/trajectories rich
 /vis/verbose confirmations
@@ -58,7 +56,7 @@
 
 #
 # For file-based drivers, use this to create an empty detector view:
-/vis/viewer/flush
+#/vis/viewer/flush
 /vis/viewer/refresh
 
 # To superimpose all of the events from a given run:

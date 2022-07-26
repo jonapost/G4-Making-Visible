@@ -21,7 +21,7 @@ filename = '/home/kappe/projects/CERN_SS/Geant_Project/TestEm3_1Block_moveble/bu
 
 
 #/////////////////////////// Server parameter/////////////////////////////////////////
-BUFFER_SIZE = 4096 # send 4096 bytes each time step
+BUFFER_SIZE = 4096*10 # send 4096 bytes each time step
 TestLength = 4096
 HEADER = 64
 PORT = 5050
