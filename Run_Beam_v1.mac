@@ -24,7 +24,7 @@
 /event/verbose 0
 /control/verbose 0
 /run/verbose 0
-/tracking/verbose 0
+#/tracking/verbose 0   deaktivate vis tracks
 
 
 /testem/phys/addPhysics  emstandard_opt1

@@ -8,8 +8,9 @@
 /run/verbose 0
 /tracking/verbose 0
 
+
 # Use this open statement to create an OpenGL view:
-##/vis/open OGL 1750x1000-0+0
+#/vis/open OGL 600x600-0+0
 
 # Use this open statement to create a .heprep file suitable for
 # viewing in HepRApp:
@@ -59,6 +60,6 @@
 /vis/viewer/refresh
 
 # To superimpose all of the events from a given run:
-/vis/scene/endOfEventAction accumulate 10
+/vis/scene/endOfEventAction accumulate 1
 
 

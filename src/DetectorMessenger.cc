@@ -53,7 +53,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
  fNbLayersCmd(0),
  fNbAbsorCmd(0),
  fAbsorCmd(0),
- fBlockCmd(0),  // CD
+ fBlockCmd(0),  // CD  Block parameter for the messenger
  fAbsorBlockCmd(0) //CD
 { 
   fTestemDir = new G4UIdirectory("/testem/");
@@ -123,7 +123,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
 
 
 
-  //// New command for Block control  CD
+  //// New command for Block control  CD, Set the block position, size and material
   fBlockCmd = new G4UIcommand("/testem/det/setBlock",this);
   fBlockCmd->SetGuidance("Set the Block Number, the X Position, the Y Position, the Z Position, the X size, the Y size, the Z size, the first material, nb of layer");
   fBlockCmd->SetGuidance(" Block number : from 1 to fNBlock");
@@ -134,7 +134,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   fBlockCmd->SetGuidance(" Block Y size (with unit)");
   fBlockCmd->SetGuidance(" Block Z size (with unit)");
   fBlockCmd->SetGuidance(" first material name");
-  fBlockCmd->SetGuidance(" nb of layers : from 1 to 5");
+  fBlockCmd->SetGuidance(" nb of layers : from 1 to 10");
   fBlockCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
   
 
@@ -224,7 +224,7 @@ DetectorMessenger::~DetectorMessenger()
   delete fNbAbsorCmd;
   delete fAbsorCmd;
   //delete fBlockCmd;  // CD  Some Problem with this
-  //delete fAbsorBlockCmd;
+  delete fAbsorBlockCmd;
   delete fDetDir;  
   delete fTestemDir;
 
