@@ -37,6 +37,8 @@
 #include "globals.hh"
 #include "G4Cache.hh"
 #include <list>
+
+#include "SensitiveBlock.hh"  //CD
 class G4Box;
 class G4LogicalVolume;
 class G4VPhysicalVolume;
@@ -103,7 +105,7 @@ public:
 
   G4int GetNbOfBlockLayers(G4int i) const {return fNbOfBlockLayers[i];}; //New CD, Funktions for Blocks layer, if aktiv, its Material
   G4int GetIfBlockAktiv(G4int i) const {return IfBlockAktiv[i];};            
-  const G4VPhysicalVolume* GetBlock(G4int i,G4int j) const {return fPhysiBlock[i][j];}; //New 
+  const G4VPhysicalVolume* GetBlock(G4int i) const {return fPhysiBlockLayer[i];}; //New 
   const G4Material* GetBlockMaterial(G4int i) const {return fBlockMaterial[i][0];}; //New  CD
   const G4Material* GetAbsorBlockMaterial(G4int i) const {return fBlockMaterial[i][1];}; //New  CD
 
@@ -115,6 +117,7 @@ private:
 
   void DefineMaterials();
   void ComputeCalorParameters();
+ // virtual void ConstructSDandField(); //CD
 
   G4int              fNbOfAbsor;
   G4Material*        fAbsorMaterial[kMaxAbsor];
@@ -160,9 +163,9 @@ private:
   G4LogicalVolume*   fLogicBlockLayer[fNBlocks];
   G4VPhysicalVolume* fPhysiBlockLayer[fNBlocks];
 
-  G4Box*             fSolidBlock[fNBlocks];
-  G4LogicalVolume*   fLogicBlock[fNBlocks][MaxNbLayer];
-  G4VPhysicalVolume* fPhysiBlock[fNBlocks][MaxNbLayer];
+  G4Box*             fSolidBlockAbsor[fNBlocks];
+  G4LogicalVolume*   fLogicBlockAbsor[fNBlocks];
+  G4VPhysicalVolume* fPhysiBlockAbsor[fNBlocks];
 
 
   G4Material*        fWorldMaterial;

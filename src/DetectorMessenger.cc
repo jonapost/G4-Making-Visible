@@ -168,19 +168,19 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
 
   G4UIparameter* SizeXPrm = new G4UIparameter("sizex",'d',false);
   SizeXPrm->SetGuidance("Block X size");
-  SizeXPrm->SetParameterRange("sizex>-100. & sizex<100");
+  SizeXPrm->SetParameterRange("sizex>0.0 & sizex<100");
   fBlockCmd->SetParameter(SizeXPrm);
   fBlockCmd->SetParameter(unitBPrm);
 
   G4UIparameter* SizeYPrm = new G4UIparameter("sizey",'d',false);
   SizeYPrm->SetGuidance("Block Y size");
-  SizeYPrm->SetParameterRange("sizey>-100. & sizey<100");
+  SizeYPrm->SetParameterRange("sizey>-0.0 & sizey<100");
   fBlockCmd->SetParameter(SizeYPrm);
   fBlockCmd->SetParameter(unitBPrm);
 
   G4UIparameter* SizeZPrm = new G4UIparameter("sizez",'d',false);
   SizeZPrm->SetGuidance("Block Z size");
-  SizeZPrm->SetParameterRange("sizez>-100. & sizez<100");
+  SizeZPrm->SetParameterRange("sizez>0.0 & sizez<100");
   fBlockCmd->SetParameter(SizeZPrm);
   fBlockCmd->SetParameter(unitBPrm);
 
@@ -218,6 +218,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
 
 DetectorMessenger::~DetectorMessenger()
 {
+  
   delete fSizeZCmd;
   delete fSizeYCmd;
   delete fNbLayersCmd;

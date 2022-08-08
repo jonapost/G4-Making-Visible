@@ -56,8 +56,6 @@ using namespace std::chrono;
 
 int main(int argc,char** argv) {
       
-  auto start = high_resolution_clock::now();
-  auto stop = high_resolution_clock::now();
   auto start2 = high_resolution_clock::now();
   auto stop2 = high_resolution_clock::now();
   
@@ -127,25 +125,15 @@ int main(int argc,char** argv) {
       G4String fileName =  argv[1];
       
       UImanager->ApplyCommand(command+fileName);
-      start = high_resolution_clock::now();
-      for (int i=0; i<1; i++){
-      UImanager->ApplyCommand("/control/execute Run_Beam_v2.mac");}
-
-      stop = high_resolution_clock::now();
-      
-      //sleep(3);
   }
-
+//getchar();
 
   //job termination
   delete visManager;
-//  getchar();
+  //getchar();
   delete runManager;
 
     stop2 = high_resolution_clock::now();
-    cout << "Command elapsed time in milliseconds: "
-        << chrono::duration_cast<chrono::milliseconds>(stop - start).count()
-        << " ms" << endl;
     cout << "Program elapsed time in milliseconds: "
         << chrono::duration_cast<chrono::milliseconds>(stop2 - start2).count()
         << " ms" << endl;

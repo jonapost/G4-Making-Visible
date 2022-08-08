@@ -51,11 +51,18 @@ class EventAction : public G4UserEventAction
     void SumEnergy(G4int k, G4double de, G4double dl)
         {fEnergyDeposit[k] += de; fTrackLengthCh[k] += dl;};          
         
+    void SumEnergyPerBlock(G4int k, G4double de)
+        {fEnergyDepositBlock[k] += de;};
+
   private:  
     DetectorConstruction* fDetector;
     
     G4double              fEnergyDeposit[kMaxAbsor];
     G4double              fTrackLengthCh[kMaxAbsor];
+
+    std::array<G4int, fNBlocks> fCalHCID = { -1, -1 ,-1, -1, -1};
+    G4double              fEnergyDepositBlock[fNBlocks]; // CD, double for measurment of Energy deposition
+    
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
