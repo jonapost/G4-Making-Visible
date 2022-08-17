@@ -1,24 +1,20 @@
 from multiprocessing import connection
 import socket 
 import threading
-import os, sys
+import os
 import pexpect as px 
 import time
 
-def blockPrint():
-    sys.stdout = open(os.devnull, 'w')
-blockPrint()
 ##############################################
 #Define Parameters
 ##############################################
 BlockPosition = [[-20,-10,0,10,20],[0,0,0,0,0],[0,0,0,0,0]]
-BlockSize = [[2,2,2,2,1],[20,20,20,20,20],[10,10,10,10,10]]
-Material = ["Scintillator","Aluminium","Silicon","Lead","Scintillator"]
-ParticleList = ["e-","e+","mu-","mu+","geantino","gamma"]
-Number_of_Layer = [0,0,0,0,0] #[1,1,1,1,4]
+BlockSize = [[2,2,2,2,2],[10,10,10,10,10],[10,10,10,10,10]]
+Material = ["Aluminium","Lead","Uranium","Scintillator","Scintillator"]
+Number_of_Layer = [1,1,1,1,1]
 
 
-MaxBlockPosition = [ 50, -50 ] # Check what is written in Geant4
+MaxBlockPosition = [ 20, -20 ] # Check what is written in Geant4
 
 FileName_HepRep = '/home/kappe/projects/CERN_SS/Geant_Project/TestEm3_1Block_moveble/build' + "/" + "TestG4Data0.heprep"
 FileName_Statistic = "stuff.csv"
@@ -35,7 +31,6 @@ FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
 Send_New_Data = "!NEWDATA"
 CHange_Geometry = "!ChangeGeo"
-CHANGE_GUN = "!CHANGEGUN"
 Make_Statitic = "!STATISTIC"
 Send_New_Statistic = "!NEWSTAT"
 
@@ -98,19 +93,6 @@ def handle_client(conn, addr,child):
                     conn.send("Invalid".encode(FORMAT)) # What should be done if geometry is invalid? Change to nearest valid geometry and start run?
                     handle_Geant4Commands(msg,child,True)
                     conn.send("Done".encode(FORMAT))
-            
-            if msg == CHANGE_GUN:
-                msg = conn.recv(TestLength).decode(FORMAT)
-                Check = Beam_Gun(msg,child)
-                if Check:
-                    print("Checht True")
-                    conn.send("Valid".encode(FORMAT))
-                else:
-                    print("Check False")
-                    conn.send("Invalid".encode(FORMAT)) 
-
-                #conn.send("Done".encode(FORMAT))
-
 
 
 
@@ -140,10 +122,6 @@ def start():
         child.expect('PreInit> ')
         print("expect return")
         child.sendline('/control/execute Run_Beam_v1.mac')
-        print("sent")
-        child.expect('Idle>')
-        print("got Idle>")
-        child.sendline('/run/numberOfThreads 7')
         print("sent")
         child.expect('Idle>')
         print("got Idle>")
@@ -178,46 +156,43 @@ def Send_File(conn,msg):
     file.close()
 
 def Beam_Gun(textline,child):
-    Check = True
-    
-    AllVal = textline #.split("|") # Split at ";" to get info for each Gun if more than one gun is needed
+    AllVal = textline.split(";") # Split at ";" to get info for each Gun if more than one gun is needed
     Particle = []
     Energy = []
     YPosy = []
+    for i in range(len(AllVal)):
+        value = AllVal[i].split("|") # Split at "|" to get command Inf: Particle | Energy (in MeV) | YPosition
+        Particle.append(value[0])
+        Energy.append(value[1])
+        YPosy.append(value[2])
 
-    value = AllVal.split(";") # Split at "|" to get command Inf: Particle | Energy (in MeV) | YPosition
-    Particle.append(value[0])
-    Energy.append(value[1])
-    YPosy.append(value[2])
+    print(value)
+    for i in range(len(AllVal)):
+        if Particle[i]=="e-":
+            child.send("/gun/particle " + Particle[i])
+            print("sent" ,"/gun/particle " + Particle[i] )
+        if Particle[i]=="p+":
+            child.send("/gun/particle " + Particle[i])
+            print("sent" ,"/gun/particle " + Particle[i] )
+        else:
+            print("Particle: ", Particle[i], " is unknown, e- was used.")
+            child.send("/gun/particle e-" )
+        child.expect('Idle>')
+        print("got Idel>") 
+        
+        if float(Energy[i]) < 0 or float(Energy[i])> 10**6:
+            Energy[i] = "10" # Default energy value if sended energy is <0 or to hige
+        child.send("/gun/energy " + Energy[i] + " MeV")
+        child.expect('Idle>')
+        print("got Idel>") 
+        
+        print("Sending new position")
+        child.send("/gun/position 0 " + YPosy[i] + " 0")
+        child.expect('Idle>')
+        print("got Idel>") 
 
-    print("Recieved Particle gun values ",value)
-    for i in range(len(ParticleList)):
-        if Particle[0]==ParticleList[i]:
-            child.sendline("/gun/particle " + Particle[0])
-            print("sent" ,"/gun/particle " + Particle[0] )
-            Particle[0] = "F"
-            break
-    if Particle[0] != "F":
-        Check = False
-        print("Particle: ", Particle[0], " is unknown, e- was used.")
-        child.sendline('/gun/particle e-')
 
-    child.expect('Idle>')
-    print("got Idel>") 
-    
-    if float(Energy[0]) < 0 or float(Energy[0])> 10**6:
-        Energy[0] = "1" # Default energy value if sended energy is <0 or to hige
-        Check = False
-    print("Test")
-    child.sendline("/gun/energy " + Energy[0] + " GeV")
-    child.expect('Idle>')
-    print("got Idel>") 
-    
-    print("Sending new position")
-    child.sendline("/gun/position -30 " + YPosy[0] + " 0")
-    child.expect('Idle>')
-    print("got Idel>") 
-    return Check
+
 
 
 
@@ -253,8 +228,7 @@ def handle_Geant4Commands(textline,child,NRun):
     print("got Idel> got idel sent")
     if NRun:
         print("Run one event for visualisation data.")
-       # child.sendline('/control/execute Beam_ON_File.mac')
-        child.sendline("/run/beamOn 1")
+        child.sendline('/control/execute Beam_ON_File.mac')
         print("sent")
         child.expect('Idle>')
         child.sendline("/vis/disable")
@@ -262,18 +236,15 @@ def handle_Geant4Commands(textline,child,NRun):
         child.expect('Idle>')
         print("Start N events for statistic.")
         child.sendline('/control/execute Beam_ON_File_100.mac')
-        #child.sendline("/run/beamOn 100")
         print("sent")
         child.expect('Idle>')
         child.sendline("/vis/enable")
         print("Enable visualisation")
     else:
-        #child.sendline('/control/execute Beam_ON_File.mac')
-        child.sendline("/run/beamOn 1")
+        child.sendline('/control/execute Beam_ON_File.mac')
         print("sent")
     child.expect('Idle>')
     print("got Idel>")
-
 
 def Geometry_Check(textline):
     value = textline.split("|") # Split at ";" to get command for each block
@@ -283,12 +254,11 @@ def Geometry_Check(textline):
         vi = value[i].split(";")
         dy = float(vi[0])
         NL = int(vi[1])
-        if ( ((BlockPosition[1][i] + BlockSize[1][i]/2 + dy) > MaxBlockPosition[0]  ) or ( (BlockPosition[1][i] - BlockSize[1][i]/2 + dy) < MaxBlockPosition[1]) ):
+        if BlockPosition[1][i] + BlockSize[1][i]/2 + dy > MaxBlockPosition[0] or BlockPosition[1][i] - BlockSize[1][i]/2 + dy < MaxBlockPosition[1]:
             CheckC = False
            
             value[i] = "0;" + str(NL)
            # break No break, change to 0 change
-            print("ERROR: Something was not in size")
     returnText = ""
     for i in range(len(value)):
         returnText += value[i] + "|"

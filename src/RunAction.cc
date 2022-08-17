@@ -106,7 +106,7 @@ void RunAction::EndOfRunAction(const G4Run*)
       G4cout << "Master thread time:  "  << *fTimer << G4endl;
     }
     delete fTimer;
-    fRun->EndOfRun();
+    //fRun->EndOfRun();  CD
   }
   //save histograms
   G4AnalysisManager* analysis = G4AnalysisManager::Instance();   

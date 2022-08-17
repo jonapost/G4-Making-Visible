@@ -3,10 +3,13 @@
 #include "G4VSensitiveDetector.hh"
 #include "SensitiveBlockHit.hh"
 
+
+class G4HCofThisEvent;
 class SensitiveBlock : public G4VSensitiveDetector
+
 {
 public:
-    SensitiveBlock(G4String, const G4String& hitsCollectionName);
+    SensitiveBlock(G4int Copy, G4String, const G4String& hitsCollectionName);
     ~SensitiveBlock();
 
     virtual void Initialize(G4HCofThisEvent* HCE);
@@ -17,6 +20,7 @@ public:
   
 private:
     SensitiveBlockHitCollection * hitCollection;
+    G4int fCopy;
     int collectionID;
     
 };

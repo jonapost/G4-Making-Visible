@@ -126,7 +126,7 @@ int main(int argc,char** argv) {
       
       UImanager->ApplyCommand(command+fileName);
   }
-//getchar();
+getchar();
 
   //job termination
   delete visManager;

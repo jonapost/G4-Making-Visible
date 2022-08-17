@@ -184,7 +184,7 @@ void Run::Merge(const G4Run* run)
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void Run::EndOfRun()
-{
+{ 
   G4int nEvt = numberOfEvent;
   G4double  norm = G4double(nEvt);
   if(norm > 0) norm = 1./norm;

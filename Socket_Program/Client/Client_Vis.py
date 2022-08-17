@@ -1,4 +1,3 @@
-import socket
 import os
 
 BUFFER_SIZE = 4096*10
@@ -15,15 +14,9 @@ Send_New_Statistic = "!NEWSTAT"
 FileName_HepRep = "Recev_Data.heprep"
 FileName_Statistic = "Recev_Statistic.csv"
 
-SERVER = "127.0.1.1"
-PORT = 5050
-ADDR = (SERVER, PORT)
-
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect(ADDR)
 
 
-def send(msg):
+def send(msg,client):
     message = msg.encode(FORMAT)
     msg_length = len(message)
     send_length = str(msg_length).encode(FORMAT)
@@ -32,7 +25,11 @@ def send(msg):
     client.send(message)
     print(client.recv(2048).decode(FORMAT))
 
-def Ask_for_data(msg,FileName):
+def Stop(client):
+    send(DISCONNECT_MESSAGE,client)
+
+
+def Ask_for_data(msg,FileName,client):
     message = msg.encode(FORMAT)
     msg_length = len(message)
     send_length = str(msg_length).encode(FORMAT)
@@ -68,7 +65,7 @@ def Ask_for_data(msg,FileName):
 
     print(client.recv(2048).decode(FORMAT))
 
-def NewGeometry(Dy,NL):
+def NewGeometry(Dy,NL,client):
     Text = str(Dy[0]) + ";" + str(NL[0]) + "|" + str(Dy[1]) + ";" + str(NL[1]) + "|" + str(Dy[2]) + ";" + str(NL[2]) + "|" + str(Dy[3]) + ";" + str(NL[3]) + "|" + str(Dy[4]) + ";" + str(NL[4])
     message = CHange_Geometry.encode(FORMAT)
     msg_length = len(message)
@@ -86,11 +83,11 @@ def NewGeometry(Dy,NL):
     msg = client.recv(2048).decode(FORMAT)
     if msg == "Done":
         print("Simulation done.")
-    Ask_for_data(Send_New_Data,FileName_HepRep)
+    Ask_for_data(Send_New_Data,FileName_HepRep,client)
 
 
 
-def Change_Particle_Gun(Particle,Energy,YP):
+def Change_Particle_Gun(Particle,Energy,YP,client):
     Text = Particle + ";" + str(Energy) + ";" + str(YP) # + "|"
 
     message = CHANGE_GUN.encode(FORMAT)
@@ -111,7 +108,7 @@ def Change_Particle_Gun(Particle,Energy,YP):
 
 
 
-def MakeStatistic(Dy,NL):
+def MakeStatistic(Dy,NL,client):
     Text = str(Dy[0]) + ";" + str(NL[0]) + "|" + str(Dy[1]) + ";" + str(NL[1]) + "|" + str(Dy[2]) + ";" + str(NL[2]) + "|" + str(Dy[3]) + ";" + str(NL[3]) + "|" + str(Dy[4]) + ";" + str(NL[4])
     message = Make_Statitic.encode(FORMAT)
     msg_length = len(message)
@@ -129,78 +126,8 @@ def MakeStatistic(Dy,NL):
     msg = client.recv(2048).decode(FORMAT)
     if msg == "Done":
         print("Simulation done.")
-    Ask_for_data(Send_New_Data,FileName_HepRep)
-    Ask_for_data(Send_New_Statistic,FileName_Statistic)
+    Ask_for_data(Send_New_Data,FileName_HepRep,client)
+    Ask_for_data(Send_New_Statistic,FileName_Statistic,client)
 
 
 
-print("Befor first send")
-send("Hello World!")
-input()
-#print("After input")
-send("Hello World!")
-print("After first input")
-
-#Ask_for_data(Send_New_Data)
-
-
-input()
-
-NewGeometry([0,0,0,0,0],[1,1,1,1,4])
-
-#input()
-#Change_Particle_Gun("e-",10,0)
-input()
-NewGeometry([0,0,0,0,0],[-1,0,-1,-1,-4])
-
-input()
-N = 10
-for i in range(N):
-    NewGeometry([0,1,0,0,0],[0,0,0,0,0])
-
-for i in range(N):
-    NewGeometry([0,-1,0,0,0],[0,0,0,0,0])
-
-input()
-
-NewGeometry([0,0,0,0,0],[0,0,1,0,0])
-
-input()
-
-N = 5
-for i in range(N):
-    NewGeometry([0,2,0,0,0],[0,0,0,0,0])
-
-input()
-MakeStatistic([0,0,0,0,0],[0,0,0,0,0])
-input()
-
-NewGeometry([0,-10,0,0,0],[0,0,0,0,4])
-
-input()
-NewGeometry([0,0,0,0,0],[0,0,0,0,2])
-
-input()
-NewGeometry([0,0,0,0,0],[0,0,0,0,2])
-
-input()
-N = 6
-for i in range(N):
-    NewGeometry([0,0,0,0,2],[0,0,0,0,0])
-
-for i in range(N):
-    NewGeometry([0,0,0,0,-2],[0,0,0,0,0])
-input()
-
-MakeStatistic([0,0,0,0,0],[0,0,0,0,0])
-input()
-'''
-N = 10
-import time
-st = time.time()
-for i in range(N):
-    NewGeometry([0,-10 + i,0,i*0.5,0],[0,0,0,0,0])
-elapsed_time = time.time() - st
-print('Execution time:', elapsed_time/N, 'seconds')
-'''
-send(DISCONNECT_MESSAGE)

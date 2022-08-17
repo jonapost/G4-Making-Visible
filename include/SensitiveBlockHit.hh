@@ -8,26 +8,18 @@
 class SensitiveBlockHit : public G4VHit {
 public:
     SensitiveBlockHit();
-    SensitiveBlockHit(G4int cellID) : G4VHit(),fCellID(cellID){}
     ~SensitiveBlockHit();
-    /*
-    SensitiveBlockHit((const SensitiveBlockHit &right) = default;)
-    ~SensitiveBlockHit() override;
 
-    SensitiveBlockHit& operator = (const SensitiveBlockHit &right) = default;
-    G4bool operator==(const SensitiveBlockHit &right) const;
-    */
-   // void Print();
-    void AddEdep(G4int k, const double e){eDep[k] += e;}
+    void AddEdep(const double e){eDep += e;}
 
-    G4double GetEdep(G4int k)   const{ return eDep[k]; G4cout<<"Test"<<G4endl;}
-    G4int GetBlockNumber() const{ return fBlockNumber; }
+    G4double GetEdep()   const{ return eDep; }
+    //G4int GetBlockNumber() const{ return fBlockNumber; }
 
 private:
-     G4int fBlockNumber;
-    G4int fCellID = -1;
-    G4double eDep[5] = {0.0,0.0,0.0,0.0,0.0};  // Hier is a big problem CD
-
+    // G4int fBlockNumber;
+    //G4int fCellID = -1;
+    //G4double eDep[5] = {0.0,0.0,0.0,0.0,0.0};  // Hier is a big problem CD
+    G4double eDep;
 
 };
 

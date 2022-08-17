@@ -83,7 +83,6 @@ DetectorConstruction::DetectorConstruction()
     fBlockPosi[i][2] = 0.0*cm;
     
     fNbOfBlockLayers[i] = 1;
-    IfBlockAktiv[i] = 0;
     fBlockCalo[i] = false;
 
     fSolidBlockPosition[i] = nullptr;
@@ -108,8 +107,8 @@ DetectorConstruction::DetectorConstruction()
   fAbsorThickness[2] = 5.7*mm;
   fNbOfLayers        = 50;
   ///fNCalorSizeZ      = []
-  fCalorSizeY       = 40.*cm;
-  fCalorSizeZ       = 40.*cm;
+  fCalorSizeY       = 10.*cm;
+  fCalorSizeZ       = 25.*cm;
   ComputeCalorParameters();
   
   //SetBlockPosition(1,40*cm,0,0);
@@ -453,56 +452,27 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   
   G4LogicalVolume *blockMotherLogical = fLogicWorld;
 
-  for (G4int k=0; k<fNBlocks; ++k) {
-    
+  for (G4int k=0; k<fNBlocks; ++k) {  
     if(fPhysiBlockPosition[k]){
-
-      
       // delete this volume from its Mother, WorldVolume
-
-      //fLogicBlockPosition[k]->RemoveDaughter(fPhysiBlockLayer[k]);
-      blockMotherLogical->RemoveDaughter(fPhysiBlockPosition[k]);
+    blockMotherLogical->RemoveDaughter(fPhysiBlockPosition[k]);
     G4cout << "Deleting and initial Geometrie" << G4endl;
-
-    
-      delete fSolidBlockLayer[k];
-      delete fLogicBlockLayer[k];
-      delete fPhysiBlockLayer[k];
-
-      delete fSolidBlockPosition[k];
-      delete fLogicBlockPosition[k];
-      delete fPhysiBlockPosition[k];
-
-      delete fSolidBlockAbsor[k];
-      delete fLogicBlockAbsor[k];
-      delete fPhysiBlockAbsor[k];
-      
-      fSolidBlockPosition[k] = nullptr;
-      fLogicBlockPosition[k] = nullptr;
-      fPhysiBlockPosition[k] = nullptr;
-
-      fSolidBlockLayer[k] = nullptr;
-      fLogicBlockLayer[k] = nullptr;
-      fPhysiBlockLayer[k] = nullptr;
-
-      fSolidBlockAbsor[k] = nullptr;
-      fLogicBlockAbsor[k] = nullptr;
-      fPhysiBlockAbsor[k] = nullptr;
     }
   }
 
 
 
+G4cout << "Test after del, int" << G4endl;
 
   for (G4int k=0; k<fNBlocks; ++k) {
-    if (IfBlockAktiv[k]==1){
-        // #### weher to place the block
-        
-        G4double BB_xsize = fBlockSize[k][0] * fNbOfBlockLayers[k] ;
-        G4cout << " Blpock Parameter #######################  : "<< BB_xsize << " " << fBlockSize[k][0] << "" << fNbOfBlockLayers[k] <<G4endl;
+      // #### weher to place the block
+      
+      G4double BB_xsize = fBlockSize[k][0] * fNbOfBlockLayers[k] ;
+      G4cout << " Blpock Parameter #######################  : "<< BB_xsize << " " << fBlockSize[k][0] << " " << fNbOfBlockLayers[k] <<G4endl;
 
-        if(fBlockCalo[k]){BB_xsize = fBlockSize[k][0] * fNbOfBlockLayers[k]*2;}
+      if(fBlockCalo[k]){BB_xsize = fBlockSize[k][0] * fNbOfBlockLayers[k]*2;}
 
+      if (fNbOfBlockLayers[k] > 0) {
         fSolidBlockPosition[k] = new G4Box("BlockPosition",                //its name
                           BB_xsize*0.5,fBlockSize[k][1]/2,fBlockSize[k][2]/2);
 
@@ -517,62 +487,62 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                             fLogicWorld,                 
                             false,                      
                             0); 
-        
-
-
-      G4double BlockLayerThickness = fBlockSize[k][0];
-      if (fBlockCalo[k]) {BlockLayerThickness = fBlockSize[k][0]*2;}
-
-      fSolidBlockLayer[k] = new G4Box("BlockLayer",                               
-                               BlockLayerThickness*0.5,fBlockSize[k][1]/2,fBlockSize[k][2]/2);
-                             
-
-      fLogicBlockLayer[k] = new G4LogicalVolume(fSolidBlockLayer[k],      
-                                        fBlockMaterial[k][0], 
-                                        fBlockMaterial[k][0]->GetName() + "_Detector_" + std::to_string(k));              
-      if (fNbOfBlockLayers[k] > 1) {
-        fPhysiBlockLayer[k] = new G4PVReplica("BlockLayer",              
-                                      fLogicBlockLayer[k],     
-                                      fLogicBlockPosition[k],      
-                                      kXAxis,              
-                                      fNbOfBlockLayers[k],            
-                                      BlockLayerThickness);     
-      } else {
-        fPhysiBlockLayer[k] = new G4PVPlacement(0,                   
-                                      G4ThreeVector(),     
-                                      fLogicBlockLayer[k],           
-                                      std::to_string(k),             
-                                      fLogicBlockPosition[k],         
-                                      false,             
-                                      0);                    
       }
-      //
-      // Absorbers
-      //
-      
-      if(fBlockCalo[k]){
-        G4double xAbcenter = -0.5*fBlockSize[k][0];
+
+
+    G4double BlockLayerThickness = fBlockSize[k][0];
+    if (fBlockCalo[k]) {BlockLayerThickness = fBlockSize[k][0]*2;}
+
+    fSolidBlockLayer[k] = new G4Box("BlockLayer",                               
+                              BlockLayerThickness*0.5,fBlockSize[k][1]/2,fBlockSize[k][2]/2);
+                            
+
+    fLogicBlockLayer[k] = new G4LogicalVolume(fSolidBlockLayer[k],      
+                                      fBlockMaterial[k][0], 
+                                      fBlockMaterial[k][0]->GetName() + "_Detector_" + std::to_string(k));              
+    if (fNbOfBlockLayers[k] > 1) {
+      fPhysiBlockLayer[k] = new G4PVReplica("BlockLayer",              
+                                    fLogicBlockLayer[k],     
+                                    fLogicBlockPosition[k],      
+                                    kXAxis,              
+                                    fNbOfBlockLayers[k],            
+                                    BlockLayerThickness);     
+    } if (fNbOfBlockLayers[k] == 1) {
+      fPhysiBlockLayer[k] = new G4PVPlacement(0,                   
+                                    G4ThreeVector(),     
+                                    fLogicBlockLayer[k],           
+                                    std::to_string(k),             
+                                    fLogicBlockPosition[k],         
+                                    false,             
+                                    0);                    
+    }
+    //
+    // Absorbers
+    //
     
-        fSolidBlockAbsor[k] = new G4Box("AbsorberBlock",                //its name
-              fBlockSize[k][0]/2,fBlockSize[k][1]/2,fBlockSize[k][2]/2);
+    if(fBlockCalo[k] &&  (fNbOfBlockLayers[k] > 0) ){
+      G4double xAbcenter = -0.5*fBlockSize[k][0];
+  
+      fSolidBlockAbsor[k] = new G4Box("AbsorberBlock",                //its name
+            fBlockSize[k][0]/2,fBlockSize[k][1]/2,fBlockSize[k][2]/2);
 
 
-        fLogicBlockAbsor[k] = new G4LogicalVolume(fSolidBlockAbsor[k],    //its solid
-                                            fBlockMaterial[k][1], //its material
-                                            fBlockMaterial[k][1]->GetName());
-        fPhysiBlockAbsor[k] = new G4PVPlacement(0,              
-                            G4ThreeVector(xAbcenter,0.,0),
-                            fLogicBlockAbsor[k],               
-                            fBlockMaterial[k][1]->GetName(),
-                            fLogicBlockLayer[k],                  
-                            false,                      
-                            0);                                //copy number
-
-        
-      }
+      fLogicBlockAbsor[k] = new G4LogicalVolume(fSolidBlockAbsor[k],    //its solid
+                                          fBlockMaterial[k][1], //its material
+                                          fBlockMaterial[k][1]->GetName());
+      fPhysiBlockAbsor[k] = new G4PVPlacement(0,              
+                          G4ThreeVector(xAbcenter,0.,0),
+                          fLogicBlockAbsor[k],               
+                          fBlockMaterial[k][1]->GetName(),
+                          fLogicBlockLayer[k],                  
+                          false,                      
+                          0);                                //copy number
 
       
     }
+
+      
+    
 
 
   }
@@ -730,21 +700,7 @@ void DetectorConstruction::SetBlockSize(G4int ival, G4double valx, G4double valy
   fBlockSize[ival][2] = valz;
 }
 
-void DetectorConstruction::SetBlockAktiv(G4int ival, G4double valx)
-{
-  // set Block aktiv
-  //
-  if (ival < 0  && ival >fNBlocks)
-    { G4cout << "\n --->warning from SetBlockAktiv: "
-             << ival << " must be at least 1. Command refused" << G4endl;
-      return;
-    }
-  if (valx)
-    {IfBlockAktiv[ival] = 1;
-     G4cout << "\n ---> Parameters were given for one Block : Size X  "
-             << valx  << IfBlockAktiv[ival] << G4endl;
-  }
-}
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -752,9 +708,9 @@ void DetectorConstruction::SetNbOfBlockLayers(G4int iNB, G4int ival)
 {
   // set the number of Block Layers
   //
-  if (ival < 1)
+  if (ival < 0)
     { G4cout << "\n --->warning from SetfNbOfBlockLayers: "
-             << ival << "from Block "<< iNB << " must be at least 1. Command refused" << G4endl;
+             << ival << "from Block "<< iNB << " must be at least 0. Command refused" << G4endl;
       return;
     }
   fNbOfBlockLayers[iNB] = ival;
@@ -883,35 +839,35 @@ void DetectorConstruction::ConstructSDandField()
 
 
   if(fLogicBlockLayer[0] != nullptr){
-    SensitiveBlock *sensDet1 = new SensitiveBlock("SensitiveBlock_1","HitsCollectionB1L1"); //CD
+    SensitiveBlock *sensDet1 = new SensitiveBlock(fNbOfBlockLayers[0],"SensitiveBlock_1","HitsCollectionB1"); //CD
     SDManager ->AddNewDetector(sensDet1);
     fLogicBlockLayer[0]->SetSensitiveDetector(sensDet1);
     G4cout<< "B1 is a SensetiveDetector"<<G4endl;
   }
 
   if(fLogicBlockLayer[1] != nullptr){
-    SensitiveBlock *sensDet2 = new SensitiveBlock("SensitiveBlock_2","HitsCollectionB2L1"); //CD
+    SensitiveBlock *sensDet2 = new SensitiveBlock(fNbOfBlockLayers[1],"SensitiveBlock_2","HitsCollectionB2"); //CD
     SDManager ->AddNewDetector(sensDet2);
     fLogicBlockLayer[1]->SetSensitiveDetector(sensDet2);
     G4cout<< "B2 is a SensetiveDetector"<<G4endl;
   }
 
     if(fLogicBlockLayer[2] != nullptr){
-    SensitiveBlock *sensDet2 = new SensitiveBlock("SensitiveBlock_3","HitsCollectionB3L1"); //CD
+    SensitiveBlock *sensDet2 = new SensitiveBlock(fNbOfBlockLayers[2],"SensitiveBlock_3","HitsCollectionB3"); //CD
     SDManager ->AddNewDetector(sensDet2);
     fLogicBlockLayer[2]->SetSensitiveDetector(sensDet2);
     G4cout<< "B3 is a SensetiveDetector"<<G4endl;
   }
 
     if(fLogicBlockLayer[3] != nullptr){
-    SensitiveBlock *sensDet2 = new SensitiveBlock("SensitiveBlock_4","HitsCollectionB4L1"); //CD
+    SensitiveBlock *sensDet2 = new SensitiveBlock(fNbOfBlockLayers[3],"SensitiveBlock_4","HitsCollectionB4"); //CD
     SDManager ->AddNewDetector(sensDet2);
     fLogicBlockLayer[3]->SetSensitiveDetector(sensDet2);
     G4cout<< "B4 is a SensetiveDetector"<<G4endl;
   }
 
     if(fLogicBlockLayer[4] != nullptr){
-    SensitiveBlock *sensDet2 = new SensitiveBlock("SensitiveBlock_5","HitsCollectionB5L1"); //CD
+    SensitiveBlock *sensDet2 = new SensitiveBlock(fNbOfBlockLayers[4],"SensitiveBlock_5","HitsCollectionB5"); //CD
     SDManager ->AddNewDetector(sensDet2);
     fLogicBlockLayer[4]->SetSensitiveDetector(sensDet2);
     G4cout<< "B5 is a SensetiveDetector"<<G4endl;

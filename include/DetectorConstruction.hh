@@ -103,8 +103,7 @@ public:
   const G4Material*        GetWorldMaterial() const   {return fWorldMaterial;};
   const G4VPhysicalVolume* GetAbsorber(G4int i) const {return fPhysiAbsor[i];};
 
-  G4int GetNbOfBlockLayers(G4int i) const {return fNbOfBlockLayers[i];}; //New CD, Funktions for Blocks layer, if aktiv, its Material
-  G4int GetIfBlockAktiv(G4int i) const {return IfBlockAktiv[i];};            
+  G4int GetNbOfBlockLayers(G4int i) const {return fNbOfBlockLayers[i];}; //New CD, Funktions for Blocks layer, if aktiv, its Material         
   const G4VPhysicalVolume* GetBlock(G4int i) const {return fPhysiBlockLayer[i];}; //New 
   const G4Material* GetBlockMaterial(G4int i) const {return fBlockMaterial[i][0];}; //New  CD
   const G4Material* GetAbsorBlockMaterial(G4int i) const {return fBlockMaterial[i][1];}; //New  CD
@@ -140,7 +139,6 @@ private:
   G4double           fCalorSizeY2;
   G4double           fCalorThickness2;
 
-  G4int              IfBlockAktiv[fNBlocks];
   G4bool             fBlockCalo[fNBlocks];
   // Ints and double for Blocks
   G4int              fNbOfBlockLayers[fNBlocks];

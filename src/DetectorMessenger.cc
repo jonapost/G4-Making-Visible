@@ -174,7 +174,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
 
   G4UIparameter* SizeYPrm = new G4UIparameter("sizey",'d',false);
   SizeYPrm->SetGuidance("Block Y size");
-  SizeYPrm->SetParameterRange("sizey>-0.0 & sizey<100");
+  SizeYPrm->SetParameterRange("sizey>0.0 & sizey<100");
   fBlockCmd->SetParameter(SizeYPrm);
   fBlockCmd->SetParameter(unitBPrm);
 
@@ -190,7 +190,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
 
   G4UIparameter* LayerNbPrm = new G4UIparameter("LayerNb",'i',false);
   LayerNbPrm->SetGuidance("layer number : from 1 to 10");
-  LayerNbPrm->SetParameterRange("LayerNb>0 & LayerNb<11");
+  LayerNbPrm->SetParameterRange("LayerNb>=0 & LayerNb<11");
   fBlockCmd->SetParameter(LayerNbPrm);
 
   //
@@ -286,7 +286,6 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
      fDetector->SetBlockMaterial (num,material);
      fDetector->SetBlockPosition (num,Px,Py,Pz);
      fDetector->SetBlockSize (num,Sx,Sy,Sz);
-     fDetector->SetBlockAktiv (num,Sx);
      fDetector->SetNbOfBlockLayers (num,Nl);
      
 
