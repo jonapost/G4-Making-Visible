@@ -51,12 +51,11 @@ G4bool SensitiveBlock::ProcessHits(G4Step *aStep, G4TouchableHistory *R0hist)
     G4double EDep = aStep->GetTotalEnergyDeposit();
  
   
-    G4cout << name << " "<<EDep <<G4endl;
+    G4cout << name << ", CopyNumber " << CopyNV << " Energy deposition "<<EDep <<G4endl;
 
-    //SensitiveBlockHit* aHit = new SensitiveBlockHit(-1); //CopyNV);
     SensitiveBlockHit* aHit = (*hitCollection)[CopyNV];
     aHit->AddEdep(EDep);
-    //hitCollection->insert(aHit);
+  
     
     return true;
 

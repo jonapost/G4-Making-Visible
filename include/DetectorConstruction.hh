@@ -49,7 +49,6 @@ class G4GlobalMagFieldMessenger;
 
      const G4int kMaxAbsor = 10;                        // 0 + 9  
      const G4int fNBlocks = 5; // Number of moveble Blocks ,CD
-     const G4int MaxNbLayer = 2;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class DetectorConstruction : public G4VUserDetectorConstruction
@@ -140,9 +139,9 @@ private:
   G4double           fCalorThickness2;
 
   G4bool             fBlockCalo[fNBlocks];
-  // Ints and double for Blocks
+  // Ints and double for Blocks, CD
   G4int              fNbOfBlockLayers[fNBlocks];
-  G4double           fBlockSizeZ[fNBlocks];  // CD
+  G4double           fBlockSizeZ[fNBlocks];  
   G4double           fBlockSizeY[fNBlocks];
   G4double           fBlockSizeX[fNBlocks];  
   G4Material*        fBlockMaterial[fNBlocks][2];

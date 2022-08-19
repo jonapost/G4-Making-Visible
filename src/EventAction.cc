@@ -121,7 +121,6 @@ void EventAction::EndOfEventAction(const G4Event*event)
 
   for (G4int i = 0; i<fNBlocks; i++){
       auto hitsCollection = GetHC(event, fCalHCID[i]);
-      G4cout << "Test  EventAction #################################################################"<< G4endl;
       if ( ! hitsCollection ) continue;
 
       
@@ -144,10 +143,9 @@ void EventAction::EndOfEventAction(const G4Event*event)
     static bool first = true;
     if (first) {
     first = false;
-    stuff << "#,eDep,  Block 1,  Block 2,  Block 3,  Block 4, Block 5" << std::endl;
+    stuff << "#,eDep [MeV],  Block 1,  Block 2,  Block 3,  Block 4, Block 5" << std::endl;
     }
     G4cout<<"Saving energy depo to csv file."<<G4endl;
-    //if (fEnergyDepositBlock[0])
     stuff << fEnergyDepositBlock[0] << ",  "<< fEnergyDepositBlock[1] << ",  "<< fEnergyDepositBlock[2] << ",  "<< fEnergyDepositBlock[3] << ",  "<< fEnergyDepositBlock[4] << std::endl;
     
 }

@@ -5,9 +5,12 @@ import os, sys
 import pexpect as px 
 import time
 
+
+import Control_G4_Py as ConG4
+
 def blockPrint():
     sys.stdout = open(os.devnull, 'w')
-blockPrint()
+#blockPrint()
 ##############################################
 #Define Parameters
 ##############################################
@@ -20,7 +23,7 @@ Number_of_Layer = [0,0,0,0,0] #[1,1,1,1,4]
 
 MaxBlockPosition = [ 50, -50 ] # Check what is written in Geant4
 
-FileName_HepRep = '/home/kappe/projects/CERN_SS/Geant_Project/TestEm3_1Block_moveble/build' + "/" + "TestG4Data0.heprep"
+FileName_HepRep = '/home/kappe/projects/CERN_SS/Geant_Project/TestEm3_1Block_moveble/build' + "/../Test/" + "TrajectoryData.heprep"
 FileName_Statistic = "stuff.csv"
 
 
@@ -76,32 +79,32 @@ def handle_client(conn, addr,child):
             if msg == CHange_Geometry:
 
                 msg = conn.recv(TestLength).decode(FORMAT)
-                msg , Check = Geometry_Check(msg)
+                msg , Check = ConG4.Geometry_Check(msg)
                 if Check:
                     conn.send("Valid".encode(FORMAT))
-                    handle_Geant4Commands(msg,child,False)
+                    ConG4.handle_Geant4Commands(msg,child,False)
                     conn.send("Done".encode(FORMAT))
                 else:
                     conn.send("Invalid".encode(FORMAT)) # What should be done if geometry is invalid? Change to nearest valid geometry and start run?
-                    handle_Geant4Commands(msg,child,False)
+                    ConG4.handle_Geant4Commands(msg,child,False)
                     conn.send("Done".encode(FORMAT))
 
             if msg == Make_Statitic:
 
                 msg = conn.recv(TestLength).decode(FORMAT)
-                msg , Check = Geometry_Check(msg)
+                msg , Check = ConG4.Geometry_Check(msg)
                 if Check:
                     conn.send("Valid".encode(FORMAT))
-                    handle_Geant4Commands(msg,child,True)
+                    ConG4.handle_Geant4Commands(msg,child,True)
                     conn.send("Done".encode(FORMAT))
                 else:
                     conn.send("Invalid".encode(FORMAT)) # What should be done if geometry is invalid? Change to nearest valid geometry and start run?
-                    handle_Geant4Commands(msg,child,True)
+                    ConG4.handle_Geant4Commands(msg,child,True)
                     conn.send("Done".encode(FORMAT))
             
             if msg == CHANGE_GUN:
                 msg = conn.recv(TestLength).decode(FORMAT)
-                Check = Beam_Gun(msg,child)
+                Check = ConG4.Beam_Gun(msg,child)
                 if Check:
                     print("Checht True")
                     conn.send("Valid".encode(FORMAT))
@@ -110,17 +113,10 @@ def handle_client(conn, addr,child):
                     conn.send("Invalid".encode(FORMAT)) 
 
                 #conn.send("Done".encode(FORMAT))
-
-
-
-
-
-
-                
                         
             conn.send("Msg received".encode(FORMAT))
     conn.close()
-    child.sendline("exit")
+    ConG4.Stop_G4(child)
 
     elapsed_time = time.time() - st
     print('Execution time:', elapsed_time, 'seconds')
@@ -134,20 +130,7 @@ def start():
         conn, addr = server.accept()
         print("Start of Geant4")
 
-        print("Spawning CalSG")
-        child = px.spawn('./CalSG')
-        print("return from spawn")
-        child.expect('PreInit> ')
-        print("expect return")
-        child.sendline('/control/execute Run_Beam_v1.mac')
-        print("sent")
-        child.expect('Idle>')
-        print("got Idle>")
-        child.sendline('/run/numberOfThreads 7')
-        print("sent")
-        child.expect('Idle>')
-        print("got Idle>")
-        print("Geant4 is in Idle mode. Commands can be sent.")
+        child = ConG4.Start_G4()
 
         thread = threading.Thread(target=handle_client, args=(conn, addr, child))
         thread.start()
@@ -176,127 +159,6 @@ def Send_File(conn,msg):
             conn.sendall(bytes_read)  
         
     file.close()
-
-def Beam_Gun(textline,child):
-    Check = True
-    
-    AllVal = textline #.split("|") # Split at ";" to get info for each Gun if more than one gun is needed
-    Particle = []
-    Energy = []
-    YPosy = []
-
-    value = AllVal.split(";") # Split at "|" to get command Inf: Particle | Energy (in MeV) | YPosition
-    Particle.append(value[0])
-    Energy.append(value[1])
-    YPosy.append(value[2])
-
-    print("Recieved Particle gun values ",value)
-    for i in range(len(ParticleList)):
-        if Particle[0]==ParticleList[i]:
-            child.sendline("/gun/particle " + Particle[0])
-            print("sent" ,"/gun/particle " + Particle[0] )
-            Particle[0] = "F"
-            break
-    if Particle[0] != "F":
-        Check = False
-        print("Particle: ", Particle[0], " is unknown, e- was used.")
-        child.sendline('/gun/particle e-')
-
-    child.expect('Idle>')
-    print("got Idel>") 
-    
-    if float(Energy[0]) < 0 or float(Energy[0])> 10**6:
-        Energy[0] = "1" # Default energy value if sended energy is <0 or to hige
-        Check = False
-    print("Test")
-    child.sendline("/gun/energy " + Energy[0] + " GeV")
-    child.expect('Idle>')
-    print("got Idel>") 
-    
-    print("Sending new position")
-    child.sendline("/gun/position -30 " + YPosy[0] + " 0")
-    child.expect('Idle>')
-    print("got Idel>") 
-    return Check
-
-
-
-
-
-
-#/////////////////////////////  Geant4 Commands /////////////////////////
-
-def Cpp_Execution(Block,Y,NOL,child):
-    BlockPosition[1][Block] += Y
-    Number_of_Layer[Block] += NOL
-    Text = "/testem/det/setBlock " + str(Block) + " " + str(BlockPosition[0][Block]) + " cm "+ str(BlockPosition[1][Block]) + " cm "+ str(BlockPosition[2][Block]) + " cm " + str(BlockSize[0][Block]) + " cm "+ str(BlockSize[1][Block]) + " cm "+ str(BlockSize[2][Block]) + " cm "+ Material[Block] + " " + str(Number_of_Layer[Block])
-    child.sendline(Text)
-    print("sent" , Text)
-    child.expect('Idle>')
-    print("got Idel> got idel sent") 
-
-    
-
-
-def handle_Geant4Commands(textline,child,NRun):
-    value = textline.split("|") # Split at ";" to get command for each block
-    print(value)
-    for i in range(len(value)):
-        vi = value[i].split(";")
-        dy = float(vi[0])
-        NL = int(vi[1])
-        Cpp_Execution(i,dy,NL,child)
-
-    child.sendline("/run/reinitializeGeometry")
-    print("sent reinitialize Geometrie")
-    child.expect('Idle>')
-    print("got Idel> got idel sent")
-    if NRun:
-        print("Run one event for visualisation data.")
-       # child.sendline('/control/execute Beam_ON_File.mac')
-        child.sendline("/run/beamOn 1")
-        print("sent")
-        child.expect('Idle>')
-        child.sendline("/vis/disable")
-        print("Disabled visualisation")
-        child.expect('Idle>')
-        print("Start N events for statistic.")
-        child.sendline('/control/execute Beam_ON_File_100.mac')
-        #child.sendline("/run/beamOn 100")
-        print("sent")
-        child.expect('Idle>')
-        child.sendline("/vis/enable")
-        print("Enable visualisation")
-    else:
-        #child.sendline('/control/execute Beam_ON_File.mac')
-        child.sendline("/run/beamOn 1")
-        print("sent")
-    child.expect('Idle>')
-    print("got Idel>")
-
-
-def Geometry_Check(textline):
-    value = textline.split("|") # Split at ";" to get command for each block
-    print("Checking New geometry changes from client:",value)
-    CheckC = True
-    for i in range(len(value)):
-        vi = value[i].split(";")
-        dy = float(vi[0])
-        NL = int(vi[1])
-        if ( ((BlockPosition[1][i] + BlockSize[1][i]/2 + dy) > MaxBlockPosition[0]  ) or ( (BlockPosition[1][i] - BlockSize[1][i]/2 + dy) < MaxBlockPosition[1]) ):
-            CheckC = False
-           
-            value[i] = "0;" + str(NL)
-           # break No break, change to 0 change
-            print("ERROR: Something was not in size")
-    returnText = ""
-    for i in range(len(value)):
-        returnText += value[i] + "|"
-
-    return returnText[:-1], CheckC
-
-
-
 
 
 print("[STARTING] server is starting...")

@@ -123,7 +123,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
 
 
 
-  //// New command for Block control  CD, Set the block position, size and material
+  //// New command for Block control  CD, Set the block position, size, material and number of layers
   fBlockCmd = new G4UIcommand("/testem/det/setBlock",this);
   fBlockCmd->SetGuidance("Set the Block Number, the X Position, the Y Position, the Z Position, the X size, the Y size, the Z size, the first material, nb of layer");
   fBlockCmd->SetGuidance(" Block number : from 1 to fNBlock");
@@ -140,7 +140,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
 
   G4UIparameter* BlockNbPrm = new G4UIparameter("BlockNb",'i',false);
   BlockNbPrm->SetGuidance("Block number : from 1 to fNBlocks");
-  BlockNbPrm->SetParameterRange("BlockNb>=0 & BlockNb<6");
+  BlockNbPrm->SetParameterRange("BlockNb>=0 & BlockNb<5");
   fBlockCmd->SetParameter(BlockNbPrm);
 
   G4UIparameter* PosiXPrm = new G4UIparameter("positionx",'d',false);
@@ -194,9 +194,10 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   fBlockCmd->SetParameter(LayerNbPrm);
 
   //
-
   fBlockCmd->SetToBeBroadcasted(false); 
 
+
+  // Command which defines the absorbers per plock
   fAbsorBlockCmd = new G4UIcommand("/testem/det/setAbsorBlock",this);
   fAbsorBlockCmd->SetGuidance("Set the Block nb, the material");
   fAbsorBlockCmd->SetGuidance("  Block number : from 1 to fNBlocks");
@@ -224,7 +225,6 @@ DetectorMessenger::~DetectorMessenger()
   delete fNbLayersCmd;
   delete fNbAbsorCmd;
   delete fAbsorCmd;
-  //delete fBlockCmd;  // CD  Some Problem with this
   delete fAbsorBlockCmd;
   delete fDetDir;  
   delete fTestemDir;
