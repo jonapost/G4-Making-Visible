@@ -1,0 +1,45 @@
+#
+# Macro file for "CalSG.cc" 
+#
+#  5 Block and Calorimeter at the end
+#
+#
+/testem/det/setNbOfLayers 1
+/testem/det/setNbOfAbsor  1
+/testem/det/setAbsor 1 "Galactic" 1 cm
+/testem/det/setSizeY 10 cm
+/testem/det/setSizeZ 10 cm
+#
+/testem/det/setBlock 0 -20 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Scintillator 1 
+/testem/det/setBlock 1 -10 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium  1 
+/testem/det/setBlock 2 0 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Silicon 1 
+/testem/det/setBlock 3 10 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Lead 1 
+/testem/det/setBlock 4 20 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Scintillator 1 
+/testem/det/setAbsorBlock 4  Lead
+
+#/testem/det/update
+
+/process/em/verbose 0
+/process/eLoss/verbose 0
+/event/verbose 0
+/control/verbose 0
+/run/verbose 0
+/tracking/verbose 0  
+
+
+/testem/phys/addPhysics  emstandard_opt1
+/run/setCut 0.5 cm
+
+/run/initialize
+/control/execute vis.mac
+
+
+/gun/particle e+
+/gun/energy 10 GeV 
+
+/run/beamOn 1
+
+
+
+
+

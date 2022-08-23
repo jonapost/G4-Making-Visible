@@ -1,3 +1,8 @@
+#This code was written by Clemens Dittmar. 
+#If you have any questions or problems, please contact Clemens.Dittmar@rwth-aachen.de
+
+#Server for socket communication with client
+
 from multiprocessing import connection
 import socket 
 import threading
@@ -5,30 +10,25 @@ import os, sys
 import pexpect as px 
 import time
 
-
+#import Geant4 control
 import Control_G4_Py as ConG4
 
+# if no print out 
 def blockPrint():
     sys.stdout = open(os.devnull, 'w')
 #blockPrint()
+
+
 ##############################################
-#Define Parameters
+#Data path and name
 ##############################################
-BlockPosition = [[-20,-10,0,10,20],[0,0,0,0,0],[0,0,0,0,0]]
-BlockSize = [[2,2,2,2,1],[20,20,20,20,20],[10,10,10,10,10]]
-Material = ["Scintillator","Aluminium","Silicon","Lead","Scintillator"]
-ParticleList = ["e-","e+","mu-","mu+","geantino","gamma"]
-Number_of_Layer = [0,0,0,0,0] #[1,1,1,1,4]
-
-
-MaxBlockPosition = [ 50, -50 ] # Check what is written in Geant4
-
-FileName_HepRep = '/home/kappe/projects/CERN_SS/Geant_Project/TestEm3_1Block_moveble/build' + "/../Test/" + "TrajectoryData.heprep"
+Path = os.path.abspath(os.getcwd())
+FileName_HepRep = Path + "/../Test/" + "TrajectoryData.heprep"
 FileName_Statistic = "stuff.csv"
 
 
 #/////////////////////////// Server parameter/////////////////////////////////////////
-BUFFER_SIZE = 4096*10 # send 4096 bytes each time step
+BUFFER_SIZE = 4096*10 # send 4096*10 bytes each time step
 TestLength = 4096
 HEADER = 64
 PORT = 5050
@@ -50,6 +50,7 @@ server.bind(ADDR)
 
 
 #////////////////////////////////////// Socket Server Funktions////////////////////////
+# Processes all new commands from the client
 def handle_client(conn, addr,child):
     st = time.time()
     print(f"[NEW CONNECTION] {addr} connected.")
@@ -85,7 +86,7 @@ def handle_client(conn, addr,child):
                     ConG4.handle_Geant4Commands(msg,child,False)
                     conn.send("Done".encode(FORMAT))
                 else:
-                    conn.send("Invalid".encode(FORMAT)) # What should be done if geometry is invalid? Change to nearest valid geometry and start run?
+                    conn.send("Invalid".encode(FORMAT)) 
                     ConG4.handle_Geant4Commands(msg,child,False)
                     conn.send("Done".encode(FORMAT))
 
@@ -98,7 +99,7 @@ def handle_client(conn, addr,child):
                     ConG4.handle_Geant4Commands(msg,child,True)
                     conn.send("Done".encode(FORMAT))
                 else:
-                    conn.send("Invalid".encode(FORMAT)) # What should be done if geometry is invalid? Change to nearest valid geometry and start run?
+                    conn.send("Invalid".encode(FORMAT)) 
                     ConG4.handle_Geant4Commands(msg,child,True)
                     conn.send("Done".encode(FORMAT))
             
@@ -106,11 +107,11 @@ def handle_client(conn, addr,child):
                 msg = conn.recv(TestLength).decode(FORMAT)
                 Check = ConG4.Beam_Gun(msg,child)
                 if Check:
-                    print("Checht True")
                     conn.send("Valid".encode(FORMAT))
+                    print("Checht True")
                 else:
-                    print("Check False")
                     conn.send("Invalid".encode(FORMAT)) 
+                    print("Check False")
 
                 #conn.send("Done".encode(FORMAT))
                         
@@ -121,6 +122,9 @@ def handle_client(conn, addr,child):
     elapsed_time = time.time() - st
     print('Execution time:', elapsed_time, 'seconds')
 
+
+#//////////////////////////////////////////////////////
+#Starts server and waits for client connections
 
 def start():
     server.listen()
@@ -138,6 +142,9 @@ def start():
         print("Working")
      
         
+#/////////////////////////////////////////////////////
+#Sends data files to client if called
+#at the end of transmission a "Stop" is send. This is a bit tinkered and should be improved.
 def Send_File(conn,msg):
     if msg == Send_New_Data:
         filename = FileName_HepRep
