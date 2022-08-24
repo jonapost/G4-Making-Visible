@@ -34,7 +34,11 @@
 /control/execute vis.mac
 
 
+<<<<<<< HEAD
 /gun/particle e+
+=======
+/gun/particle e-
+>>>>>>> f273c6b8e4d43c57b3056e15f0c38fdba903586f
 /gun/energy 10 GeV 
 
 /run/beamOn 1
