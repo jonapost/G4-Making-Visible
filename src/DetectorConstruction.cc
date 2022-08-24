@@ -50,6 +50,8 @@
 #include "G4UnitsTable.hh"
 #include "G4PhysicalConstants.hh"
 
+
+#include "SensitiveBlock.hh"  //CD
 #include <iomanip>
 #include <list>
 
@@ -60,7 +62,7 @@ DetectorConstruction::DetectorConstruction()
   fWorldMaterial(nullptr),fSolidWorld(nullptr),fLogicWorld(nullptr),
   fPhysiWorld(nullptr),fSolidCalor(nullptr),fLogicCalor(nullptr),
   fPhysiCalor(nullptr),fSolidLayer(nullptr),fLogicLayer(nullptr),
-  fPhysiLayer(nullptr)
+  fPhysiLayer(nullptr) 
 {
   for(G4int i=0; i<kMaxAbsor; ++i) { 
     fAbsorMaterial[i] = nullptr; 
@@ -69,8 +71,8 @@ DetectorConstruction::DetectorConstruction()
     fLogicAbsor[i] = nullptr;
     fPhysiAbsor[i] = nullptr;
   } 
- G4cout << "\n----------------------------------H!!!!!---------------------------";
-  for(G4int i=0; i<fNBlocks; ++i) { // CD  Default Parameter fot the blocks
+ G4cout << "\n-------------------------------------------------------------";
+  for(G4int i=0; i<fNBlocks; ++i) { // CD  Default Parameter for block size, position, number of layer
     fBlockMaterial[i][0] = nullptr; 
     fBlockMaterial[i][1] = nullptr; 
     fBlockSize[i][0] = 0.0*mm;
@@ -81,7 +83,6 @@ DetectorConstruction::DetectorConstruction()
     fBlockPosi[i][2] = 0.0*cm;
     
     fNbOfBlockLayers[i] = 1;
-    IfBlockAktiv[i] = 0;
     fBlockCalo[i] = false;
 
     fSolidBlockPosition[i] = nullptr;
@@ -92,11 +93,11 @@ DetectorConstruction::DetectorConstruction()
     fLogicBlockLayer[i] = nullptr;
     fPhysiBlockLayer[i] = nullptr;
 
-    fSolidBlock[i] = nullptr;
-    fLogicBlock[i][0] = nullptr;
-    fPhysiBlock[i][0] = nullptr;
-    fLogicBlock[i][1] = nullptr;
-    fPhysiBlock[i][1] = nullptr;
+    fSolidBlockAbsor[i] = nullptr;
+    fLogicBlockAbsor[i] = nullptr;
+    fPhysiBlockAbsor[i] = nullptr;
+
+
   }
    
 
@@ -105,13 +106,10 @@ DetectorConstruction::DetectorConstruction()
   fAbsorThickness[1] = 2.3*mm;
   fAbsorThickness[2] = 5.7*mm;
   fNbOfLayers        = 50;
-  ///fNCalorSizeZ      = []
-  fCalorSizeY       = 40.*cm;
-  fCalorSizeZ       = 40.*cm;
+
+  fCalorSizeY       = 10.*cm;   
+  fCalorSizeZ       = 25.*cm;
   ComputeCalorParameters();
-  
-  SetBlockPosition(1,40*cm,0,0);
-  SetBlockSize(1,1*cm,1*cm,1*cm);
   
 
   // materials
@@ -119,11 +117,6 @@ DetectorConstruction::DetectorConstruction()
   SetWorldMaterial("Galactic");
   SetAbsorMaterial(1,"Galactic");
   SetAbsorMaterial(2,"Galactic");
-
-  SetBlockMaterial(1, "G4_lAr");
-
-  // Blocck Material
-  //SetBlockMaterial(1,"G4_lAr");   // CD
 
   // create commands for interactive definition of the calorimeter
   fDetectorMessenger = new DetectorMessenger(this);
@@ -134,6 +127,7 @@ DetectorConstruction::DetectorConstruction()
 DetectorConstruction::~DetectorConstruction()
 {
   delete fDetectorMessenger;
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -334,9 +328,13 @@ void DetectorConstruction::ComputeCalorParameters()
   for (G4int iAbs=1; iAbs<=fNbOfAbsor; iAbs++) {
     fLayerThickness += fAbsorThickness[iAbs];
   }
-  fCalorThickness = fNbOfLayers*fLayerThickness;     
-  fWorldSizeX = 98*cm; //1.2*fCalorThickness + 100*cm;  Set fix World length 
-  fWorldSizeYZ = 1.0*fCalorSizeY*cm;  // CD  Set World size. 
+  fCalorThickness = fNbOfLayers*fLayerThickness;    
+
+  fWorldSizeX = 98*cm;
+  if ( abs(fBlockPosi[0][0]) > fWorldSizeX/2){ fWorldSizeX = (abs(fBlockPosi[0][0])/2 + 10 )*cm; }
+  if ( abs(fBlockPosi[4][0]) > fWorldSizeX/2){ fWorldSizeX = (abs(fBlockPosi[4][0])/2 + 10 )*cm; }
+   //1.2*fCalorThickness + 100*cm;  Set fix World length 
+  fWorldSizeYZ = fCalorSizeY*cm;  // CD  Set World size. 
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -423,8 +421,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     G4double xfront = -0.5*fLayerThickness;
     for (G4int k=1; k<=fNbOfAbsor; ++k) {
       fSolidAbsor[k] = new G4Box("Absorber",                //its name
-                        // fAbsorThickness[k]/2,fCalorSizeY/2,fCalorSizeZ/2);
-                          fAbsorThickness[k]/2,fWorldSizeYZ/2,fWorldSizeYZ/2);
+                        fAbsorThickness[k]/2,fWorldSizeYZ/2,fWorldSizeYZ/2);
 
       fLogicAbsor[k] = new G4LogicalVolume(fSolidAbsor[k],    //its solid
                                           fAbsorMaterial[k], //its material
@@ -446,79 +443,34 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   //
   // Block  // CD
+  // This is where the definition of the block geometry begins. 
   //
   
   G4LogicalVolume *blockMotherLogical = fLogicWorld;
 
-  for (G4int k=0; k<fNBlocks; ++k) {
+  for (G4int k=0; k<fNBlocks; ++k) {  
     if(fPhysiBlockPosition[k]){
-
-      
       // delete this volume from its Mother, WorldVolume
-      //fLogicBlockLayer[k]->RemoveDaughter(fPhysiBlock[k][0]);
-      //fLogicBlockLayer[k]->RemoveDaughter(fPhysiBlock[k][1]);
-      //fLogicBlockPosition[k]->RemoveDaughter(fPhysiBlockLayer[k]);
-      blockMotherLogical->RemoveDaughter(fPhysiBlockPosition[k]);
+    blockMotherLogical->RemoveDaughter(fPhysiBlockPosition[k]); // If the geometry is reinitialised, the old one must be deleted first.
     G4cout << "Deleting and initial Geometrie" << G4endl;
-
-      delete fSolidBlock[k];
-      delete fLogicBlock[k][0];
-      delete fLogicBlock[k][1];
-      
-      delete fPhysiBlock[k][0];
-      delete fPhysiBlock[k][1];
-
-      delete fSolidBlockLayer[k];
-      delete fLogicBlockLayer[k];
-      delete fPhysiBlockLayer[k];
-
-      delete fSolidBlockPosition[k];
-      delete fLogicBlockPosition[k];
-      delete fPhysiBlockPosition[k];
-
-      fSolidBlock[k] = nullptr;
-      fLogicBlock[k][0] = nullptr;
-      fPhysiBlock[k][0] = nullptr;
-
-      fLogicBlock[k][1] = nullptr;
-      fPhysiBlock[k][1] = nullptr;
-
-      fSolidBlockPosition[k] = nullptr;
-      fLogicBlockPosition[k] = nullptr;
-      fPhysiBlockPosition[k] = nullptr;
-
-      fSolidBlockLayer[k] = nullptr;
-      fLogicBlockLayer[k] = nullptr;
-      fPhysiBlockLayer[k] = nullptr;
     }
   }
 
+
   for (G4int k=0; k<fNBlocks; ++k) {
-    G4cout << k << IfBlockAktiv[k]  <<G4endl;
-    //G4cout << fBlockSizeX[k] << G4endl;
-    //G4cout << fBlockMaterial[k] << G4endl;
-  //  G4cout << fBlockPosiX[k] << G4endl;
-   // getchar();
-    if (IfBlockAktiv[k]==1){
-    //getchar();
-      G4cout << IfBlockAktiv[k]   <<G4endl;
-      G4cout << fBlockSize[k] << G4endl;
-      G4cout << fBlockMaterial[k][0] << G4endl;
-      G4cout << fBlockPosi[k] << G4endl;
+      // #### BlockPosition defines the position of the blocks 
+      
+      G4double BB_xsize = fBlockSize[k][0] * fNbOfBlockLayers[k] ;
 
-     /// if (fNbOfBlockLayers[k] > 1) {
+      if(fBlockCalo[k]){BB_xsize = fBlockSize[k][0] * fNbOfBlockLayers[k]*2;}
 
-        // #### weher to place the block
-        G4int BB_xsize = fBlockSize[k][0]/2 * fNbOfBlockLayers[k] ;
-
+      if (fNbOfBlockLayers[k] > 0) {
         fSolidBlockPosition[k] = new G4Box("BlockPosition",                //its name
-                          BB_xsize,fBlockSize[k][1]/2,fBlockSize[k][2]/2);
+                          BB_xsize*0.5,fBlockSize[k][1]/2,fBlockSize[k][2]/2);
 
         fLogicBlockPosition[k] = new G4LogicalVolume(fSolidBlockPosition[k],    //its solid
                                           fWorldMaterial,
                                           fWorldMaterial->GetName());
-                                         // fBlockMaterial[k], //its material
-                                         // fBlockMaterial[k]->GetName());
 
         fPhysiBlockPosition[k] = new G4PVPlacement(0,              
                             G4ThreeVector(fBlockPosi[k][0],fBlockPosi[k][1],fBlockPosi[k][2]),
@@ -527,109 +479,62 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                             fLogicWorld,                 
                             false,                      
                             0); 
+      }
 
-        // ###### making copies of an block
-        
-        fSolidBlockLayer[k] = new G4Box("BlockLayer",fBlockSize[k][0]/2,fBlockSize[k][1]/2,fBlockSize[k][2]/2);                             
-                       
+    //BlockLayer is the actual block, placed in BlockPoition
 
-        fLogicBlockLayer[k] = new G4LogicalVolume(fSolidBlockLayer[k],      
-                                       fWorldMaterial,
-                                      "BlockLayer");              
+    G4double BlockLayerThickness = fBlockSize[k][0];
+    if (fBlockCalo[k]) {BlockLayerThickness = fBlockSize[k][0]*2;}
 
-        if (fNbOfBlockLayers[k] > 1) {
-          fPhysiBlockLayer[k] = new G4PVReplica("Layer",              
-                                        fLogicBlockLayer[k],     
-                                        fLogicBlockPosition[k],      
-                                        kXAxis,              
-                                        fNbOfBlockLayers[k],            
-                                        fBlockSize[k][0]);    
-        }else{
-          fPhysiBlockLayer[k] = new G4PVPlacement(0,              
-                    G4ThreeVector(0,0,0),
-                    fLogicBlockLayer[k],               
-                    fWorldMaterial->GetName(),
-                    fLogicBlockPosition[k],                 
-                    false,                      
-                    0);    
-        }
+    fSolidBlockLayer[k] = new G4Box("BlockLayer",                               
+                              BlockLayerThickness*0.5,fBlockSize[k][1]/2,fBlockSize[k][2]/2);
+                            
 
-
-
-
-
-    
-        // Place absorber in the Block
-        G4double BlockS = fBlockSize[k][0]/2;
-        G4double BlockP = 0;
-        if (fBlockCalo[k]){BlockS = fBlockSize[k][0]/4;
-                          BlockP = fBlockSize[k][0]/4;}
-
-        fSolidBlock[k] = new G4Box("Block",                //its name   onlie 1D array
-                          BlockS,fBlockSize[k][1]/2,fBlockSize[k][2]/2);
-
-        fLogicBlock[k][0] = new G4LogicalVolume(fSolidBlock[k],    //its solid   2D array, first layer is the absorber, second the Colorimeter Block
-                                    
-                                          fBlockMaterial[k][0], //its material
-                                          fBlockMaterial[k][0]->GetName());
-        fPhysiBlock[k][0] = new G4PVPlacement(0,              
-                            G4ThreeVector(BlockP,0,0),
-                            fLogicBlock[k][0],               
-                            fBlockMaterial[k][0]->GetName(),
-                            fLogicBlockLayer[k],                 
-                            false,                      
-                            0);  
-        /// Place Calorimeter Block in the Block
-        
-        if(fBlockCalo[k]){
-          fLogicBlock[k][1] = new G4LogicalVolume(fSolidBlock[k],    //its solid   2D array, first layer is the absorber, second the Colorimeter Block
-                                            fBlockMaterial[k][1], //its material
-                                            fBlockMaterial[k][1]->GetName());
-          fPhysiBlock[k][1] = new G4PVPlacement(0,              
-                              G4ThreeVector(-fBlockSize[k][0]/4,0,0),
-                              fLogicBlock[k][1],               
-                              fBlockMaterial[k][1]->GetName(),
-                              fLogicBlockLayer[k],                 
-                              false,                      
-                              0);  
-        }
-
-
-
-
-
-
-      /*}else{
-
-        fSolidBlock[k] = new G4Box("Block",                //its name
-                          fBlockSize[k][0]/2,fBlockSize[k][1]/2,fBlockSize[k][2]/2);
-
-        fLogicBlock[k][0] = new G4LogicalVolume(fSolidBlock[k],    //its solid
-                                        //  fWorldMaterial,
-                                         // fWorldMaterial->GetName());
-                                          fBlockMaterial[k][0], //its material
-                                          fBlockMaterial[k][0]->GetName());
-        fPhysiBlock[k][0] = new G4PVPlacement(0,              
-                            G4ThreeVector(fBlockPosi[k][0],fBlockPosi[k][1],fBlockPosi[k][2]),
-                            fLogicBlock[k][0],               
-                            fBlockMaterial[k][0]->GetName(),
-                            fLogicWorld,                 
-                            false,                      
-                            0);    
-                                                      //copy number
-      }*/
-      
+    fLogicBlockLayer[k] = new G4LogicalVolume(fSolidBlockLayer[k],      
+                                      fBlockMaterial[k][0], 
+                                      fBlockMaterial[k][0]->GetName() + "_Detector_" + std::to_string(k));              
+    if (fNbOfBlockLayers[k] > 1) {
+      fPhysiBlockLayer[k] = new G4PVReplica("BlockLayer",              
+                                    fLogicBlockLayer[k],     
+                                    fLogicBlockPosition[k],      
+                                    kXAxis,              
+                                    fNbOfBlockLayers[k],            
+                                    BlockLayerThickness);     
+    } if (fNbOfBlockLayers[k] == 1) {
+      fPhysiBlockLayer[k] = new G4PVPlacement(0,                   
+                                    G4ThreeVector(),     
+                                    fLogicBlockLayer[k],           
+                                    fBlockMaterial[k][0]->GetName() + "_Detector_" + std::to_string(k), //#std::to_string(k),             
+                                    fLogicBlockPosition[k],         
+                                    false,             
+                                    0);                    
     }
+    //
+    // Absorbers
+    //Absorber block which is placed in front of the block in block position.
+    //
+    
+    if(fBlockCalo[k] &&  (fNbOfBlockLayers[k] > 0) ){
+      G4double xAbcenter = -0.5*fBlockSize[k][0];
+  
+      fSolidBlockAbsor[k] = new G4Box("AbsorberBlock",                //its name
+            fBlockSize[k][0]/2,fBlockSize[k][1]/2,fBlockSize[k][2]/2);
 
 
+      fLogicBlockAbsor[k] = new G4LogicalVolume(fSolidBlockAbsor[k],    //its solid
+                                          fBlockMaterial[k][1], //its material
+                                          fBlockMaterial[k][1]->GetName());
+      fPhysiBlockAbsor[k] = new G4PVPlacement(0,              
+                          G4ThreeVector(xAbcenter,0.,0),
+                          fLogicBlockAbsor[k],               
+                          fBlockMaterial[k][1]->GetName(),
+                          fLogicBlockLayer[k],                  
+                          false,                      
+                          0);                                //copy number
+     
+    }
   }
 
-  G4cout << "Plotting is done so fare" << G4endl;
-  
- // getchar();
-
-
- 
 
   //always return the fPhysical World
   //
@@ -690,10 +595,10 @@ void DetectorConstruction::SetBlockAbsorMaterial(G4int ival,
       if (pttoMaterial) {
         fBlockMaterial[ival][1] = pttoMaterial;
         G4cout << pttoMaterial << G4endl;
-     //#   if(fLogicBlock[ival][1]) {
-     //#     fLogicBlock[ival][1]->SetMaterial(pttoMaterial);
-     //#     G4RunManager::GetRunManager()->PhysicsHasBeenModified();    
-     //   }
+        if(fLogicBlockAbsor[ival]) {
+          fLogicBlockAbsor[ival]->SetMaterial(pttoMaterial);
+          G4RunManager::GetRunManager()->PhysicsHasBeenModified();    
+        }
        fBlockCalo[ival] = true;
       }
       
@@ -716,8 +621,8 @@ void DetectorConstruction::SetBlockMaterial(G4int ival,
     if (pttoMaterial) {
       fBlockMaterial[ival][0] = pttoMaterial;
       G4cout << pttoMaterial << G4endl;
-      if(fLogicBlock[ival][0]) {
-        fLogicBlock[ival][0]->SetMaterial(pttoMaterial);
+      if(fLogicBlockLayer[ival]) {
+        fLogicBlockLayer[ival]->SetMaterial(pttoMaterial);
         G4RunManager::GetRunManager()->PhysicsHasBeenModified();    
       }
     }
@@ -756,17 +661,18 @@ void DetectorConstruction::SetBlockSize(G4int ival, G4double valx, G4double valy
 {
   // change the Size   CD
   //
-  if (valx <= DBL_MIN)
+  G4double minSize = 0.0;
+  if (valx < minSize)
     { G4cout << "\n --->warning from SetfBlockSize : Size X "
              << valx  << " out of range. Command refused" << G4endl;
       return;
     }
-  if (valy <= DBL_MIN)
+  if (valy < minSize)
     { G4cout << "\n --->warning from SetfBlockSize : Size Y  "
              << valy  << " out of range. Command refused" << G4endl;
       return;
     }
-  if (valz <= DBL_MIN)
+  if (valz < minSize)
     { G4cout << "\n --->warning from SetfBlockSize : Size Z  "
              << valz  << " out of range. Command refused" << G4endl;
       return;
@@ -776,21 +682,7 @@ void DetectorConstruction::SetBlockSize(G4int ival, G4double valx, G4double valy
   fBlockSize[ival][2] = valz;
 }
 
-void DetectorConstruction::SetBlockAktiv(G4int ival, G4double valx)
-{
-  // set Block aktiv
-  //
-  if (ival < 0  && ival >fNBlocks)
-    { G4cout << "\n --->warning from SetBlockAktiv: "
-             << ival << " must be at least 1. Command refused" << G4endl;
-      return;
-    }
-  if (valx)
-    {IfBlockAktiv[ival] = 1;
-     G4cout << "\n ---> Parameters were given for one Block : Size X  "
-             << valx  << IfBlockAktiv[ival] << G4endl;
-  }
-}
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -798,9 +690,9 @@ void DetectorConstruction::SetNbOfBlockLayers(G4int iNB, G4int ival)
 {
   // set the number of Block Layers
   //
-  if (ival < 1)
+  if (ival < 0)
     { G4cout << "\n --->warning from SetfNbOfBlockLayers: "
-             << ival << "from Block "<< iNB << " must be at least 1. Command refused" << G4endl;
+             << ival << "from Block "<< iNB << " must be at least 0. Command refused" << G4endl;
       return;
     }
   fNbOfBlockLayers[iNB] = ival;
@@ -908,6 +800,7 @@ void DetectorConstruction::SetCalorSizeZ(G4double val)
 
 #include "G4GlobalMagFieldMessenger.hh"
 #include "G4AutoDelete.hh"
+#include "G4SDManager.hh"
 
 void DetectorConstruction::ConstructSDandField()
 {
@@ -922,6 +815,51 @@ void DetectorConstruction::ConstructSDandField()
     G4AutoDelete::Register(msg);
     fFieldMessenger.Put( msg );        
   }
+  
+
+  G4SDManager* SDManager = G4SDManager::GetSDMpointer();
+
+//Here the blocks are defined as Sensitive Detectors.
+
+  if(fLogicBlockLayer[0] != nullptr){
+    SensitiveBlock *sensDet1 = new SensitiveBlock(fNbOfBlockLayers[0],"SensitiveBlock_1","HitsCollectionB1"); //CD
+    SDManager ->AddNewDetector(sensDet1);
+    fLogicBlockLayer[0]->SetSensitiveDetector(sensDet1);
+    G4cout<< "Block 1 is a SensetiveDetector"<<G4endl;
+  }
+
+  if(fLogicBlockLayer[1] != nullptr){
+    SensitiveBlock *sensDet2 = new SensitiveBlock(fNbOfBlockLayers[1],"SensitiveBlock_2","HitsCollectionB2"); //CD
+    SDManager ->AddNewDetector(sensDet2);
+    fLogicBlockLayer[1]->SetSensitiveDetector(sensDet2);
+    G4cout<< "Block 2 is a SensetiveDetector"<<G4endl;
+  }
+
+    if(fLogicBlockLayer[2] != nullptr){
+    SensitiveBlock *sensDet2 = new SensitiveBlock(fNbOfBlockLayers[2],"SensitiveBlock_3","HitsCollectionB3"); //CD
+    SDManager ->AddNewDetector(sensDet2);
+    fLogicBlockLayer[2]->SetSensitiveDetector(sensDet2);
+    G4cout<< "Block 3 is a SensetiveDetector"<<G4endl;
+  }
+
+    if(fLogicBlockLayer[3] != nullptr){
+    SensitiveBlock *sensDet2 = new SensitiveBlock(fNbOfBlockLayers[3],"SensitiveBlock_4","HitsCollectionB4"); //CD
+    SDManager ->AddNewDetector(sensDet2);
+    fLogicBlockLayer[3]->SetSensitiveDetector(sensDet2);
+    G4cout<< "Block 4 is a SensetiveDetector"<<G4endl;
+  }
+
+    if(fLogicBlockLayer[4] != nullptr){
+    SensitiveBlock *sensDet2 = new SensitiveBlock(fNbOfBlockLayers[4],"SensitiveBlock_5","HitsCollectionB5"); //CD
+    SDManager ->AddNewDetector(sensDet2);
+    fLogicBlockLayer[4]->SetSensitiveDetector(sensDet2);
+    G4cout<< "Block 5 is a SensetiveDetector"<<G4endl;
+  }
+  
+  
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+

@@ -10,14 +10,18 @@
 
 
 # Use this open statement to create an OpenGL view:
-#/vis/open OGL 600x600-0+0
+/vis/open OGL 600x600-0+0
 
 # Use this open statement to create a .heprep file suitable for
 # viewing in HepRApp:
-/vis/open HepRepFile
+#/vis/open HepRepFile
 
-/vis/heprep/setFileDir Test
-/vis/heprep/appendGeometry false
+/vis/heprep/setOverwrite True
+/vis/heprep/setCullInvisibles False
+
+/vis/heprep/setFileName TrajectoryData
+/vis/heprep/setFileDir ../Test/
+
 
 # Disable auto refresh and quieten vis messages whilst scene and
 # trajectories are established:
@@ -60,6 +64,6 @@
 /vis/viewer/refresh
 
 # To superimpose all of the events from a given run:
-/vis/scene/endOfEventAction accumulate 1
+/vis/scene/endOfEventAction accumulate 
 
 

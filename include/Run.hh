@@ -79,7 +79,10 @@ class Run : public G4Run
     std::vector<G4double> fEnergyFlow;
     std::vector<G4double> fLateralEleak;
     std::vector<G4double> fEnergyDeposit[kMaxAbsor];
-    
+
+    std::vector<G4double> fEnergyDepositBlock[fNBlocks];  //CD
+    std::vector<G4double> eDep[fNBlocks];  //CD
+
     G4double fChargedStep;
     G4double fNeutralStep;
 

@@ -38,6 +38,36 @@
 #include "G4RunManager.hh"
 #include "G4Event.hh"
 
+#include "G4VHit.hh"
+#include "G4Allocator.hh"
+#include "G4THitsCollection.hh"
+#include "SensitiveBlockHit.hh"
+#include "SensitiveBlockHit.hh"
+#include "G4SDManager.hh"
+// Utility function which finds a hit collection with the given Id
+// and print warnings if not found
+SensitiveBlockHitCollection* GetHC(const G4Event* event, G4int collId) {
+  auto HCE = event->GetHCofThisEvent();
+  if (!HCE) {
+      G4ExceptionDescription msg;
+      msg << "No hits collection of this event found." << G4endl;
+      G4Exception("EventAction::EndOfEventAction()",
+                  "Code001", JustWarning, msg);
+      return nullptr;
+  }
+
+  auto hitsCollection = HCE->GetHC(collId);
+  if ( ! hitsCollection) {
+    G4ExceptionDescription msg;
+    msg << "Hits collection " << collId << " of this event not found." << G4endl;
+    G4Exception("EventAction::EndOfEventAction()",
+                "Code001", JustWarning, msg);
+  }
+  return static_cast<SensitiveBlockHitCollection*>(hitsCollection);
+
+}
+
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 EventAction::EventAction(DetectorConstruction* det)
@@ -52,17 +82,30 @@ EventAction::~EventAction()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void EventAction::BeginOfEventAction(const G4Event*)
-{       
+{    
+
+  G4SDManager* sdManager = G4SDManager::GetSDMpointer();
   //initialize EnergyDeposit per event
   //
   for (G4int k=0; k<kMaxAbsor; k++) {
     fEnergyDeposit[k] = fTrackLengthCh[k] = 0.0;   
   }
+
+  //initialize EnergyDeposit per event for each block  CD
+  for (G4int k=0; k<fNBlocks; k++) {
+    fEnergyDepositBlock[k] = 0.0;  
+    fCalHCID[k]   = sdManager->GetCollectionID("HitsCollectionB" + std::to_string(k+1));
+    G4cout << " HitCollection ID for " << "HitsCollectionB" <<  std::to_string(k+1) << " is: " << fCalHCID[k] <<G4endl;
+  }
+
+
+
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void EventAction::EndOfEventAction(const G4Event*)
+void EventAction::EndOfEventAction(const G4Event*event)
 {
   //get Run
   Run* run = static_cast<Run*>(
@@ -73,6 +116,38 @@ void EventAction::EndOfEventAction(const G4Event*)
      if (fEnergyDeposit[k] > 0.)
              G4AnalysisManager::Instance()->FillH1(k, fEnergyDeposit[k]);
   }
+
+  G4double energy = 0.;
+
+  for (G4int i = 0; i<fNBlocks; i++){
+      auto hitsCollection = GetHC(event, fCalHCID[i]);
+      if ( ! hitsCollection ) continue;
+
+      
+      if (hitsCollection) {
+      for (G4int j = 0; j < hitsCollection->GetSize(); ++j) {
+
+        auto hit = static_cast<SensitiveBlockHit*>(hitsCollection->GetHit(j));
+        energy = hit->GetEdep();
+        G4cout << i << " Value from Hit collection " << energy << G4endl;
+        SumEnergyPerBlock(i,energy);   
+      }
+    }
+  }
+  
+    #ifdef G4MULTITHREADED
+    static G4Mutex stuffMutex = G4MUTEX_INITIALIZER;
+    G4AutoLock al(&stuffMutex);
+    #endif
+    static std::ofstream stuff("stuff.csv");
+    static bool first = true;
+    if (first) {
+    first = false;
+    stuff << "#,eDep [MeV],  Block 1,  Block 2,  Block 3,  Block 4, Block 5" << std::endl;
+    }
+    G4cout<<"Saving energy depo to csv file."<<G4endl;
+    stuff << fEnergyDepositBlock[0] << ",  "<< fEnergyDepositBlock[1] << ",  "<< fEnergyDepositBlock[2] << ",  "<< fEnergyDepositBlock[3] << ",  "<< fEnergyDepositBlock[4] << std::endl;
+    
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

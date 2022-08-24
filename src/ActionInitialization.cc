@@ -67,9 +67,10 @@ void ActionInitialization::Build() const
   EventAction* event = new EventAction(fDetector);
   SetUserAction(event);
 
-  SetUserAction(new TrackingAction(fDetector));
+  //SetUserAction(new TrackingAction(fDetector));  // Switched off because there were problems with the new 
+                                                    // geometry. When it is turned on, CalSG crashes at certain 
+  //SetUserAction(new SteppingAction(fDetector,event)); //numbers of block layers.
 
-  SetUserAction(new SteppingAction(fDetector,event));
 }  
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -123,7 +123,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
 
 
 
-  //// New command for Block control  CD, Set the block position, size and material
+  //// New command for Block control  CD, Set the block position, size, material and number of layers
   fBlockCmd = new G4UIcommand("/testem/det/setBlock",this);
   fBlockCmd->SetGuidance("Set the Block Number, the X Position, the Y Position, the Z Position, the X size, the Y size, the Z size, the first material, nb of layer");
   fBlockCmd->SetGuidance(" Block number : from 1 to fNBlock");
@@ -140,7 +140,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
 
   G4UIparameter* BlockNbPrm = new G4UIparameter("BlockNb",'i',false);
   BlockNbPrm->SetGuidance("Block number : from 1 to fNBlocks");
-  BlockNbPrm->SetParameterRange("BlockNb>=0 & BlockNb<6");
+  BlockNbPrm->SetParameterRange("BlockNb>=0 & BlockNb<5");
   fBlockCmd->SetParameter(BlockNbPrm);
 
   G4UIparameter* PosiXPrm = new G4UIparameter("positionx",'d',false);
@@ -168,19 +168,19 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
 
   G4UIparameter* SizeXPrm = new G4UIparameter("sizex",'d',false);
   SizeXPrm->SetGuidance("Block X size");
-  SizeXPrm->SetParameterRange("sizex>-100. & sizex<100");
+  SizeXPrm->SetParameterRange("sizex>0.0 & sizex<100");
   fBlockCmd->SetParameter(SizeXPrm);
   fBlockCmd->SetParameter(unitBPrm);
 
   G4UIparameter* SizeYPrm = new G4UIparameter("sizey",'d',false);
   SizeYPrm->SetGuidance("Block Y size");
-  SizeYPrm->SetParameterRange("sizey>-100. & sizey<100");
+  SizeYPrm->SetParameterRange("sizey>0.0 & sizey<100");
   fBlockCmd->SetParameter(SizeYPrm);
   fBlockCmd->SetParameter(unitBPrm);
 
   G4UIparameter* SizeZPrm = new G4UIparameter("sizez",'d',false);
   SizeZPrm->SetGuidance("Block Z size");
-  SizeZPrm->SetParameterRange("sizez>-100. & sizez<100");
+  SizeZPrm->SetParameterRange("sizez>0.0 & sizez<100");
   fBlockCmd->SetParameter(SizeZPrm);
   fBlockCmd->SetParameter(unitBPrm);
 
@@ -190,13 +190,14 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
 
   G4UIparameter* LayerNbPrm = new G4UIparameter("LayerNb",'i',false);
   LayerNbPrm->SetGuidance("layer number : from 1 to 10");
-  LayerNbPrm->SetParameterRange("LayerNb>0 & LayerNb<11");
+  LayerNbPrm->SetParameterRange("LayerNb>=0 & LayerNb<11");
   fBlockCmd->SetParameter(LayerNbPrm);
 
   //
-
   fBlockCmd->SetToBeBroadcasted(false); 
 
+
+  // Command which defines the absorbers per plock
   fAbsorBlockCmd = new G4UIcommand("/testem/det/setAbsorBlock",this);
   fAbsorBlockCmd->SetGuidance("Set the Block nb, the material");
   fAbsorBlockCmd->SetGuidance("  Block number : from 1 to fNBlocks");
@@ -218,12 +219,12 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
 
 DetectorMessenger::~DetectorMessenger()
 {
+  
   delete fSizeZCmd;
   delete fSizeYCmd;
   delete fNbLayersCmd;
   delete fNbAbsorCmd;
   delete fAbsorCmd;
-  //delete fBlockCmd;  // CD  Some Problem with this
   delete fAbsorBlockCmd;
   delete fDetDir;  
   delete fTestemDir;
@@ -285,7 +286,6 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
      fDetector->SetBlockMaterial (num,material);
      fDetector->SetBlockPosition (num,Px,Py,Pz);
      fDetector->SetBlockSize (num,Sx,Sy,Sz);
-     fDetector->SetBlockAktiv (num,Sx);
      fDetector->SetNbOfBlockLayers (num,Nl);
      
 
