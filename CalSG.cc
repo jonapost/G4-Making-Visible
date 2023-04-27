@@ -91,16 +91,18 @@ int main(int argc,char** argv) {
   //get the pointer to the User Interface manager
   G4UImanager* UImanager = G4UImanager::GetUIpointer();
 
- 
-
-  if (ui)  {
+  if (ui)  
+  {
     //interactive mode
     visManager = new G4VisExecutive();
     visManager->Initialize();
     ui->SessionStart();
     delete ui;
 
-  }if( strcmp(argv[1], "Loop") == 0) {
+  }
+
+  if( strcmp(argv[1], "Loop") == 0) 
+  {
     // Loop changing mode for interaktive test
       visManager = new G4VisExecutive();  
       visManager->Initialize();
@@ -115,8 +117,10 @@ int main(int argc,char** argv) {
         UImanager->ApplyCommand(command+fileName);
        // sleep(1);
 
-        }
-  } else {
+      }
+  } 
+  else 
+  {
     //batch mode
       visManager = new G4VisExecutive();  
       visManager->Initialize();
@@ -126,7 +130,9 @@ int main(int argc,char** argv) {
       
       UImanager->ApplyCommand(command+fileName);
   }
-getchar();
+
+  // G4cout << "Press Return to exit." << G4endl;
+  // getchar();
 
   //job termination
   delete visManager;

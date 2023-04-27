@@ -39,8 +39,6 @@ void SensitiveBlock::Initialize(G4HCofThisEvent* HCE)
 G4bool SensitiveBlock::ProcessHits(G4Step *aStep, G4TouchableHistory *R0hist)
 {
 
-
- 
     // collect energy deposited in this step
     const G4VTouchable *touchable = aStep->GetPreStepPoint()->GetTouchable();
     G4VPhysicalVolume *physVol = touchable->GetVolume();
@@ -49,14 +47,13 @@ G4bool SensitiveBlock::ProcessHits(G4Step *aStep, G4TouchableHistory *R0hist)
     G4int CopyNV = physVol->GetCopyNo();
 
     G4double EDep = aStep->GetTotalEnergyDeposit();
- 
   
-    G4cout << name << ", CopyNumber " << CopyNV << " Energy deposition "<<EDep <<G4endl;
+    // G4cout << name << ", CopyNumber " << CopyNV << " Energy deposition "<<EDep <<G4endl;
+    // G4cout << name << ", CopyNo " << CopyNV << " E-dep= "<<EDep <<G4endl;
 
     SensitiveBlockHit* aHit = (*hitCollection)[CopyNV];
     aHit->AddEdep(EDep);
   
-    
     return true;
 
 }

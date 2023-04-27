@@ -119,6 +119,8 @@ void EventAction::EndOfEventAction(const G4Event*event)
 
   G4double energy = 0.;
 
+  unsigned int prec= G4cout.precision(7);
+
   for (G4int i = 0; i<fNBlocks; i++){
       auto hitsCollection = GetHC(event, fCalHCID[i]);
       if ( ! hitsCollection ) continue;
@@ -135,19 +137,21 @@ void EventAction::EndOfEventAction(const G4Event*event)
     }
   }
   
-    #ifdef G4MULTITHREADED
+  G4cout.precision(prec);
+
+  #ifdef G4MULTITHREADED
     static G4Mutex stuffMutex = G4MUTEX_INITIALIZER;
     G4AutoLock al(&stuffMutex);
-    #endif
-    static std::ofstream stuff("stuff.csv");
-    static bool first = true;
-    if (first) {
+  #endif
+  static std::ofstream stuff("stuff.csv");
+  static bool first = true;
+  if (first) {
     first = false;
     stuff << "#,eDep [MeV],  Block 1,  Block 2,  Block 3,  Block 4, Block 5" << std::endl;
-    }
-    G4cout<<"Saving energy depo to csv file."<<G4endl;
-    stuff << fEnergyDepositBlock[0] << ",  "<< fEnergyDepositBlock[1] << ",  "<< fEnergyDepositBlock[2] << ",  "<< fEnergyDepositBlock[3] << ",  "<< fEnergyDepositBlock[4] << std::endl;
-    
+  }
+  G4cout<<"Saving energy depo to csv file."<<G4endl;
+  stuff << fEnergyDepositBlock[0] << ",  "<< fEnergyDepositBlock[1] << ",  "<< fEnergyDepositBlock[2] << ",  "<< fEnergyDepositBlock[3] << ",  "<< fEnergyDepositBlock[4] << std::endl;
+  
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
