@@ -105,7 +105,7 @@ def Check_Position_v2(N,X,Y,Z,B):
 def SetBlockPosition(N,X,Y,Z,M):
     Check_Position(N,X,Y,Z)
 
-    Text = "/testem/det/setBlock " + str(N) + " " + str(X) + " cm "+ str(Y) + " cm "+ str(Z) + " cm " + str(BlockSize[0][N]) + " cm 10.0 cm 10.0 cm " + M + " 1 \n"
+    Text = "/det/setBlock " + str(N) + " " + str(X) + " cm "+ str(Y) + " cm "+ str(Z) + " cm " + str(BlockSize[0][N]) + " cm 10.0 cm 10.0 cm " + M + " 1 \n"
     a_file = open('build/Run_Beam_v1.mac', "r")
     list_of_lines = a_file.readlines()
    # print(list_of_lines)
@@ -125,7 +125,7 @@ def SetBlockPosition_v2(N,X,Y,Z,M,B):
     a_file = open('build/Run_Beam_v1.mac', "w")
 
     for i in N:
-        Text = "/testem/det/setBlock " + str(i) + " " + str(X[i]) + " cm "+ str(Y[i]) + " cm "+ str(Z[i]) + " cm " + str(BlockN[0][i]) + " cm 10.0 cm 10.0 cm "+ M[i] + " 1 \n"
+        Text = "/det/setBlock " + str(i) + " " + str(X[i]) + " cm "+ str(Y[i]) + " cm "+ str(Z[i]) + " cm " + str(BlockN[0][i]) + " cm 10.0 cm 10.0 cm "+ M[i] + " 1 \n"
         list_of_lines[14 + i] = Text
         print(i, Text)
     a_file.writelines(list_of_lines)
@@ -168,15 +168,15 @@ def Cpp_Execution(Block,Y,NOL):
     #BlockPosition_D[1][Block] += Y[0]
      
       
-    Text = "/testem/det/setBlock " + str(Block) + " " + str(BlockPosition_D[0][Block]) + " cm "+ str(BlockPosition_D[1][Block]) + " cm "+ str(BlockPosition_D[2][Block]) + " cm " + "2" + " cm 10.0 cm 10.0 cm "+ Material[Block] + " " + str(Number_of_Layer[Block])
+    Text = "/det/setBlock " + str(Block) + " " + str(BlockPosition_D[0][Block]) + " cm "+ str(BlockPosition_D[1][Block]) + " cm "+ str(BlockPosition_D[2][Block]) + " cm " + "2" + " cm 10.0 cm 10.0 cm "+ Material[Block] + " " + str(Number_of_Layer[Block])
     child.sendline(Text)
     print("sent" , Text)
     child.expect('Idle>')
-    print("got Idel> got idel sent") 
+    print("got Idle> promptt") 
     child.sendline("/run/reinitializeGeometry")
     print("sent reinitialize Geometrie")
     child.expect('Idle>')
-    print("got Idel> got idel sent")
+    print("got Idle> prompt")
     return
 
 
@@ -188,15 +188,15 @@ def Cpp_Execution(Block,Y,NOL):
 q = True
 
 import pexpect as px  
-print("Spawning TestEm3")
-child = px.spawn('./TestEm3')
-print("return from spawn")
+print("-Spawning CalSG in ./build")
+child = px.spawn('./build/CalSG')
+print("-returned from spawn")
 child.expect('PreInit> ')
-print("expect return")
+print("-got PreInit> prompt")
 child.sendline('/control/execute Run_Beam_v1.mac')
-print("sent")
+print("-sent execute Run_Beam_v1")
 child.expect('Idle>')
-print("got Idel> got idel sen")
+print("got Idle> prompt")
 # get the start time
 st = time.time()
 N = 0
@@ -222,7 +222,7 @@ while(q):
     child.sendline('/control/execute Beam_ON_File.mac')
     print("sent")
     child.expect('Idle>')
-    print("got Idel> got idel sen")
+    print("got Idle> prompt")
     #if (N==100):
        # break
 

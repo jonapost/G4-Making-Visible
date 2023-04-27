@@ -45,24 +45,17 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
-:G4UImessenger(),fDetector(Det),
- fTestemDir(0),
- fDetDir(0),
- fSizeYCmd(0),
- fSizeZCmd(0),
- fNbLayersCmd(0),
- fNbAbsorCmd(0),
- fAbsorCmd(0),
- fBlockCmd(0),  // CD  Block parameter for the messenger
- fAbsorBlockCmd(0) //CD
+: G4UImessenger(),
+  fDetector(Det)
 { 
   fTestemDir = new G4UIdirectory("/testem/");
   fTestemDir->SetGuidance("UI commands specific to this example");
-  
-  fDetDir = new G4UIdirectory("/testem/det/");
+  // Used in other Messengers: Physics List, Primary Generator, RunAction, StepMax
+
+  fDetDir = new G4UIdirectory("/det/");
   fDetDir->SetGuidance("detector construction commands");
   
-  fSizeYCmd = new G4UIcmdWithADoubleAndUnit("/testem/det/setSizeY",this);
+  fSizeYCmd = new G4UIcmdWithADoubleAndUnit("/det/setSizeY",this);
   fSizeYCmd->SetGuidance("Set tranverse Y size of the calorimeter");
   fSizeYCmd->SetParameterName("Size",false);
   fSizeYCmd->SetRange("Size>0.");
@@ -70,7 +63,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   fSizeYCmd->AvailableForStates(G4State_PreInit);
   fSizeYCmd->SetToBeBroadcasted(false);
 
-  fSizeZCmd = new G4UIcmdWithADoubleAndUnit("/testem/det/setSizeZ",this);
+  fSizeZCmd = new G4UIcmdWithADoubleAndUnit("/det/setSizeZ",this);
   fSizeZCmd->SetGuidance("Set tranverse Z size of the calorimeter");
   fSizeZCmd->SetParameterName("Size",false);
   fSizeZCmd->SetRange("Size>=0.");
@@ -78,21 +71,21 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   fSizeZCmd->AvailableForStates(G4State_PreInit);
   fSizeZCmd->SetToBeBroadcasted(false);
     
-  fNbLayersCmd = new G4UIcmdWithAnInteger("/testem/det/setNbOfLayers",this);
+  fNbLayersCmd = new G4UIcmdWithAnInteger("/det/setNbOfLayers",this);
   fNbLayersCmd->SetGuidance("Set number of layers.");
   fNbLayersCmd->SetParameterName("NbLayers",false);
   fNbLayersCmd->SetRange("NbLayers>0");
   fNbLayersCmd->AvailableForStates(G4State_PreInit);
   fNbLayersCmd->SetToBeBroadcasted(false);
     
-  fNbAbsorCmd = new G4UIcmdWithAnInteger("/testem/det/setNbOfAbsor",this);
+  fNbAbsorCmd = new G4UIcmdWithAnInteger("/det/setNbOfAbsor",this);
   fNbAbsorCmd->SetGuidance("Set number of Absorbers.");
   fNbAbsorCmd->SetParameterName("NbAbsor",false);
   fNbAbsorCmd->SetRange("NbAbsor>0");
   fNbAbsorCmd->AvailableForStates(G4State_PreInit);
   fNbAbsorCmd->SetToBeBroadcasted(false);
      
-  fAbsorCmd = new G4UIcommand("/testem/det/setAbsor",this);
+  fAbsorCmd = new G4UIcommand("/det/setAbsor",this);
   fAbsorCmd->SetGuidance("Set the absor nb, the material, the thickness.");
   fAbsorCmd->SetGuidance("  absor number : from 1 to NbOfAbsor");
   fAbsorCmd->SetGuidance("  material name");
@@ -124,7 +117,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
 
 
   //// New command for Block control  CD, Set the block position, size, material and number of layers
-  fBlockCmd = new G4UIcommand("/testem/det/setBlock",this);
+  fBlockCmd = new G4UIcommand("/det/setBlock",this);
   fBlockCmd->SetGuidance("Set the Block Number, the X Position, the Y Position, the Z Position, the X size, the Y size, the Z size, the first material, nb of layer");
   fBlockCmd->SetGuidance(" Block number : from 1 to fNBlock");
   fBlockCmd->SetGuidance(" Block X position (with unit)");
@@ -198,7 +191,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
 
 
   // Command which defines the absorbers per plock
-  fAbsorBlockCmd = new G4UIcommand("/testem/det/setAbsorBlock",this);
+  fAbsorBlockCmd = new G4UIcommand("/det/setAbsorBlock",this);
   fAbsorBlockCmd->SetGuidance("Set the Block nb, the material");
   fAbsorBlockCmd->SetGuidance("  Block number : from 1 to fNBlocks");
   fAbsorBlockCmd->SetGuidance("  material name");
@@ -287,8 +280,6 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
      fDetector->SetBlockPosition (num,Px,Py,Pz);
      fDetector->SetBlockSize (num,Sx,Sy,Sz);
      fDetector->SetNbOfBlockLayers (num,Nl);
-     
-
    }
 }
 

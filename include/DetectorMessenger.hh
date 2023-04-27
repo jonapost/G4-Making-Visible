@@ -56,16 +56,16 @@ class DetectorMessenger: public G4UImessenger
   private:
     DetectorConstruction*      fDetector;
 
-    G4UIdirectory*             fTestemDir;
-    G4UIdirectory*             fDetDir;
+    G4UIdirectory*             fTestemDir= nullptr;
+    G4UIdirectory*             fDetDir;    // For /det directory
     
-    G4UIcmdWithADoubleAndUnit* fSizeYCmd;
-    G4UIcmdWithADoubleAndUnit* fSizeZCmd; 
-    G4UIcmdWithAnInteger*      fNbLayersCmd;
-    G4UIcmdWithAnInteger*      fNbAbsorCmd;
-    G4UIcommand*               fAbsorCmd;
-    G4UIcommand*               fBlockCmd;
-    G4UIcommand*               fAbsorBlockCmd;
+    G4UIcmdWithADoubleAndUnit* fSizeYCmd= nullptr;
+    G4UIcmdWithADoubleAndUnit* fSizeZCmd= nullptr; 
+    G4UIcmdWithAnInteger*      fNbLayersCmd= nullptr;
+    G4UIcmdWithAnInteger*      fNbAbsorCmd= nullptr;
+    G4UIcommand*               fAbsorCmd= nullptr;
+    G4UIcommand*               fBlockCmd= nullptr;
+    G4UIcommand*               fAbsorBlockCmd= nullptr;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
