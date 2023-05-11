@@ -6,32 +6,40 @@
 
                             CalSG
                             -------
-  
 
 
+This program is based on TestEm3 and its commands can still be used if needed. (see below)
+
+1- GEOMETRY DEFINITION
+----------------------
+The geometry consists of up to 5 blocks, each of which is created individually. 
+
+a) To create a block, the following parameters must be set (via the command - typically in stdin )
+
+/testem/det/setBlock 0 -20 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium 1 
+
+The meaning of the arguments is the following:
+      Block-number  (X Y Z Position)  (X Y Z  Length)  Material Number-of-copies
+
+and in detail 
+ - sequence number
+ - Thickness, height and depth of this block
+ - Position
+ - Name of the material
+ - Number of copies which are placed, one after the other
 
 
-This program is based on TestEm3 and its commands can still be used.
+b) With the following command an existing block can be modified:
 
-Here 5 blocks can be created individually. The following parameters can be set via commands.
+/testem/det/setAbsorBlock 4  Lead 
 
-/testem/det/setBlock 0 -20 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium 1 -> Block number  X Y Z Position  X Y Z  Length  Material Number of copies
-
-Number of blocks
-Thickness, height and depth
-Position
-Material
-Number of copies which are placed one after the other
-
-
-With this command a block can be further modified.
-
-/testem/det/setAbsorBlock 4  Lead -> Block number Material First layer
+  -> Block-number Material First-layer
 
 Whether a block should consist of two layers
 Material of the layer in front in X direction
 
-
+2 - METHODS of running
+----------------------
 CalSG.cc also has a Python mode.
 CalSG is started with Control_v1.py and the position can be changed with commands from the console while the programme is in idle mode.
 iu -> Block i goes up one cm.
@@ -39,17 +47,17 @@ id -> Block i moves down one cm.
 q -> Program is terminated.
 
 
-With HepRepFile a HepRep file can be created which stores the geometry, positions of the tracks and the global time for each step.
+3 - VISUALIZATION OUTPUT With HepRepFile 
+------------------
+The program can create an output file with the geometry and tracks.
+
+The HepRep file stores the geometry (optional), the positions of the tracks and the global time for each step.
 
 
+From here on, the text is adapted from the documentation of TestEm3.
+===================================================================
 
-
-
-
-From here on the documentation of TestEm3 follows.
-
-
-
+This application demonstrates:
 
  How to collect energy deposition in a sampling calorimeter.
  How to survey energy flow.
@@ -107,26 +115,16 @@ From here on the documentation of TestEm3 follows.
   3. Decays
   4. StepMax - for step limitation
 
-  EM physics builders can be local (eg. in this example) or from G4 kernel
-  physics_lists subdirectory.
+  EM physics builders must be from G4 kernel from physics_lists subdirectory.
 
   Local physics builders:	 
   - "local"	standard EM physics with current 'best' options setting.
               these options are explicited in PhysListEmStandard
   
   From geant4/source/physics_lists/builders:	
-  - "emstandard_opt0" recommended standard EM physics for LHC
   - "emstandard_opt1" best CPU performance standard physics for LHC
   - "emstandard_opt2" similar fast simulation
-  - "emstandard_opt3" best standard EM options - analog to "local" above
-  - "emstandard_opt4" best current advanced EM options standard + lowenergy
-  - "emstandardWVI" standard EM physics and WentzelVI multiple scattering
-  - "emstandardSS"  standard EM physics and single scattering model
-  - "emlivermore"  low-energy EM physics using Livermore data
-  - "empenelope"   low-energy EM physics implementing Penelope models
-  - "emlowenergy"  low-energy EM physics implementing experimental
-                    low-energy models
-      
+
   Physics lists and options can be (re)set with UI commands.
     
  3- AN EVENT : THE PRIMARY GENERATOR
@@ -163,16 +161,8 @@ From here on the documentation of TestEm3 follows.
   The particle's type and the physics processes which will be available
   in this example are set in PhysicsList class.
  	
-  In addition a built-in interactive command (/process/inactivate processName)
-  allows to activate/inactivate the processes one by one.
-  Then one can well visualize the processes one by one, especially 
-  in the bubble chamber setup with a transverse magnetic field.
- 
-  As a homework try to visualize a gamma conversion alone, 
-  or the effect of the multiple scattering.
-
-  Notice that one can control the maximum step size, via the
-  StepMax process and the command /testem/stepMax
+  One can control the maximum step size, via the StepMax process and the command 
+     /testem/stepMax
   (see StepMax and PhysicsList classes)
  
  6- HOW TO START ?
@@ -190,17 +180,12 @@ From here on the documentation of TestEm3 follows.
 
   Macros provided in this example:
   - atlashec.mac: ATLAS HEC model
-  - dedx.mac: to control dE/dx calculation: 1 layer; minimum ionizing particle
-  - emtutor.mac: for tutorial; interactivity + visualisation
   - geom.mac: to play with geometry
   - ionC12.mac: ion C12, 1 layer
-  - lhcb.mac: LHCB ECAL model
-  - linac.mac: Linac/Ecal from Graham Wilson
   - lockwood.mac: Al-Au-Al 1 layer (G.L.Lockwood et al. SAND79-0414 (1980))
   - run01.mac: Lead-liquidArgon 50 layers; electron 1 GeV
   - run02.mac: Tungsten-Silicon 50 layers; electron 1 GeV
   - storeTables.mac: show how to store and retrieve physics tables
-  - tileCal.mac: ATLAS tileCal
   - vis.mac: to activate visualization
 
  7- HISTOGRAMS
