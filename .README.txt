@@ -14,7 +14,7 @@
 
   Here 5 blocks can be created individually. The following parameters can be set via commands.
 
-  /testem/det/setBlock 0 -20 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium 1 -> Block number  X Y Z Position  X Y Z  Length  Material Number of copies
+  /det/setBlock 0 -20 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium 1 -> Block number  X Y Z Position  X Y Z  Length  Material Number of copies
 
   Number of blocks
   Thickness, height and depth
@@ -25,7 +25,7 @@
 
   With this command a block can be further modified.
 
-  /testem/det/setAbsorBlock 4  Lead -> Block number Material First layer
+  /det/setAbsorBlock 4  Lead -> Block number Material First layer
 
   Whether a block should consist of two layers
   Material of the layer in front in X direction
