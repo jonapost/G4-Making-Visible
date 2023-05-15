@@ -16,7 +16,7 @@ The geometry consists of up to 5 blocks, each of which is created individually.
 
 a) To create a block, the following parameters must be set (via the command - typically in stdin )
 
-/testem/det/setBlock 0 -20 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium 1 
+/det/setBlock 0 -20 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium 1 
 
 The meaning of the arguments is the following:
       Block-number  (X Y Z Position)  (X Y Z  Length)  Material Number-of-copies
@@ -31,7 +31,7 @@ and in detail
 
 b) With the following command an existing block can be modified:
 
-/testem/det/setAbsorBlock 4  Lead 
+/det/setAbsorBlock 4  Lead 
 
   -> Block-number Material First-layer
 
