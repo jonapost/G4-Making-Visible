@@ -285,12 +285,6 @@ void DetectorConstruction::DefineMaterials()
   //
   G4double temperature, pressure;
   
-  G4Material* CO2 = 
-  new G4Material("CarbonicGas", density= 27.*mg/cm3, ncomponents=2,
-                 kStateGas, temperature= 325.*kelvin, pressure= 50.*atmosphere);
-  CO2->AddElement(C, natoms=1);
-  CO2->AddElement(O, natoms=2);
-
   G4Material* steam = 
   new G4Material("WaterSteam", density= 1.0*mg/cm3, ncomponents=1,
                   kStateGas, temperature= 273*kelvin, pressure= 1*atmosphere);
@@ -307,14 +301,6 @@ void DetectorConstruction::DefineMaterials()
   temperature = 2.73*kelvin;
   new G4Material("Galactic", z=1., a=1.008*g/mole, density,
                              kStateGas,temperature,pressure);
-
-  density     = 1.e-5*g/cm3;
-  pressure    = 2.e-2*bar;
-  temperature = STP_Temperature;         //from PhysicalConstants.h
-  G4Material* beam = 
-  new G4Material("Beam", density, ncomponents=1,
-                         kStateGas,temperature,pressure);
-  beam->AddMaterial(Air, fractionmass=1.);
 
   //  G4cout << *(G4Material::GetMaterialTable()) << G4endl;
 }
@@ -448,14 +434,15 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   
   G4LogicalVolume *blockMotherLogical = fLogicWorld;
 
+  G4bool changed= false;
   for (G4int k=0; k<fNBlocks; ++k) {  
     if(fPhysiBlockPosition[k]){
       // delete this volume from its Mother, WorldVolume
-    blockMotherLogical->RemoveDaughter(fPhysiBlockPosition[k]); // If the geometry is reinitialised, the old one must be deleted first.
-    G4cout << "Deleting and initial Geometrie" << G4endl;
+      blockMotherLogical->RemoveDaughter(fPhysiBlockPosition[k]); // If the geometry is reinitialised, the old one must be deleted first.
+      changed= true;
     }
   }
-
+  if( changed )  G4cout << "Deleting and re-initializing the Geometry" << G4endl;
 
   for (G4int k=0; k<fNBlocks; ++k) {
       // #### BlockPosition defines the position of the blocks 
@@ -484,12 +471,14 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     //BlockLayer is the actual block, placed in BlockPoition
 
     G4double BlockLayerThickness = fBlockSize[k][0];
-    if (fBlockCalo[k]) {BlockLayerThickness = fBlockSize[k][0]*2;}
+    if (fBlockCalo[k]) {
+      BlockLayerThickness = fBlockSize[k][0]*2;
+    }
 
     fSolidBlockLayer[k] = new G4Box("BlockLayer",                               
                               BlockLayerThickness*0.5,fBlockSize[k][1]/2,fBlockSize[k][2]/2);
                             
-
+    assert( fBlockMaterial[k][0] != nullptr);
     fLogicBlockLayer[k] = new G4LogicalVolume(fSolidBlockLayer[k],      
                                       fBlockMaterial[k][0], 
                                       fBlockMaterial[k][0]->GetName() + "_Detector_" + std::to_string(k));              
@@ -611,13 +600,27 @@ void DetectorConstruction::SetBlockMaterial(G4int ival,
 {
     // search the material by its name
     //
-    if (ival > fNBlocks || ival < 0)
-      { G4cout << "\n --->warning from SetBlockMaterial: block number "
-              << ival << " out of range. Command refused" << G4endl;
-        return;
-      }
+    if (ival > fNBlocks || ival < 0) {
+      G4cerr << "\n ---> Warning from SetBlockMaterial: block number "
+               << ival << " is out of range. Command REFUSED" << G4endl;
+      return;
+    }
 
     G4Material* pttoMaterial = G4NistManager::Instance()->FindOrBuildMaterial(material);
+    
+    if( !pttoMaterial ) {
+      G4String aluminiumStr("G4_Al");
+      G4cerr << " ERROR in SetBlockMaterial:  material with name '" << material << "' cannot be found. Replacing with Aluminium." << G4endl;
+      pttoMaterial= G4NistManager::Instance()->FindOrBuildMaterial(aluminiumStr);
+      
+      if( pttoMaterial==nullptr ) {
+        G4ExceptionDescription msg;
+        msg << "Neither the original material " << material << " nor the substitute " << aluminiumStr << " can be found -- FAILURE/exiting";
+        G4Exception("G4NistManager::SetBlockMaterial","DetectorCtor001",FatalException, msg);
+      }
+    }
+    assert(pttoMaterial);
+    
     if (pttoMaterial) {
       fBlockMaterial[ival][0] = pttoMaterial;
       G4cout << pttoMaterial << G4endl;
