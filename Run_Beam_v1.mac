@@ -7,13 +7,13 @@
 /det/setNbOfLayers 1
 /det/setNbOfAbsor  1
 /det/setAbsor 1 "Galactic" 1 cm
-/det/setSizeY 10 cm
-/det/setSizeZ 10 cm
+/det/setSizeY 50 cm
+/det/setSizeZ 50 cm
 #
-/det/setBlock 0 -20 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Scintillator 1 
-/det/setBlock 1 -10 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium  1 
-/det/setBlock 2 0 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Silicon 1 
-/det/setBlock 3 10 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Lead 1 
+/det/setBlock 0 -20 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium 1 
+/det/setBlock 1 -10 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Lead 1 
+/det/setBlock 2 0 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Uranium 1 
+/det/setBlock 3 10 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Scintillator 1 
 /det/setBlock 4 20 cm 0 cm 0 cm 2 cm 10.0 cm 10.0 cm Scintillator 1 
 /det/setAbsorBlock 4  Lead
 
@@ -24,7 +24,7 @@
 /event/verbose 0
 /control/verbose 0
 /run/verbose 0
-/tracking/verbose 0  
+/tracking/verbose 0
 
 
 /testem/phys/addPhysics  emstandard_opt1
@@ -33,15 +33,12 @@
 /run/initialize
 /control/execute vis.mac
 
-
-/gun/particle e+
-# /gun/particle e-
+/gun/particle e-
 /gun/energy 10 GeV 
 
-/tracking/verbose 1
 /run/beamOn 1
 
-/tracking/verbose 0  
+
 
 
 

@@ -202,7 +202,7 @@ void Run::EndOfRun()
   G4double MeanLAbs,MeanLAbs2,rmsLAbs;
 
   std::ios::fmtflags mode = G4cout.flags();
-  G4int  prec = G4cout.precision(2);
+  auto prec = G4cout.precision(2);
   G4cout << "\n------------------------------------------------------------\n";
   G4cout << std::setw(14) << "material"
          << std::setw(17) << "Edep       RMS"
