@@ -129,7 +129,6 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   fBlockCmd->SetGuidance(" first material name");
   fBlockCmd->SetGuidance(" nb of layers : from 1 to 10");
   fBlockCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-  
 
   G4UIparameter* BlockNbPrm = new G4UIparameter("BlockNb",'i',false);
   BlockNbPrm->SetGuidance("Block number : from 1 to fNBlocks");
@@ -228,41 +227,8 @@ DetectorMessenger::~DetectorMessenger()
 
 void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 {
-  if( command == fSizeYCmd )
-   { fDetector->SetCalorSizeY(fSizeYCmd->GetNewDoubleValue(newValue));}
-     
-  if( command == fSizeZCmd )
-   { fDetector->SetCalorSizeZ(fSizeZCmd->GetNewDoubleValue(newValue));}
-
-  if( command == fNbLayersCmd )
-   { fDetector->SetNbOfLayers(fNbLayersCmd->GetNewIntValue(newValue));}
-
-  if( command == fNbAbsorCmd )
-   { fDetector->SetNbOfAbsor(fNbAbsorCmd->GetNewIntValue(newValue));}
-   
-  if (command == fAbsorCmd)
-   {
-     G4int num; G4double tick;
-     G4String unt, mat;
-     std::istringstream is(newValue);
-     is >> num >> mat >> tick >> unt;
-     G4String material=mat;
-     tick *= G4UIcommand::ValueOf(unt);
-     fDetector->SetAbsorMaterial (num,material);
-     fDetector->SetAbsorThickness(num,tick);
-   }
-  if (command == fAbsorBlockCmd)
-   {
-     G4int num; 
-     G4String mat;
-     std::istringstream is(newValue);
-     is >> num >> mat;
-     G4String material=mat;
-     fDetector->SetBlockAbsorMaterial (num,material);
-   }
-
   if (command == fBlockCmd) 
-   {
+  {
     G4int num; G4double Px; G4double Py; G4double Pz;
     G4double Sx; G4double Sy; G4double Sz;
     G4String unt1,unt2,unt3,unt4,unt5,unt6, mat; G4int Nl;
@@ -280,7 +246,44 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
      fDetector->SetBlockPosition (num,Px,Py,Pz);
      fDetector->SetBlockSize (num,Sx,Sy,Sz);
      fDetector->SetNbOfBlockLayers (num,Nl);
+  }
+  else { 
+  if( command == fSizeYCmd )
+   { fDetector->SetCalorSizeY(fSizeYCmd->GetNewDoubleValue(newValue));}
+  else {
+  if( command == fSizeZCmd )
+   { fDetector->SetCalorSizeZ(fSizeZCmd->GetNewDoubleValue(newValue));}
+  else { 
+  if( command == fNbLayersCmd )
+   { fDetector->SetNbOfLayers(fNbLayersCmd->GetNewIntValue(newValue));}
+  else {
+  if( command == fNbAbsorCmd )
+   { fDetector->SetNbOfAbsor(fNbAbsorCmd->GetNewIntValue(newValue));}
+  else { 
+  if (command == fAbsorCmd)
+   {
+     G4int num; G4double tick;
+     G4String unt, mat;
+     std::istringstream is(newValue);
+     is >> num >> mat >> tick >> unt;
+     G4String material=mat;
+     tick *= G4UIcommand::ValueOf(unt);
+     fDetector->SetAbsorMaterial (num,material);
+     fDetector->SetAbsorThickness(num,tick);
    }
+  else {
+  if (command == fAbsorBlockCmd)
+   {
+     G4int num; 
+     G4String mat;
+     std::istringstream is(newValue);
+     is >> num >> mat;
+     G4String material=mat;
+     fDetector->SetBlockAbsorMaterial (num,material);
+   }
+
+ 
+   }}}}}}
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
