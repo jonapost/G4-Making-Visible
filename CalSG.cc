@@ -44,6 +44,8 @@
 #include "G4UIExecutive.hh"
 #include "G4VisExecutive.hh"
 
+#include "G4Exception.hh"
+
 #include <stdlib.h>     //for using the function sleep
 #include <iostream>   //CD
 #include <string>
@@ -54,83 +56,113 @@ using namespace std::chrono;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo.....
 
-int main(int argc,char** argv) {
-      
+int main(int argc,char** argv)
+{
+  G4String  progName="CalSG";
   auto start2 = high_resolution_clock::now();
   auto stop2 = high_resolution_clock::now();
   
   start2 = high_resolution_clock::now();
 
-  //detect interactive mode (if no arguments) and define UI session
+  // 0. Detect interactive mode (if no arguments) and define UI session
   G4UIExecutive* ui = nullptr;
-  if (argc == 1) { ui = new G4UIExecutive(argc,argv,"tcsh"); }
+  if (argc == 1) {
+     ui = new G4UIExecutive(argc,argv,"tcsh");  
+  }
  
-  //Use SteppingVerbose with Unit
+  //   Choose SteppingVerbose with Units
   G4int precision = 4;
   G4SteppingVerbose::UseBestUnit(precision);
   
-  //Creating run manager
-  auto runManager = new G4RunManager(); //G4RunManagerFactory::CreateRunManager();
-    
-  if (argc==3) { 
-     G4int nThreads = G4UIcommand::ConvertToInt(argv[2]);
-     runManager->SetNumberOfThreads(nThreads);
+  // 1. Create run manager (serial or MT)
+  // =====================================
+  G4RunManager* runManager= nullptr;
+  unsigned int nThreads = 0;  //  Default -- enables MT but allows to read 1 = serial
+  if (argc>=3) { 
+     auto inpThreads = G4UIcommand::ConvertToInt(argv[2]);
+     if( inpThreads >= 0 ) 
+        nThreads = inpThreads;
+     else
+        G4cerr << progName << " argv[2] = " << inpThreads << " is NOT valid. Value must be >= 1 . IGNORED." << G4endl;
+  }
+  
+  if( nThreads == 1 ) {
+     runManager = new G4RunManager(); //  Sequential only - for simpler testing
+  } else {
+     runManager = G4RunManagerFactory::CreateRunManager();
+     if( nThreads > 1 )
+        runManager->SetNumberOfThreads(nThreads);
+  }
+  if( runManager == nullptr){
+     G4ExceptionDescription msg;
+     msg << "Geant4 Failed to create a valid G4RunManager.  Threads= " << nThreads; 
+     G4Exception("CalSG (main program) ERROR - no G4RunManager", "Main001",
+                 FatalException, msg);
   }
 
-  //set mandatory initialization classes
+  // 2. Create and set mandatory initialization classes
+  // ==================================================
   DetectorConstruction* detector = new DetectorConstruction;
   runManager->SetUserInitialization(detector);
   runManager->SetUserInitialization(new PhysicsList);
 
-  //set user action classes
+  // 3. Set user action class(es) - compatible with MT
   runManager->SetUserInitialization(new ActionInitialization(detector));
 
-  //initialize visualization
+  // 4. Initialize visualization and UI
+  // =======================================  
   G4VisManager* visManager = nullptr;
-
-  //get the pointer to the User Interface manager
   G4UImanager* UImanager = G4UImanager::GetUIpointer();
 
   if (ui)  
   {
     //interactive mode
+    G4cout << progName << ": Entering Interactive mode." << G4endl;     
     visManager = new G4VisExecutive();
     visManager->Initialize();
     ui->SessionStart();
     delete ui;
 
   }
-
-  if( strcmp(argv[1], "Loop") == 0) 
+  else
   {
-    // Loop changing mode for interaktive test
-      visManager = new G4VisExecutive();  
-      visManager->Initialize();
+     // Two batch modes: 
 
-      G4String command = "/control/execute ";
-      G4String commandS = "/control/shell ";
-      G4String fileName =  "Run_Beam_v1.mac";
-      G4String PyCommand = "python3 ../Control_v2.py ";  // Was "sudo python3 ... 
-      for (G4int i=1; i<=20; i++) {
-        if (i>1){fileName = "Run_Beam_v2.mac";}
-        UImanager->ApplyCommand(commandS+PyCommand+std::to_string(i));
+     // A. Loop mode
+     // ----------------------
+     if( strcmp(argv[1], "Loop") == 0) 
+     {
+        // Loop changing mode for interaktive test
+        visManager = new G4VisExecutive();  
+        visManager->Initialize();
+        G4cout << progName << ": Entering LOOP mode." << G4endl;
+        
+        G4String command = "/control/execute ";
+        G4String commandS = "/control/shell ";
+        G4String fileName =  "Run_Beam_v1.mac";
+        G4String PyCommand = "python3 ../Control_v2.py ";  // Was "sudo python3 ... 
+        for (G4int i=1; i<=20; i++) {
+           if (i>1){fileName = "Run_Beam_v2.mac";}
+           UImanager->ApplyCommand(commandS+PyCommand+std::to_string(i));
+           UImanager->ApplyCommand(command+fileName);
+           // sleep(1);
+           
+        }
+     } 
+     else 
+     {
+        // B. Pure batch mode
+        // ----------------------        
+        visManager = new G4VisExecutive();  
+        visManager->Initialize();
+        G4cout << progName << ": Entering Batch mode." << G4endl;
+        
+        G4String command = "/control/execute ";
+        G4String fileName =  argv[1];
+        
         UImanager->ApplyCommand(command+fileName);
-       // sleep(1);
-
-      }
-  } 
-  else 
-  {
-    //batch mode
-      visManager = new G4VisExecutive();  
-      visManager->Initialize();
-
-      G4String command = "/control/execute ";
-      G4String fileName =  argv[1];
-      
-      UImanager->ApplyCommand(command+fileName);
+     }
   }
-
   // G4cout << "Press Return to exit." << G4endl;
   // getchar();
 
