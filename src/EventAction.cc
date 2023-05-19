@@ -119,22 +119,24 @@ void EventAction::EndOfEventAction(const G4Event*event)
 
   G4double energy = 0.;
 
-  unsigned int prec= G4cout.precision(7);
+  auto prec= G4cout.precision(7);
 
   for (G4int i = 0; i<fNBlocks; i++){
-      auto hitsCollection = GetHC(event, fCalHCID[i]);
-      if ( ! hitsCollection ) continue;
+     auto hitsCollection = GetHC(event, fCalHCID[i]);
+     if (hitsCollection) {
+        for (G4int j = 0; j < hitsCollection->GetSize(); ++j) {
 
-      
-      if (hitsCollection) {
-      for (G4int j = 0; j < hitsCollection->GetSize(); ++j) {
-
-        auto hit = static_cast<SensitiveBlockHit*>(hitsCollection->GetHit(j));
-        energy = hit->GetEdep();
-        G4cout << i << " Value from Hit collection " << energy << G4endl;
-        SumEnergyPerBlock(i,energy);   
-      }
-    }
+           auto hit = static_cast<SensitiveBlockHit*>(hitsCollection->GetHit(j));
+           energy = hit->GetEdep();
+           G4cout << i << " Value from Hit collection " << energy;
+           if( auto size= hitsCollection->GetSize() > 0 )
+              G4cout << " from " << size << " parts.";
+           else
+              G4cout << " (one piece)";
+           G4cout << G4endl;
+           SumEnergyPerBlock(i,energy);   
+        }
+     }
   }
   
   G4cout.precision(prec);
@@ -144,14 +146,20 @@ void EventAction::EndOfEventAction(const G4Event*event)
     G4AutoLock al(&stuffMutex);
   #endif
   static std::ofstream stuff("stuff.csv");
+
   static bool first = true;
   if (first) {
     first = false;
-    stuff << "#,eDep [MeV],  Block 1,  Block 2,  Block 3,  Block 4, Block 5" << std::endl;
+    stuff.precision(8);
+    stuff << "# eDep [MeV]: Block 1,  Block 2,  Block 3,  Block 4, Block 5" << std::endl;
   }
-  G4cout<<"Saving energy depo to csv file."<<G4endl;
-  stuff << fEnergyDepositBlock[0] << ",  "<< fEnergyDepositBlock[1] << ",  "<< fEnergyDepositBlock[2] << ",  "<< fEnergyDepositBlock[3] << ",  "<< fEnergyDepositBlock[4] << std::endl;
   
+  G4cout<<"Saving energy depo to csv file."<<G4endl;
+  stuff << fEnergyDepositBlock[0] / CLHEP::MeV << " ,  "
+        << fEnergyDepositBlock[1] / CLHEP::MeV << " ,  "
+        << fEnergyDepositBlock[2] / CLHEP::MeV << " ,  "
+        << fEnergyDepositBlock[3] / CLHEP::MeV << " ,  "
+        << fEnergyDepositBlock[4] / CLHEP::MeV << std::endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
