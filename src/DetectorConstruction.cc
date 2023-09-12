@@ -81,9 +81,9 @@ DetectorConstruction::DetectorConstruction()
     fBlockPosi[i][0] = 0.0*cm;
     fBlockPosi[i][1] = 0.0*cm;
     fBlockPosi[i][2] = 0.0*cm;
-    
-    fNbOfBlockLayers[i] = 0;  // Ensure that layers are inactive until created!
-    fBlockCalo[i] = false;
+
+    fNbOfBlockLayers[i] = 0;      // Ensure that layers are inactive until created!
+    fBlockSampling[i] = false;
 
     fSolidBlockPosition[i] = nullptr;
     fLogicBlockPosition[i] = nullptr;
@@ -96,10 +96,7 @@ DetectorConstruction::DetectorConstruction()
     fSolidBlockAbsor[i] = nullptr;
     fLogicBlockAbsor[i] = nullptr;
     fPhysiBlockAbsor[i] = nullptr;
-
-
   }
-   
 
   // default parameter values of the calorimeter
   fNbOfAbsor = 2;
@@ -442,21 +439,28 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       changed= true;
     }
   }
-  if( changed )  G4cout << "Deleting and re-initializing the Geometry" << G4endl;
+  if( changed )
+     G4cout << "Deleting and re-initializing the Geometry" << G4endl;
 
   for (G4int k=0; k<fNBlocks; ++k) {
     // #### BlockPosition defines the position of the blocks
     
     G4double BB_xsize = fBlockSize[k][0] * fNbOfBlockLayers[k] ;
     
-    if(fBlockCalo[k]){BB_xsize = fBlockSize[k][0] * fNbOfBlockLayers[k]*2;}
+    if(fBlockSampling[k]){
+       BB_xsize = 2.0 * fBlockSize[k][0] * fNbOfBlockLayers[k] ;
+    }
     
     const bool verbose= false;
     if( verbose )
+    {
       G4cerr << " CodeLocation-A Block # " << k << " #Layers " << fNbOfBlockLayers[k]
       << "  Box with full size: " << BB_xsize / CLHEP::mm << " , " << fBlockSize[k][1] / CLHEP::mm << " , "
       << fBlockSize[k][2] / CLHEP::mm << "  mm " << G4endl;
-    if (fNbOfBlockLayers[k] > 0) {
+    }
+    
+    if (fNbOfBlockLayers[k] > 0)
+    {
       fSolidBlockPosition[k] = new G4Box("BlockPosition",                //its name
                                          BB_xsize*0.5,fBlockSize[k][1]/2,fBlockSize[k][2]/2);
       
@@ -476,8 +480,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       //BlockLayer is the actual block, placed in BlockPosition
       
       G4double BlockLayerThickness = fBlockSize[k][0];
-      if (fBlockCalo[k]) {
-        BlockLayerThickness = fBlockSize[k][0]*2;
+      if (fBlockSampling[k]) {
+        BlockLayerThickness = 2.0 * fBlockSize[k][0];
       }
       
       if( verbose ){
@@ -499,11 +503,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                                               kXAxis,
                                               fNbOfBlockLayers[k],
                                               BlockLayerThickness);
-      } if (fNbOfBlockLayers[k] == 1) {
+      }
+      if (fNbOfBlockLayers[k] == 1) {
         fPhysiBlockLayer[k] = new G4PVPlacement(0,
                                                 G4ThreeVector(),
                                                 fLogicBlockLayer[k],
-                                                fBlockMaterial[k][0]->GetName() + "_Detector_" + std::to_string(k), //#std::to_string(k),
+                                                fBlockMaterial[k][0]->GetName() + "_Detector_" + std::to_string(k),
                                                 fLogicBlockPosition[k],
                                                 false,
                                                 0);
@@ -514,7 +519,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     //Absorber block which is placed in front of the block in block position.
     //
     
-    if(fBlockCalo[k] &&  (fNbOfBlockLayers[k] > 0) ){
+    if(fBlockSampling[k] &&  (fNbOfBlockLayers[k] > 0) ){
       G4double xAbcenter = -0.5*fBlockSize[k][0];
       
       fSolidBlockAbsor[k] = new G4Box("AbsorberBlock",                //its name
@@ -578,43 +583,52 @@ void DetectorConstruction::SetWorldMaterial(const G4String& material)
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-// CD  Funktions to set the block propertis 
 
-void DetectorConstruction::SetBlockAbsorMaterial(G4int ival,
-                                            const G4String& material)
+//
+// Methods to set the block properties     -- CD
+//
+
+//  Adds a second material in each layer of a block - an absorber
+// 
+G4bool DetectorConstruction::SetBlockAbsorMaterial(G4int ival,
+                                                   const G4String& material)
 {
+    G4bool good= true;
     // search the material by its name
     //
     if (ival > fNBlocks || ival < 0)
-      { G4cout << "\n --->warning from SetBlockMaterial: block number "
-              << ival << " out of range. Command refused" << G4endl;
-        return;
-      }
+    {
+       G4cerr << "\n ---> Warning from  SetBlockMaterial: block number "
+             << ival << " is out of range. Command refused" << G4endl;
+       return false;
+    }
  
-      G4Material* pttoMaterial = G4NistManager::Instance()->FindOrBuildMaterial(material);
-      if (pttoMaterial) {
-        fBlockMaterial[ival][1] = pttoMaterial;
-        G4cout << pttoMaterial << G4endl;
-        if(fLogicBlockAbsor[ival]) {
+    G4Material* pttoMaterial = G4NistManager::Instance()->FindOrBuildMaterial(material);
+    if (pttoMaterial) {
+       fBlockMaterial[ival][1] = pttoMaterial;
+       G4cout << pttoMaterial << G4endl;
+       if(fLogicBlockAbsor[ival]) {
           fLogicBlockAbsor[ival]->SetMaterial(pttoMaterial);
           G4RunManager::GetRunManager()->PhysicsHasBeenModified();    
-        }
-       fBlockCalo[ival] = true;
-      }
-      
-    
-
+       }
+       fBlockSampling[ival] = true;
+    } else {
+       good= false;
+    }
+    return good;
 }
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-void DetectorConstruction::SetBlockMaterial(G4int ival,
+
+G4bool DetectorConstruction::SetBlockMaterial(G4int ival,
                                             const G4String& material)
 {
     // search the material by its name
     //
     if (ival > fNBlocks || ival < 0) {
-      G4cerr << "\n ---> Warning from SetBlockMaterial: block number "
+      G4cerr << "\n --->  Warning from  SetBlockMaterial: block number "
                << ival << " is out of range. Command REFUSED" << G4endl;
-      return;
+      return false;
     }
 
     G4Material* pttoMaterial = G4NistManager::Instance()->FindOrBuildMaterial(material);
@@ -628,6 +642,7 @@ void DetectorConstruction::SetBlockMaterial(G4int ival,
         G4ExceptionDescription msg;
         msg << "Neither the original material " << material << " nor the substitute " << aluminiumStr << " can be found -- FAILURE/exiting";
         G4Exception("G4NistManager::SetBlockMaterial","DetectorCtor001",FatalException, msg);
+        return false;
       }
     }
     assert(pttoMaterial);
@@ -640,76 +655,81 @@ void DetectorConstruction::SetBlockMaterial(G4int ival,
         G4RunManager::GetRunManager()->PhysicsHasBeenModified();    
       }
     }
+    return (pttoMaterial!=nullptr);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void DetectorConstruction::SetBlockPosition(G4int ival, G4double valx, G4double valy, G4double valz)
+G4bool DetectorConstruction::SetBlockPosition(G4int ival, G4double valx, G4double valy, G4double valz)
 {
   // change the Position   CD
   //
   if (valx <= -1000)
-    { G4cout << "\n --->warning from SetfBlockPosition : Position X "
-             << valx  << " out of range. Command refused" << G4endl;
+    { G4cerr << "\n ---> Warning from  SetfBlockPosition : Position X "
+             << valx  << " is out of range. Command refused" << G4endl;
              getchar();
-      return;
+      return false;
     }
   if (valy <= -1000 )//DBL_MIN)
-    { G4cout << "\n --->warning from SetfBlockPosition : Position Y  "
-             << valy  << " out of range. Command refused" << G4endl;
-      return;
+    { G4cerr << "\n ---> Warning from  SetfBlockPosition : Position Y  "
+             << valy  << " is out of range. Command refused" << G4endl;
+      return false;
     }
   if (valz <= -1000 ) //DBL_MIN)
-    { G4cout << "\n --->warning from SetfBlockPosition : Position Z  "
-             << valz  << " out of range. Command refused" << G4endl;
-      return;
+    { G4cerr << "\n ---> Warning from  SetfBlockPosition : Position Z  "
+             << valz  << " is out of range. Command refused" << G4endl;
+      return false;
     }
   fBlockPosi[ival][0] = valx;
   fBlockPosi[ival][1] = valy;
   fBlockPosi[ival][2] = valz;
-  
+
+  return true;
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void DetectorConstruction::SetBlockSize(G4int ival, G4double valx, G4double valy, G4double valz)
+G4bool DetectorConstruction::SetBlockSize(G4int ival, G4double valx, G4double valy, G4double valz)
 {
   // change the Size   CD
   //
   G4double minSize = 0.0;
   if (valx < minSize)
-    { G4cout << "\n --->warning from SetfBlockSize : Size X "
-             << valx  << " out of range. Command refused" << G4endl;
-      return;
+    { G4cerr << "\n ---> Warning from  SetfBlockSize : Size X "
+             << valx  << " is out of range. Command refused" << G4endl;
+      return false;
     }
   if (valy < minSize)
-    { G4cout << "\n --->warning from SetfBlockSize : Size Y  "
-             << valy  << " out of range. Command refused" << G4endl;
-      return;
+    { G4cerr << "\n ---> Warning from  SetfBlockSize : Size Y  "
+             << valy  << " is out of range. Command refused" << G4endl;
+      return false;
     }
   if (valz < minSize)
-    { G4cout << "\n --->warning from SetfBlockSize : Size Z  "
-             << valz  << " out of range. Command refused" << G4endl;
-      return;
+    { G4cerr << "\n ---> Warning from  SetfBlockSize : Size Z  "
+             << valz  << " is out of range. Command refused" << G4endl;
+      return false;
     }
   fBlockSize[ival][0] = valx;
   fBlockSize[ival][1] = valy;
   fBlockSize[ival][2] = valz;
+  
+  return true;
 }
 
 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void DetectorConstruction::SetNbOfBlockLayers(G4int iNB, G4int ival)
+G4bool DetectorConstruction::SetNbOfBlockLayers(G4int iNB, G4int ival)
 {
   // set the number of Block Layers
   //
   if (ival < 0)
-    { G4cout << "\n --->warning from SetfNbOfBlockLayers: "
+    { G4cerr << "\n ---> Warning from  SetfNbOfBlockLayers: "
              << ival << "from Block "<< iNB << " must be at least 0. Command refused" << G4endl;
-      return;
+      return false;
     }
   fNbOfBlockLayers[iNB] = ival;
+  return true;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -719,7 +739,7 @@ void DetectorConstruction::SetNbOfLayers(G4int ival)
   // set the number of Layers
   //
   if (ival < 1)
-    { G4cout << "\n --->warning from SetfNbOfLayers: "
+    { G4cerr << "\n ---> Warning from  SetfNbOfLayers: "
              << ival << " must be at least 1. Command refused" << G4endl;
       return;
     }
@@ -733,12 +753,14 @@ void DetectorConstruction::SetNbOfAbsor(G4int ival)
   // set the number of Absorbers
   //
   if (ival < 1 || ival > (kMaxAbsor-1))
-    { G4cout << "\n ---> warning from SetfNbOfAbsor: "
-             << ival << " must be at least 1 and and most " << kMaxAbsor-1
-             << ". Command refused" << G4endl;
-      return;
-    }
-  fNbOfAbsor = ival;
+  {
+    G4cerr << "\n --->  Warning from  DetectorConstruction::SetfNbOfAbsor: value "
+          << ival << " must be at least 1 and and most " << kMaxAbsor-1
+          << ". Command refused" << G4endl;
+  } else {
+     fNbOfAbsor = ival;
+  }
+  return;  
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -749,11 +771,12 @@ void DetectorConstruction::SetAbsorMaterial(G4int ival,
   // search the material by its name
   //
   if (ival > fNbOfAbsor || ival <= 0)
-    { G4cout << "\n --->warning from SetAbsorMaterial: absor number "
-             << ival << " out of range. Command refused" << G4endl;
-      return;
-    }
-
+  {
+    G4cerr << "\n ---> Warning from  SetAbsorMaterial: absor number "
+            << ival << " is out of range. Command refused" << G4endl;
+    return;
+  }
+  
   G4Material* pttoMaterial = 
     G4NistManager::Instance()->FindOrBuildMaterial(material);
   if (pttoMaterial) {
@@ -762,6 +785,12 @@ void DetectorConstruction::SetAbsorMaterial(G4int ival,
       fLogicAbsor[ival]->SetMaterial(pttoMaterial);
       G4RunManager::GetRunManager()->PhysicsHasBeenModified();    
     }
+  } else {
+  {
+    G4cerr << "\n ---> Warning from  SetAbsorMaterial: cannot find the material"
+            << material << " in the G4 NIST database. Command failed." << G4endl;
+    return;
+  }     
   }
 }
 
@@ -772,13 +801,13 @@ void DetectorConstruction::SetAbsorThickness(G4int ival, G4double val)
   // change Absorber thickness
   //
   if (ival > fNbOfAbsor || ival <= 0)
-    { G4cout << "\n --->warning from SetAbsorThickness: absor number "
-             << ival << " out of range. Command refused" << G4endl;
+    { G4cerr << "\n ---> Warning from  SetAbsorThickness: absor number "
+             << ival << " is out of range. Command refused" << G4endl;
       return;
     }
   if (val <= DBL_MIN)
-    { G4cout << "\n --->warning from SetAbsorThickness: thickness "
-             << val  << " out of range. Command refused" << G4endl;
+    { G4cerr << "\n ---> Warning from  SetAbsorThickness: thickness "
+             << val  << " is out of range. Command refused" << G4endl;
       return;
     }
   fAbsorThickness[ival] = val;
@@ -791,8 +820,8 @@ void DetectorConstruction::SetCalorSizeY(G4double val)
   // change the transverse size
   //
   if (val <= DBL_MIN)
-    { G4cout << "\n --->warning from SetfCalorSizeY: thickness "
-             << val  << " out of range. Command refused" << G4endl;
+    { G4cerr << "\n ---> Warning from  SetfCalorSizeY: thickness "
+             << val  << " is out of range. Command refused" << G4endl;
       return;
     }
   fCalorSizeY = val;
@@ -803,8 +832,8 @@ void DetectorConstruction::SetCalorSizeZ(G4double val)
   // change the transverse size
   //
   if (val <= DBL_MIN)
-    { G4cout << "\n --->warning from SetfCalorSizeZ: thickness "
-             << val  << " out of range. Command refused" << G4endl;
+    { G4cerr << "\n --->warning from SetfCalorSizeZ: thickness "
+             << val  << " is out of range. Command refused" << G4endl;
       return;
     }
   fCalorSizeZ = val;
@@ -824,56 +853,48 @@ void DetectorConstruction::ConstructSDandField()
     // the field value is not zero.
     G4ThreeVector fieldValue = G4ThreeVector();
     G4GlobalMagFieldMessenger* msg =
-      new G4GlobalMagFieldMessenger(fieldValue);
+    new G4GlobalMagFieldMessenger(fieldValue);
     //msg->SetVerboseLevel(1);
     G4AutoDelete::Register(msg);
-    fFieldMessenger.Put( msg );        
+    fFieldMessenger.Put( msg );
   }
   
-
   G4SDManager* SDManager = G4SDManager::GetSDMpointer();
+  
+  //Here the blocks are defined as Sensitive Detectors.
+  static G4ThreadLocal unsigned int callCount= 0;
+  G4cout << " DetectorConstruction's ConstructSDandField() method called - count ." << ++callCount << G4endl;
+  bool verbose= true;
 
-//Here the blocks are defined as Sensitive Detectors.
-  if(fLogicBlockLayer[0] != nullptr){
-    // Clear up previous SD
-    delete (fLogicBlockLayer[0]->GetSensitiveDetector());
-    fLogicBlockLayer[0]->SetSensitiveDetector(nullptr);
+  const unsigned int NumBlocks=5; // Maximum number of blocks (types of detectors, also pieces)
+  const char* SensitiveBlockNames[5]= { "SensitiveBlock_1", "SensitiveBlock_2", "SensitiveBlock_3",
+    "SensitiveBlock_4", "SensitiveBlock_5" };
+  // std::vector<char *>
+  const char* HitsCollectionNames[5]= { "HitsCollectionB1", "HitsCollectionB2", "HitsCollectionB3",
+    "HitsCollectionB4", "HitsCollectionB5" };
 
-    SensitiveBlock *sensDet1 = new SensitiveBlock(fNbOfBlockLayers[0],"SensitiveBlock_1","HitsCollectionB1"); //CD
-    SDManager ->AddNewDetector(sensDet1);
-    fLogicBlockLayer[0]->SetSensitiveDetector(sensDet1);
-    G4cout<< "Block 1 is a SensetiveDetector"<<G4endl;
-  }
+  for( unsigned int isd= 0; isd < NumBlocks ; isd++ )
+  {
+    if(fLogicBlockLayer[isd] != nullptr){
+      // Clear up previous SD
+      auto existingSD = fLogicBlockLayer[isd]->GetSensitiveDetector();
+      if( verbose && (existingSD!= nullptr) ) {
+        G4cerr << " Deleted existing SD for block " << isd << " - avoids memory leak." << G4endl;
+      }
+      delete (existingSD);
+      // delete(fLogicBlockLayer[isd]->GetSensitiveDetector());
 
-  if(fLogicBlockLayer[1] != nullptr){
-    SensitiveBlock *sensDet2 = new SensitiveBlock(fNbOfBlockLayers[1],"SensitiveBlock_2","HitsCollectionB2"); //CD
-    SDManager ->AddNewDetector(sensDet2);
-    fLogicBlockLayer[1]->SetSensitiveDetector(sensDet2);
-    G4cout<< "Block 2 is a SensetiveDetector"<<G4endl;
-  }
+      fLogicBlockLayer[isd]->SetSensitiveDetector(nullptr);
 
-    if(fLogicBlockLayer[2] != nullptr){
-    SensitiveBlock *sensDet2 = new SensitiveBlock(fNbOfBlockLayers[2],"SensitiveBlock_3","HitsCollectionB3"); //CD
-    SDManager ->AddNewDetector(sensDet2);
-    fLogicBlockLayer[2]->SetSensitiveDetector(sensDet2);
-    G4cout<< "Block 3 is a SensetiveDetector"<<G4endl;
-  }
-
-    if(fLogicBlockLayer[3] != nullptr){
-    SensitiveBlock *sensDet2 = new SensitiveBlock(fNbOfBlockLayers[3],"SensitiveBlock_4","HitsCollectionB4"); //CD
-    SDManager ->AddNewDetector(sensDet2);
-    fLogicBlockLayer[3]->SetSensitiveDetector(sensDet2);
-    G4cout<< "Block 4 is a SensetiveDetector"<<G4endl;
-  }
-
-    if(fLogicBlockLayer[4] != nullptr){
-    SensitiveBlock *sensDet2 = new SensitiveBlock(fNbOfBlockLayers[4],"SensitiveBlock_5","HitsCollectionB5"); //CD
-    SDManager ->AddNewDetector(sensDet2);
-    fLogicBlockLayer[4]->SetSensitiveDetector(sensDet2);
-    G4cout<< "Block 5 is a SensetiveDetector"<<G4endl;
+      SensitiveBlock *sensDet = new SensitiveBlock(fNbOfBlockLayers[isd],
+                                                   SensitiveBlockNames[isd],
+                                                   HitsCollectionNames[isd]); // JA - like CD
+      SDManager ->AddNewDetector(sensDet);
+      fLogicBlockLayer[isd]->SetSensitiveDetector(sensDet);
+      G4cout<< "Block " << isd+1 << " is a SensitiveDetector"<<G4endl;
+    }
   }
 }
-
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 

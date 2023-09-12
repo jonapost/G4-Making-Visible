@@ -47,8 +47,8 @@ class DetectorMessenger;
 
 class G4GlobalMagFieldMessenger;
 
-     const G4int kMaxAbsor = 10;                        // 0 + 9  
-     const G4int fNBlocks = 5; // Number of moveble Blocks ,CD
+const G4int kMaxAbsor = 10;                        // 0 + 9  
+const G4int fNBlocks = 5; // Number of moveble Blocks ,CD
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class DetectorConstruction : public G4VUserDetectorConstruction
@@ -70,12 +70,12 @@ public:
   void SetNbOfLayers    (G4int);   
 
 // Set the parameters of all Blocks CD
-  void SetBlockAktiv (G4int,G4double);
-  void SetNbOfBlockLayers (G4int,G4int);
-  void SetBlockMaterial (G4int,const G4String&); 
-  void SetBlockAbsorMaterial (G4int,const G4String&);
-  void SetBlockPosition(G4int, G4double, G4double, G4double);
-  void SetBlockSize(G4int, G4double, G4double, G4double);
+  // void SetBlockActiv (G4int blockNo, G4double);     // Unused ...
+  G4bool SetNbOfBlockLayers (G4int blockNo, G4int numberOfLayers);
+  G4bool SetBlockMaterial (G4int blockNo,const G4String& materialName ); 
+  G4bool SetBlockAbsorMaterial (G4int blockNo, const G4String& absorberName);
+  G4bool SetBlockPosition(G4int blockNo, G4double xPos, G4double yPos, G4double zPos);
+  G4bool SetBlockSize(G4int, G4double, G4double, G4double);
   
   virtual G4VPhysicalVolume* Construct();
   virtual void ConstructSDandField();
@@ -86,7 +86,6 @@ public:
                     
   G4double GetWorldSizeX() const           {return fWorldSizeX;}; 
   G4double GetWorldSizeYZ() const          {return fWorldSizeYZ;};
-  
      
   G4double GetCalorThickness() const       {return fCalorThickness;}; 
   G4double GetCalorSizeY() const          {return fCalorSizeY;};
@@ -102,13 +101,15 @@ public:
   const G4Material*        GetWorldMaterial() const   {return fWorldMaterial;};
   const G4VPhysicalVolume* GetAbsorber(G4int i) const {return fPhysiAbsor[i];};
 
-  G4int GetNbOfBlockLayers(G4int i) const {return fNbOfBlockLayers[i];}; //New CD, Funktions for Blocks layer, if aktiv, its Material         
+  // Methods for Blocks - to set/get block attributes, each one's layers and their Material         
+  //   CD 
+  G4int GetNbOfBlockLayers(G4int i) const {return fNbOfBlockLayers[i];}; 
   const G4VPhysicalVolume* GetBlock(G4int i) const {return fPhysiBlockLayer[i];}; //New 
   const G4Material* GetBlockMaterial(G4int i) const {return fBlockMaterial[i][0];}; //New  CD
   const G4Material* GetAbsorBlockMaterial(G4int i) const {return fBlockMaterial[i][1];}; //New  CD
 
-  G4double GetBlockSize(G4int i, G4int j) const {return fBlockSize[i][j];};
-  G4double GetBlockPosition(G4int i, G4int j) const {return fBlockPosi[i][j];};
+  G4double GetBlockSize(G4int iBlock, G4int coord) const {return fBlockSize[iBlock][coord];};
+  G4double GetBlockPosition(G4int iBlock, G4int coord) const {return fBlockPosi[iBlock][coord];};
 
 
 private:
@@ -138,7 +139,9 @@ private:
   G4double           fCalorSizeY2;
   G4double           fCalorThickness2;
 
-  G4bool             fBlockCalo[fNBlocks];
+  // G4int              fNActiveBlocks = 0; // Number of active Blocks  JA 
+  G4bool             fBlockSampling[fNBlocks];  // Multi-layer block (as in sampling calorimeters)
+
   // Ints and double for Blocks, CD
   G4int              fNbOfBlockLayers[fNBlocks];
   G4double           fBlockSizeZ[fNBlocks];  
