@@ -98,9 +98,6 @@ void EventAction::BeginOfEventAction(const G4Event*)
     G4cout << " HitCollection ID for " << "HitsCollectionB" <<  std::to_string(k+1) << " is: " << fCalHCID[k] <<G4endl;
   }
 
-
-
-
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -122,21 +119,27 @@ void EventAction::EndOfEventAction(const G4Event*event)
   auto prec= G4cout.precision(7);
 
   for (G4int i = 0; i<fNBlocks; i++){
-     auto hitsCollection = GetHC(event, fCalHCID[i]);
-     if (hitsCollection) {
-        for (G4int j = 0; j < hitsCollection->GetSize(); ++j) {
-
-           auto hit = static_cast<SensitiveBlockHit*>(hitsCollection->GetHit(j));
-           energy = hit->GetEdep();
-           G4cout << i << " Value from Hit collection " << energy;
-           if( auto size= hitsCollection->GetSize() > 0 )
-              G4cout << " from " << size << " parts.";
-           else
-              G4cout << " (one piece)";
-           G4cout << G4endl;
-           SumEnergyPerBlock(i,energy);   
+    G4int  calID= fCalHCID[i];
+    if( calID >= 0 )
+    {
+      auto hitsCollection = GetHC(event, calID); // fCalHCID[i]
+      if (hitsCollection) {
+        // G4cerr << " EventAction:  Hits collection for block # " << i << " has address " << hitsCollection << G4endl;
+        G4int hcSize=hitsCollection->GetSize();
+        for (G4int j = 0; j < hcSize; ++j) {
+          
+          auto hit = static_cast<SensitiveBlockHit*>(hitsCollection->GetHit(j));
+          energy = hit->GetEdep();
+          G4cout << i << " Value from Hit collection " << energy;
+          if( auto size= hitsCollection->GetSize() > 0 )
+            G4cout << " from " << size << " parts.";
+          else
+            G4cout << " (one piece)";
+          G4cout << G4endl;
+          SumEnergyPerBlock(i,energy);
         }
-     }
+      }
+    }
   }
   
   G4cout.precision(prec);
