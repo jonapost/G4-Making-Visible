@@ -241,11 +241,14 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
      Sx *= G4UIcommand::ValueOf(unt4);
      Sy *= G4UIcommand::ValueOf(unt5);
      Sz *= G4UIcommand::ValueOf(unt6);
-
+     
+     // Sanity checking is done in Detector methods
      fDetector->SetBlockMaterial (num,material);
      fDetector->SetBlockPosition (num,Px,Py,Pz);
      fDetector->SetBlockSize (num,Sx,Sy,Sz);
+     if( Nl <= 0 ) { Nl=1; }
      fDetector->SetNbOfBlockLayers (num,Nl);
+      //  Number of layers in this block 
   }
   else { 
   if( command == fSizeYCmd )
