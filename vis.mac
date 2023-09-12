@@ -10,18 +10,17 @@
 
 
 # Use this open statement to create an OpenGL view:
-/vis/open OGL 600x600-0+0
+#/vis/open OGL 600x600-0+0
 
 # Use this open statement to create a .heprep file suitable for
 # viewing in HepRApp:
-#/vis/open HepRepFile
+/vis/open HepRepFile
 
 /vis/heprep/setOverwrite True
 /vis/heprep/setCullInvisibles False
 
 /vis/heprep/setFileName TrajectoryData
-/vis/heprep/setFileDir ../Test/
-
+/vis/heprep/setFileDir ./
 
 # Disable auto refresh and quieten vis messages whilst scene and
 # trajectories are established:
@@ -31,11 +30,8 @@
 # Draw geometry:
 /vis/drawVolume
 
-
 /vis/scene/add/trajectories rich
 /vis/verbose confirmations
-
-
 
 #/vis/modeling/trajectories/create/drawByCharge
 #/vis/modeling/trajectories/drawByCharge-0/default/setDrawStepPts true
@@ -47,11 +43,6 @@
 #/vis/modeling/trajectories/drawByCharge-0/default/setDrawAuxPts true
 #/vis/modeling/trajectories/drawByCharge-0/default/setAuxPtsSize 5
 #/vis/modeling/trajectories/drawByCharge-0/default/setTimeSliceInterval 0.1 ns
-
-
-
-
-
 
 
 # Re-establish auto refreshing and verbosity:
