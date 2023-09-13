@@ -144,13 +144,13 @@ private:
 
   // Ints and double for Blocks, CD
   G4int              fNbOfBlockLayers[fNBlocks];
-  G4double           fBlockSizeZ[fNBlocks];  
-  G4double           fBlockSizeY[fNBlocks];
-  G4double           fBlockSizeX[fNBlocks];  
+   // G4double           fBlockSizeZ[fNBlocks];  
+   // G4double           fBlockSizeY[fNBlocks];
+   // G4double           fBlockSizeX[fNBlocks];  
   G4Material*        fBlockMaterial[fNBlocks][2];
-  G4double           fBlockPosiX[fNBlocks];
-  G4double           fBlockPosiY[fNBlocks];
-  G4double           fBlockPosiZ[fNBlocks];
+   // G4double           fBlockPosiX[fNBlocks];
+   // G4double           fBlockPosiY[fNBlocks];
+   // G4double           fBlockPosiZ[fNBlocks];
 
   G4double           fBlockSize[fNBlocks][3];
   G4double           fBlockPosi[fNBlocks][3];
@@ -189,7 +189,9 @@ private:
   G4VPhysicalVolume* fPhysiAbsor[kMaxAbsor];
 
   DetectorMessenger* fDetectorMessenger;
-  G4Cache<G4GlobalMagFieldMessenger*> fFieldMessenger;  
+  G4Cache<G4GlobalMagFieldMessenger*> fFieldMessenger;
+
+  G4bool             fVerbose= false;  // To provide information
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
