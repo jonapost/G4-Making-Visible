@@ -111,6 +111,8 @@ public:
   G4double GetBlockSize(G4int iBlock, G4int coord) const {return fBlockSize[iBlock][coord];};
   G4double GetBlockPosition(G4int iBlock, G4int coord) const {return fBlockPosi[iBlock][coord];};
 
+  G4Material* FindMaterial(const G4String& materialName);
+     // Try simple name, then known G4 aliases for popular materials
 
 private:
 
@@ -144,13 +146,7 @@ private:
 
   // Ints and double for Blocks, CD
   G4int              fNbOfBlockLayers[fNBlocks];
-   // G4double           fBlockSizeZ[fNBlocks];  
-   // G4double           fBlockSizeY[fNBlocks];
-   // G4double           fBlockSizeX[fNBlocks];  
   G4Material*        fBlockMaterial[fNBlocks][2];
-   // G4double           fBlockPosiX[fNBlocks];
-   // G4double           fBlockPosiY[fNBlocks];
-   // G4double           fBlockPosiZ[fNBlocks];
 
   G4double           fBlockSize[fNBlocks][3];
   G4double           fBlockPosi[fNBlocks][3];

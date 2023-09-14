@@ -107,13 +107,12 @@ DetectorConstruction::DetectorConstruction()
   fCalorSizeY       = 10.*cm;   
   fCalorSizeZ       = 25.*cm;
   ComputeCalorParameters();
-  
 
   // materials
   DefineMaterials();
-  SetWorldMaterial("Galactic");
-  SetAbsorMaterial(1,"Galactic");
-  SetAbsorMaterial(2,"Galactic");
+  SetWorldMaterial("Galactic"); // "Air20");
+  SetAbsorMaterial(1,"Air20");
+  SetAbsorMaterial(2,"Air20");
 
   // create commands for interactive definition of the calorimeter
   fDetectorMessenger = new DetectorMessenger(this);
@@ -144,7 +143,13 @@ void DetectorConstruction::DefineMaterials()
   G4Element* C  = manager->FindOrBuildElement(6);
   G4Element* N  = manager->FindOrBuildElement(7);
   G4Element* O  = manager->FindOrBuildElement(8);
+  G4Element* Na = manager->FindOrBuildElement(11);
+  G4Element* Al = manager->FindOrBuildElement(13);
+//G4Element* S  = manager->FindOrBuildElement(14); // Sulfur
   G4Element* Si = manager->FindOrBuildElement(14);
+//G4Element* K  = manager->FindOrBuildElement(19); // Potassium
+  G4Element* Ca = manager->FindOrBuildElement(20); // Calcium
+  G4Element* Fe = manager->FindOrBuildElement(26);
   G4Element* Ge = manager->FindOrBuildElement(32);
   G4Element* Sb = manager->FindOrBuildElement(51);
   G4Element* I  = manager->FindOrBuildElement(53);
@@ -179,8 +184,10 @@ void DetectorConstruction::DefineMaterials()
   new G4Material("Copper",      z=29., a= 63.55*g/mole,  density= 8.960*g/cm3);
   new G4Material("Tungsten",    z=74., a= 183.85*g/mole, density= 19.30*g/cm3);
   new G4Material("Gold",        z=79., a= 196.97*g/mole, density= 19.32*g/cm3);
-  new G4Material("Uranium",     z=92., a= 238.03*g/mole, density= 18.95*g/cm3);
 
+  new G4Material("Galactic", z=1., a= 1.008*g/mole, universe_mean_density,
+                  kStateGas, 2.73*kelvin, 3.e-18*pascal);
+  
   //
   // define a material from elements.   case 1: chemical molecule
   //
@@ -205,12 +212,6 @@ void DetectorConstruction::DefineMaterials()
   
   Sci->GetIonisation()->SetBirksConstant(0.126*mm/MeV);
 
-  G4Material* Lct =
-  new G4Material("Lucite", density= 1.185*g/cm3, ncomponents=3);
-  Lct->AddElement(C, 59.97*perCent);
-  Lct->AddElement(H, 8.07*perCent);
-  Lct->AddElement(O, 31.96*perCent);
-
   G4Material* Sili = 
   new G4Material("Silicon", density= 2.330*g/cm3, ncomponents=1);
   Sili->AddElement(Si, natoms=1);
@@ -220,6 +221,8 @@ void DetectorConstruction::DefineMaterials()
   SiO2->AddElement(Si, natoms=1);
   SiO2->AddElement(O , natoms=2);
 
+ 
+  // Other
   G4Material* G10 = 
   new G4Material("NemaG10", density= 1.700*g/cm3, ncomponents=4);
   G10->AddElement(Si, natoms=1);
@@ -289,16 +292,40 @@ void DetectorConstruction::DefineMaterials()
   
   new G4Material("ArgonGas", z=18, a=39.948*g/mole, density= 1.782*mg/cm3,
                  kStateGas, 273.15*kelvin, 1*atmosphere);
-  //
-  // examples of vacuum
-  //
 
-  density     = universe_mean_density;    //from PhysicalConstants.h
-  pressure    = 3.e-18*pascal;
-  temperature = 2.73*kelvin;
-  new G4Material("Galactic", z=1., a=1.008*g/mole, density,
-                             kStateGas,temperature,pressure);
+  // 'ShieldingConcrete' definition is copied from Geant4 advanced example 'lAr_Calorimeter'
+  //   For future review see
+  //      https://www.engr.psu.edu/ce/courses/ce584/concrete/library/construction/curing/Composition%20of%20cement.htm
+  density = 2.5*g/cm3;
+  G4Material* ShieldingConcrete= new G4Material("Concrete",density, 6);  // numElements= 6
+  ShieldingConcrete->AddElement(O, fractionmass = 0.52);
+  ShieldingConcrete->AddElement(Si, fractionmass = 0.325);
+  ShieldingConcrete->AddElement(Ca, fractionmass = 0.06);
+  ShieldingConcrete->AddElement(Na, fractionmass = 0.015);
+  ShieldingConcrete->AddElement(Fe, fractionmass = 0.04);
+  ShieldingConcrete->AddElement(Al, fractionmass = 0.04);
 
+  G4Material* Concrete= manager->FindOrBuildMaterial("G4_CONCRETE");
+  if( Concrete ) {
+     // G4cout << " Found G4_Concrete : material properties are" << G4endl << *Concrete << G4endl;
+  }
+  else
+     G4cout << " Did NOT find G4_Concrete. -- WARNING." << G4endl;
+
+/***  Values from NIST web site
+Atomic number	Fraction by weight
+1	0.010000
+6	0.001000
+8	0.529107
+11	0.016000
+12	0.002000
+13	0.033872
+14	0.337021
+19	0.013000
+20	0.044000
+26	0.014000
+***/
+  
   //  G4cout << *(G4Material::GetMaterialTable()) << G4endl;
 }
 
@@ -420,7 +447,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                           false,                      
                           k);                                //copy number
 
-  }
+    }
 //PrintCalorParameters();
   }
 
@@ -455,14 +482,16 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     if( verbose )
     {
       G4cerr << " CodeLocation-A Block # " << k << " #Layers " << fNbOfBlockLayers[k]
-      << "  Box with full size: " << BB_xsize / CLHEP::mm << " , " << fBlockSize[k][1] / CLHEP::mm << " , "
-      << fBlockSize[k][2] / CLHEP::mm << "  mm " << G4endl;
+             << "  Box with full size: " << BB_xsize / CLHEP::mm << " , " << fBlockSize[k][1] / CLHEP::mm << " , "
+             << fBlockSize[k][2] / CLHEP::mm << "  mm " << G4endl;
     }
     
     if (fNbOfBlockLayers[k] > 0)
     {
+      // BlockPosition is the 'Holder' volume, which contains the layers
+       
       fSolidBlockPosition[k] = new G4Box("BlockPosition",                //its name
-                                         BB_xsize*0.5,fBlockSize[k][1]/2,fBlockSize[k][2]/2);
+                                         BB_xsize*0.5, 0.5*fBlockSize[k][1], 0.5*fBlockSize[k][2] );
       
       fLogicBlockPosition[k] = new G4LogicalVolume(fSolidBlockPosition[k],    //its solid
                                                    fWorldMaterial,
@@ -584,8 +613,52 @@ void DetectorConstruction::SetWorldMaterial(const G4String& material)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
+G4Material* DetectorConstruction::FindMaterial(const G4String& materialName)
+{
+  G4Material* ptrMaterial = G4NistManager::Instance()->FindOrBuildMaterial(materialName);
+  if (!ptrMaterial) {
+     G4bool   replaced= false;
+     G4String altName= materialName; 
+     if( materialName.compare( G4String("Water") ) == 0 ) {
+        altName= G4String("G4_WATER");
+        replaced= true;
+     } // else {
+     if( materialName.compare( G4String("PbWO4") ) == 0 ) {
+        altName= G4String("G4_PbWO4");
+        replaced= true;        
+     } // else {
+     if( materialName.compare( G4String("Galactic") ) == 0 )
+     {
+       altName= G4String("G4_Galactic");
+       replaced= true;
+     } // else {
+     if( materialName.compare( G4String("Concrete") ) == 0 )
+     {
+       altName= G4String("G4_CONCRETE");
+       replaced= true;
+     }
+     //      }
+     //   }
+     // }
+
+     // Verbose report
+     if( replaced || altName.compare( materialName ) != 0 ){
+        G4cout << " Replaced material " << materialName << " with altName " << altName;
+        
+        ptrMaterial = G4NistManager::Instance()->FindOrBuildMaterial(materialName);
+        if( ptrMaterial != nullptr )
+           G4cout << " Result of looking for G4 name " << altName << " (instead of " << materialName
+                  << " )  is " << *ptrMaterial << G4endl;
+     }
+  }
+
+  return ptrMaterial;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
 //
-// Methods to set the block properties     -- CD
+// Methods to set the block properties     -- Clemens D /CD
 //
 
 //  Adds a second material in each layer of a block - an absorber
@@ -604,6 +677,9 @@ G4bool DetectorConstruction::SetBlockAbsorMaterial(G4int ival,
     }
  
     G4Material* pttoMaterial = G4NistManager::Instance()->FindOrBuildMaterial(material);
+    if (!pttoMaterial) {
+       pttoMaterial= FindMaterial(material); // Try name aliases
+    }
     if (pttoMaterial) {
        fBlockMaterial[ival][1] = pttoMaterial;
        G4cout << pttoMaterial << G4endl;
@@ -613,6 +689,8 @@ G4bool DetectorConstruction::SetBlockAbsorMaterial(G4int ival,
        }
        fBlockSampling[ival] = true;
     } else {
+       G4cerr << " ERROR in SetBlockAbsorMaterial:  material with name '" << material
+              << "' cannot be found. Cannot create second layer - NO ACTION taken." << G4endl;
        good= false;
     }
     return good;
@@ -631,7 +709,8 @@ G4bool DetectorConstruction::SetBlockMaterial(G4int ival,
       return false;
     }
 
-    G4Material* pttoMaterial = G4NistManager::Instance()->FindOrBuildMaterial(material);
+    G4Material* pttoMaterial = FindMaterial(material); // Try name and aliases
+          //  G4NistManager::Instance()->FindOrBuildMaterial(material);
     
     if( !pttoMaterial ) {
       G4String aluminiumStr("G4_Al");
@@ -779,18 +858,23 @@ void DetectorConstruction::SetAbsorMaterial(G4int ival,
   
   G4Material* pttoMaterial = 
     G4NistManager::Instance()->FindOrBuildMaterial(material);
-  if (pttoMaterial) {
+
+  if(!pttoMaterial)
+     pttoMaterial= FindMaterial(material); // Try name and aliases
+  
+  if (pttoMaterial)
+  {
     fAbsorMaterial[ival] = pttoMaterial;
     if(fLogicAbsor[ival]) {
       fLogicAbsor[ival]->SetMaterial(pttoMaterial);
       G4RunManager::GetRunManager()->PhysicsHasBeenModified();    
     }
-  } else {
+  }
+  else
   {
-    G4cerr << "\n ---> Warning from  SetAbsorMaterial: cannot find the material"
+    G4cerr << "\n ---> Warning from  SetAbsorMaterial: cannot find the material "
             << material << " in the G4 NIST database. Command failed." << G4endl;
     return;
-  }     
   }
 }
 
@@ -864,7 +948,6 @@ void DetectorConstruction::ConstructSDandField()
   //Here the blocks are defined as Sensitive Detectors.
   static G4ThreadLocal unsigned int callCount= 0;
   G4cout << " DetectorConstruction's ConstructSDandField() method called - count ." << ++callCount << G4endl;
-  bool verbose= true;
 
   const unsigned int NumBlocks=5; // Maximum number of blocks (types of detectors, also pieces)
   const char* SensitiveBlockNames[5]= { "SensitiveBlock_1", "SensitiveBlock_2", "SensitiveBlock_3",
@@ -878,10 +961,10 @@ void DetectorConstruction::ConstructSDandField()
     if(fLogicBlockLayer[isd] != nullptr){
       // Clear up previous SD
       auto existingSD = fLogicBlockLayer[isd]->GetSensitiveDetector();
-      if( verbose && (existingSD!= nullptr) ) {
-        G4cerr << " Deleted existing SD for block " << isd << " - avoids memory leak." << G4endl;
+      delete (existingSD);      
+      if( fVerbose && (existingSD!= nullptr) ) {
+        G4cout << " Deleted existing SD for block " << isd << " - avoids memory leak." << G4endl;
       }
-      delete (existingSD);
       // delete(fLogicBlockLayer[isd]->GetSensitiveDetector());
 
       fLogicBlockLayer[isd]->SetSensitiveDetector(nullptr);
@@ -891,7 +974,8 @@ void DetectorConstruction::ConstructSDandField()
                                                    HitsCollectionNames[isd]); // JA - like CD
       SDManager ->AddNewDetector(sensDet);
       fLogicBlockLayer[isd]->SetSensitiveDetector(sensDet);
-      G4cout<< "Block " << isd+1 << " is a SensitiveDetector"<<G4endl;
+      if(fVerbose)
+         G4cout<< "Block " << isd+1 << " is a SensitiveDetector"<<G4endl;
     }
   }
 }
