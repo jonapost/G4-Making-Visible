@@ -105,10 +105,10 @@ def Check_Position_v2(N,X,Y,Z,B):
 
 
 
-def SetBlockPosition(N,X,Y,Z,M):
+def SetBlockPosition(N,X,Y,Z,mat):
     Check_Position(N,X,Y,Z)
 
-    Text = "/det/setBlock " + str(N) + " " + str(X) + " cm "+ str(Y) + " cm "+ str(Z) + " cm " + str(BlockSize[0][N]) + " cm 10.0 cm 10.0 cm " + M + "\n"
+    Text = "/det/setBlock " + str(N) + " " + str(X) + " cm "+ str(Y) + " cm "+ str(Z) + " cm " + str(BlockSize[0][N]) + " cm 10.0 cm 10.0 cm " + mat + "  1 \n"
     a_file = open('Run_Beam_v1.mac', "r")
     list_of_lines = a_file.readlines()
    # print(list_of_lines)
@@ -120,7 +120,7 @@ def SetBlockPosition(N,X,Y,Z,M):
 
 
 
-def SetBlockPosition_v2(N,X,Y,Z,M,B):
+def SetBlockPosition_v2(N,X,Y,Z,mat,B):
     BlockN = Check_Position_v2(N,X,Y,Z,B)
 
     a_file = open('Run_Beam_v1.mac', "r")
@@ -128,7 +128,7 @@ def SetBlockPosition_v2(N,X,Y,Z,M,B):
     a_file = open('Run_Beam_v1.mac', "w")
 
     for i in N:
-        Text = "/det/setBlock " + str(i) + " " + str(X[i]) + " cm "+ str(Y[i]) + " cm "+ str(Z[i]) + " cm " + str(BlockN[0][i]) + " cm 10.0 cm 10.0 cm "+ M[i] + "\n"
+        Text = "/det/setBlock " + str(i) + " " + str(X[i]) + " cm "+ str(Y[i]) + " cm "+ str(Z[i]) + " cm " + str(BlockN[0][i]) + " cm 10.0 cm 10.0 cm "+ mat[i] + "  1 \n"
         list_of_lines[14 + i] = Text
         print(i, Text)
     a_file.writelines(list_of_lines)
