@@ -1,0 +1,64 @@
+
+Briefing
+===========
+The program is called 'CalSG' and resides in the 'build' subdirectory.
+To run it in the parent directory type:
+   ./build/CalSG   Run_Beam_v1.mac
+There are other test input files in the top directory, and the tests directories.
+
+However the Python application to drive 'CalSG' resides in the subdirectory
+  Socket_Program
+
+
+Output
+===========
+There are two output files:
+  stuff.csv:             a simple text file, a line is one event's energy deposition in each of 5 layers
+  TrajectoryData.heprep: the traces or trajectories of the tracks.
+
+The text output is always written -- as each event is simulated.
+The 'heprep' file is only created if a 'vis.mac' file is loaded and 
+         it's location (and name) are specified there.
+
+
+Details
+============
+
+1) Location of output '.heprep' file
+
+   Output files are stored in the ../Test directory relative to the location you ran the executable.
+   This is chosen in vis.mac line:
+
+/vis/heprep/setFileDir ../Test/
+
+   Changing this line modifies this choice / configuration
+
+Configuration
+================
+
+-) Use 'local' visualisation or HEPrep output file ?
+
+## Outputting HEPrep output file:
+To enable output in the HEPrep file format, the command is:
+
+  /vis/open HepRepFile
+
+Commenting it out using '#' at the start of line disables it.
+
+-) How to Use 'local' visualisation or HEPrep output file ?
+
+Edit the file 'vis.mac' to enable / disable local OpenGL visualisation:
+The following line enables local visualization (useful to check, debug or
+understand what is happening): 
+
+  # /vis/open OGL 600x600-0+0
+    The line must be commented out:
+
+It can be turned on for local tests by uncommenting it:
+
+   /vis/open OGL 600x600-0+0
+
+
+
+
+

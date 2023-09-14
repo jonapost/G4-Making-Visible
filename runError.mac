@@ -27,7 +27,8 @@
 #/tracking/verbose 0   deaktivate vis tracks
 
 
-/testem/phys/addPhysics  emstandard_opt1
+# /testem/phys/addPhysics  emstandard_opt0
+#  Only if using local PhysicsList.cc
 
 
 /run/initialize
