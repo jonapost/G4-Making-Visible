@@ -1,0 +1,33 @@
+#
+# Macro file for "CalSG.cc" 
+#
+#  5 Block and Calorimeter at the end
+#
+#
+/det/setNbOfLayers 1
+/det/setNbOfAbsor  1
+/det/setAbsor 1 "Galactic" 1 cm
+/det/setSizeY 50 cm
+/det/setSizeZ 50 cm
+#
+/det/setBlock 0   -20 cm 0 cm 0 cm   3 cm  10.0 cm  10.0 cm   Aluminium 1 
+
+#/det/update
+
+/process/em/verbose 0
+/process/eLoss/verbose 0
+/event/verbose 0
+/control/verbose 0
+/run/verbose 0
+/tracking/verbose 0
+
+/run/setCut 0.5 cm
+
+/run/initialize
+
+/tracking/verbose 0
+
+/gun/particle gamma
+/gun/energy 1.0 GeV 
+/run/beamOn 1000
+
