@@ -54,6 +54,9 @@ class EventAction : public G4UserEventAction
     void SumEnergyPerBlock(G4int k, G4double de)
         {fEnergyDepositBlock[k] += de;};
 
+    void   SetVerbose(G4bool val= true) { fVerbose=val;}
+    G4bool GetVerbose(){ return fVerbose;}
+   
   private:  
     DetectorConstruction* fDetector;
     
@@ -62,7 +65,8 @@ class EventAction : public G4UserEventAction
 
     std::array<G4int, fNBlocks> fCalHCID = { -1, -1 ,-1, -1, -1};
     G4double              fEnergyDepositBlock[fNBlocks]; // CD, double for measurment of Energy deposition
-    
+
+    G4bool                fVerbose= false;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

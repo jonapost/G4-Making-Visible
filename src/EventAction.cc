@@ -46,7 +46,8 @@
 #include "G4SDManager.hh"
 // Utility function which finds a hit collection with the given Id
 // and print warnings if not found
-SensitiveBlockHitCollection* GetHC(const G4Event* event, G4int collId) {
+SensitiveBlockHitCollection* GetHC(const G4Event* event, G4int collId)
+{
   auto HCE = event->GetHCofThisEvent();
   if (!HCE) {
       G4ExceptionDescription msg;
@@ -72,7 +73,9 @@ SensitiveBlockHitCollection* GetHC(const G4Event* event, G4int collId) {
 
 EventAction::EventAction(DetectorConstruction* det)
 :G4UserEventAction(),fDetector(det)
-{ }
+{
+   // fVerbose= true;   
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -93,9 +96,12 @@ void EventAction::BeginOfEventAction(const G4Event*)
 
   //initialize EnergyDeposit per event for each block  CD
   for (G4int k=0; k<fNBlocks; k++) {
-    fEnergyDepositBlock[k] = 0.0;  
+    fEnergyDepositBlock[k] = 0.0;
+    
     fCalHCID[k]   = sdManager->GetCollectionID("HitsCollectionB" + std::to_string(k+1));
-    G4cout << " HitCollection ID for " << "HitsCollectionB" <<  std::to_string(k+1) << " is: " << fCalHCID[k] <<G4endl;
+    if(fVerbose) 
+       G4cout << " HitCollection ID for " << "HitsCollectionB" <<  std::to_string(k+1) << " is: " << fCalHCID[k]
+              <<G4endl;
   }
 
 }
@@ -126,18 +132,20 @@ void EventAction::EndOfEventAction(const G4Event*event)
       if (hitsCollection) {
         // G4cerr << " EventAction:  Hits collection for block # " << i << " has address " << hitsCollection << G4endl;
         G4int hcSize=hitsCollection->GetSize();
+
+        if( fVerbose )
+           G4cout << " Block " << i << " has " << hcSize << " parts.  Energy values from Hit collection: ";
+        
         for (G4int j = 0; j < hcSize; ++j) {
-          
           auto hit = static_cast<SensitiveBlockHit*>(hitsCollection->GetHit(j));
           energy = hit->GetEdep();
-          G4cout << i << " Value from Hit collection " << energy;
-          if( auto size= hitsCollection->GetSize() > 0 )
-            G4cout << " from " << size << " parts.";
-          else
-            G4cout << " (one piece)";
-          G4cout << G4endl;
+
+          if( fVerbose ) {
+             G4cout << " part " << j << "  E= " << energy / CLHEP::MeV << " MeV ";
+          }
           SumEnergyPerBlock(i,energy);
         }
+        if( fVerbose) { G4cout << G4endl; }
       }
     }
   }
@@ -156,8 +164,10 @@ void EventAction::EndOfEventAction(const G4Event*event)
     stuff.precision(8);
     stuff << "# eDep [MeV]: Block 1,  Block 2,  Block 3,  Block 4, Block 5" << std::endl;
   }
-  
-  G4cout<<"Saving energy depo to csv file."<<G4endl;
+
+  if( fVerbose )
+     G4cout<<"Saving energy depo to csv file."<<G4endl;
+
   stuff << fEnergyDepositBlock[0] / CLHEP::MeV << " ,  "
         << fEnergyDepositBlock[1] / CLHEP::MeV << " ,  "
         << fEnergyDepositBlock[2] / CLHEP::MeV << " ,  "
