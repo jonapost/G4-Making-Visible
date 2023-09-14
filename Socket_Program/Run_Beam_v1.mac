@@ -26,8 +26,6 @@
 /run/verbose 0
 /tracking/verbose 0  
 
-
-/testem/phys/addPhysics  emstandard_opt1
 /run/setCut 0.5 cm
 
 /run/initialize

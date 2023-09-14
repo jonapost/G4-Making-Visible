@@ -38,7 +38,8 @@
 #include "Randomize.hh"
 
 #include "DetectorConstruction.hh"
-#include "PhysicsList.hh"
+// #include "PhysicsList.hh"
+#include "FTFP_BERT.hh"
 #include "ActionInitialization.hh"
 
 #include "G4UIExecutive.hh"
@@ -104,8 +105,8 @@ int main(int argc,char** argv)
   // ==================================================
   DetectorConstruction* detector = new DetectorConstruction;
   runManager->SetUserInitialization(detector);
-  runManager->SetUserInitialization(new PhysicsList);
-
+  runManager->SetUserInitialization(new FTFP_BERT); // PhysicsList);
+  
   // 3. Set user action class(es) - compatible with MT
   runManager->SetUserInitialization(new ActionInitialization(detector));
 
