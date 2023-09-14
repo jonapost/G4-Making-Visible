@@ -11,13 +11,13 @@
 /det/setSizeY 50 cm
 /det/setSizeZ 50 cm
 #
-/det/setBlock 0 -12 cm 18 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium
+/det/setBlock 0 -12 cm 18 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium  1 
 
 /run/reinitializeGeometry
 /run/initialize
 /run/beamOn 1
 
-/det/setBlock 0 -10 cm 18 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium
+/det/setBlock 0 -10 cm 18 cm 0 cm 2 cm 10.0 cm 10.0 cm Aluminium  1
 
 /run/reinitializeGeometry
 /run/initialize
